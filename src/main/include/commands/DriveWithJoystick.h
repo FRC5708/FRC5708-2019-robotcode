@@ -8,13 +8,19 @@
 #pragma once
 
 #include <frc/commands/Command.h>
+#include <frc/Joystick.h>
+#include <RobotMap.h>
 
-class MyAutoCommand : public frc::Command {
- public:
-  MyAutoCommand();
-  void Initialize() override;
-  void Execute() override;
-  bool IsFinished() override;
-  void End() override;
-  void Interrupted() override;
+#include "../Robot.h"
+
+enum JoystickMode {SINGLE_JOY, XBOX};
+
+class DriveWithJoystick : public frc::Command {
+public:
+	JoystickMode joyMode = XBOX;
+
+	DriveWithJoystick();
+	void Execute() override;
+	bool IsFinished() override;
+	void End() override;
 };
