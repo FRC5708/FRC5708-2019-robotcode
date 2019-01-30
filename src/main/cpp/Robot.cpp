@@ -9,10 +9,12 @@
 
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/AnalogGyro.h>
 
 OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
 Drivetrain Robot::drivetrain;
+frc::Gyro* Robot::gyro;
 
 void Robot::RobotInit() {
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
@@ -20,6 +22,7 @@ void Robot::RobotInit() {
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::joystick = new frc::Joystick(0);
+	Robot::gyro = new frc::AnalogGyro(0);
 }
 
 /**

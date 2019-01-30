@@ -14,6 +14,7 @@
 
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
+#include <frc/interfaces/Gyro.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -21,6 +22,7 @@ class Robot : public frc::TimedRobot {
 	static OI m_oi;
 	static Drivetrain drivetrain;
 	static frc::Joystick* joystick;
+	static frc::Gyro* gyro;
 
 	void RobotInit() override;
 	void RobotPeriodic() override;
