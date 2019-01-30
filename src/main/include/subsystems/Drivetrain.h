@@ -18,6 +18,8 @@ public:
 	void Drive(double left, double right);				//Drives left and right wheels accordingly
 	void DrivePolar(double moveValue, double rotateValue);	//Drives at moveValue and rotateValue
 	void ResetDistance();
+	double GetDistance();
+	double GetRate();
 
 	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], false);
 	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], true);
