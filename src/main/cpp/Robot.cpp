@@ -14,6 +14,8 @@
 OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
 Drivetrain Robot::drivetrain;
+AutoDrive Robot::autoDrive;
+VisionReceiver Robot::visionReceiver;
 frc::Gyro* Robot::gyro;
 
 void Robot::RobotInit() {

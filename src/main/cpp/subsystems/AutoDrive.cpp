@@ -14,7 +14,7 @@ constexpr double maxCentripetal = 6*12, // in/sec^2
 
 
 // NOTE: assumes gyro is clockwise=positive
-void AutoDrive::Periodic() {
+void AutoDrive::updatePower() {
 	updatePosition();
 
 	constexpr double kTurning = 0.05,
@@ -24,8 +24,8 @@ void AutoDrive::Periodic() {
 	Point curveAimOffset;
 	if (target.isAngled) {
 
-		double targetDistance = sqrt(pow(target.point.x - currentPosition.point.x, 2) + 
-		pow(target.point.y - currentPosition.point.y, 2));
+		double targetDistance = sqrt(pow(target.loc.x - currentPosition.loc.x, 2) + 
+		pow(target.loc.y - currentPosition.loc.y, 2));
 
 		double expectedSpeed = targetDistance / reachTopSpeed;
 		if (target.slowDown) expectedSpeed /= 2;
@@ -45,11 +45,11 @@ void AutoDrive::Periodic() {
 	double pointAngle;
 	double maxTurnPower;
 	// if we haven't passed the aim point
-	if (fabs(target.point.x - currentPosition.point.x) > fabs(curveAimOffset.x) &&
-		fabs(target.point.y - currentPosition.point.y) > fabs(curveAimOffset.y)) {
+	if (fabs(target.loc.x - currentPosition.loc.x) > fabs(curveAimOffset.x) &&
+		fabs(target.loc.y - currentPosition.loc.y) > fabs(curveAimOffset.y)) {
 		// Point towards the curve aim point
-		pointAngle = atan2(target.point.x - currentPosition.point.x + curveAimOffset.x,
-		 target.point.y - currentPosition.point.y + curveAimOffset.y);
+		pointAngle = atan2(target.loc.x - currentPosition.loc.x + curveAimOffset.x,
+		 target.loc.y - currentPosition.loc.y + curveAimOffset.y);
 		maxTurnPower = 1;
 	}
 	else {
@@ -70,12 +70,18 @@ void AutoDrive::Periodic() {
 	if (target.slowDown) {
 		forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
 			// distance to target:
-			sqrt(pow(target.point.x - currentPosition.point.x, 2)
-		 + pow(target.point.y - currentPosition.point.y, 2)));
+			sqrt(pow(target.loc.x - currentPosition.loc.x, 2)
+		 + pow(target.loc.y - currentPosition.loc.y, 2)));
 	}
 	else forwardPower = maxPower;
 
 	Robot::drivetrain.DrivePolar(forwardPower, -turnPower);
+}
+
+bool AutoDrive::passedTarget(Point beginning) {
+	// if we are farther from beginning than the target
+	return pow(currentPosition.loc.x - beginning.x, 2) + pow(currentPosition.loc.x - beginning.x, 2)
+	> pow(target.loc.x - beginning.x, 2) + pow(target.loc.y - beginning.y, 2);
 }
 
 void AutoDrive::updatePosition() {
@@ -85,8 +91,8 @@ void AutoDrive::updatePosition() {
 	newPos.angle = Robot::gyro->GetAngle();
 	double distance = newPos.encoderDistance - currentPosition.encoderDistance;
 	
-	newPos.point = { currentPosition.point.x + distance * sin(newPos.angle/180*M_PI),
-	                 currentPosition.point.y + distance * cos(newPos.angle/180*M_PI) };
+	newPos.loc = { currentPosition.loc.x + distance * sin(newPos.angle/180*M_PI),
+	                 currentPosition.loc.y + distance * cos(newPos.angle/180*M_PI) };
 
 	currentPosition = newPos;
 }

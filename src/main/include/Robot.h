@@ -14,13 +14,18 @@
 
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
+#include "subsystems/AutoDrive.h"
+#include "subsystems/VisionReceiver.h"
 #include <frc/interfaces/Gyro.h>
+
 
 class Robot : public frc::TimedRobot {
  public:
  
 	static OI m_oi;
 	static Drivetrain drivetrain;
+  static AutoDrive autoDrive;
+  static VisionReceiver visionReceiver;
 	static frc::Joystick* joystick;
 	static frc::Gyro* gyro;
 
