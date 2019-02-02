@@ -64,6 +64,7 @@ void VisionReceiver::Periodic() {
 	}
 	std::string line;
 	while (std::getline(visionDataStream, line) && line[0] == '#') {
+			std::cout << line << std::endl;
 			int isPort, num;
 			TargetData data;
 			sscanf(line.c_str(), "#%d: isPort=%d distance=%lf tapeAngle=%lf robotAngle=%lf",
@@ -101,5 +102,6 @@ void VisionReceiver::Periodic() {
 	}
 	CLEAR:
 	readTapes.clear();
+	std::cout << "@CLEAR:" << std::endl;
 	//More stuff here?
 }
