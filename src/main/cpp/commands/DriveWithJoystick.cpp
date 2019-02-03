@@ -65,7 +65,7 @@ void DriveWithJoystick::Execute() {
 	//powerRampup(left, &currentLeftPower);
 	//powerRampup(right, &currentRightPower);
 	
-	Robot::drivetrain.Drive(currentLeftPower, currentRightPower);
+	Robot::drivetrain.Drive(left, right);
 }
 
 // Make this return true when this Command no longer needs to run execute()
