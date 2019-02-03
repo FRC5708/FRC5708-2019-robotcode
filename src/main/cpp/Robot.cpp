@@ -9,6 +9,7 @@
 
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "commands/DriveWithJoystick.h"
 
 OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
@@ -79,6 +80,7 @@ void Robot::TeleopInit() {
 		m_autonomousCommand->Cancel();
 		m_autonomousCommand = nullptr;
 	}
+	(new DriveWithJoystick())->Start();
 }
 
 void Robot::TeleopPeriodic() { frc::Scheduler::GetInstance()->Run(); }
