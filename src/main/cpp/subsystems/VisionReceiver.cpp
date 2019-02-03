@@ -105,10 +105,10 @@ void VisionReceiver::Periodic() {
 		newData = true;
 	}
 	else {
-	std::cout << "No data found" << std::endl;
+	//std::cout << "No data found" << std::endl;
 	}
 	CLEAR:
 	readTapes.clear();
-	std::cout << "@CLEAR:" << std::endl;
+	//std::cout << "@CLEAR:" << std::endl;
 	//More stuff here?
 }
