@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 
-constexpr char VISION_PORT[] = "8081";
+constexpr char VISION_PORT[] = "5800";
 
 VisionReceiver::VisionReceiver() : Subsystem("VisionReceiver"),
 visionDataStream(&visionDataStreamBuf) {
@@ -52,16 +52,23 @@ void VisionReceiver::setupSocket() {
 
 void VisionReceiver::Periodic() {
 
-	while (true) {
+
 	char buf[66537];
-		ssize_t recieveSize = recvfrom(sockfd, buf, sizeof(buf) - 1, 
-		MSG_DONTWAIT, nullptr, nullptr);
-		if (recieveSize > 0) {
-			buf[recieveSize] = '\0';
-			visionDataStream << buf;
-		}
-		else break;
+	ssize_t recieveSize = recvfrom(sockfd, buf, sizeof(buf) - 1, 
+	MSG_DONTWAIT, nullptr, nullptr);
+	if (recieveSize > 0) {
+		buf[recieveSize] = '\0';
+		visionDataStream << buf;
 	}
+	else if (recieveSize < 0 && errno != EAGAIN) {
+		perror("vision data recieve error");
+		return;
+	}
+	else{
+		return;
+	}
+
+	
 	std::string line;
 	while (std::getline(visionDataStream, line) && line[0] == '#') {
 			std::cout << line << std::endl;
@@ -76,7 +83,7 @@ void VisionReceiver::Periodic() {
 		perror("Vision data parse error, invalid header");
 		goto CLEAR;
 	}
-	if (readTapes.size() == 0) {
+	if (readTapes.size() != 0) {
 		sscanf(line.c_str(), "@%d", &latency);
 		//TODO: correct for latency
 		AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;

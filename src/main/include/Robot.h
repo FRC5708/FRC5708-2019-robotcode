@@ -22,11 +22,11 @@
 class Robot : public frc::TimedRobot {
  public:
  
-	static OI m_oi;
+	static frc::Joystick* joystick;
+	static OI* m_oi;
 	static Drivetrain drivetrain;
   static AutoDrive autoDrive;
   static VisionReceiver visionReceiver;
-	static frc::Joystick* joystick;
 	static frc::Gyro* gyro;
 
 	void RobotInit() override;

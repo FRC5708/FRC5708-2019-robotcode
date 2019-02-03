@@ -11,8 +11,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/AnalogGyro.h>
 
-OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
+OI* Robot::m_oi;
 Drivetrain Robot::drivetrain;
 AutoDrive Robot::autoDrive;
 VisionReceiver Robot::visionReceiver;
@@ -25,6 +25,7 @@ void Robot::RobotInit() {
 
 	Robot::joystick = new frc::Joystick(0);
 	Robot::gyro = new frc::AnalogGyro(0);
+	Robot::m_oi = new OI();
 }
 
 /**
