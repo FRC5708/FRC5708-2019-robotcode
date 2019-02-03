@@ -21,6 +21,8 @@ void Robot::RobotInit() {
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::joystick = new frc::Joystick(0);
+
+	driveCommand = new DriveWithJoystick();
 }
 
 /**
@@ -38,7 +40,9 @@ void Robot::RobotPeriodic() {}
  * can use it to reset any subsystem information you want to clear when the
  * robot is disabled.
  */
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+	frc::Scheduler::GetInstance()->RemoveAll();
+}
 
 void Robot::DisabledPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
@@ -80,7 +84,7 @@ void Robot::TeleopInit() {
 		m_autonomousCommand->Cancel();
 		m_autonomousCommand = nullptr;
 	}
-	(new DriveWithJoystick())->Start();
+	driveCommand->Start();
 }
 
 void Robot::TeleopPeriodic() { frc::Scheduler::GetInstance()->Run(); }
