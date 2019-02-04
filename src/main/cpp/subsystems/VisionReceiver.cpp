@@ -59,49 +59,53 @@ void VisionReceiver::Periodic() {
 	if (recieveSize > 0) {
 		buf[recieveSize] = '\0';
 		visionDataStream << buf;
+
+		std::string line;
+		while (std::getline(visionDataStream, line)) {
+			if (line[0] == '#') {
+				std::cout << line << std::endl;
+				int isPort, num;
+				TargetData data;
+				sscanf(line.c_str(), "#%d: isPort=%d distance=%lf tapeAngle=%lf robotAngle=%lf",
+				&num, &isPort, &data.distance, &data.tapeAngle, &data.robotAngle);
+				readTapes.push_back(data);
+			}
+			else if(line[0] == '@') {
+				sscanf(line.c_str(), "@%d", &latency);
+			}
+			else {
+				perror("Vision data parse error, invalid header");
+				goto CLEAR;
+			}
+		}
 	}
 	else if (recieveSize < 0 && errno != EAGAIN) {
 		perror("vision data recieve error");
 		return;
 	}
-	else{
-		return;
-	}
-
+	// else do nothing
 	
-	std::string line;
-	while (std::getline(visionDataStream, line) && line[0] == '#') {
-			std::cout << line << std::endl;
-			int isPort, num;
-			TargetData data;
-			sscanf(line.c_str(), "#%d: isPort=%d distance=%lf tapeAngle=%lf robotAngle=%lf",
-			&num, &isPort, &data.distance, &data.tapeAngle, &data.robotAngle);
-			readTapes.push_back(data);
-			
-	}
-	if(line[0]!='@'){
-		perror("Vision data parse error, invalid header");
-		goto CLEAR;
-	}
 	if (readTapes.size() != 0) {
-		sscanf(line.c_str(), "@%d", &latency);
+
 		//TODO: correct for latency
 		AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
 		targetLocs.clear();
-		TargetData i=readTapes.at(readTapes.size()-1);
-		if(latency > 500){ //If data is really old
+		if(latency > 500) { //If data is really old
 			goto CLEAR;
 		}
-		TargetLoc target;
-		double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
+		// What if there is some garbage data very close to the robot?
+		// That's why we don't just pick the closest target.
+		for (auto i : readTapes) {
+			TargetLoc target;
+			double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
 
-		target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
-		target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
+			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
+			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
 
-		target.angle = i.tapeAngle;
+			target.angle = i.tapeAngle;
 
-		targetLocs.push_back(target);
-		
+			targetLocs.push_back(target);
+		}
 		newData = true;
 	}
 	else {

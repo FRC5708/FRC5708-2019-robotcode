@@ -39,6 +39,6 @@ class VisionReceiver : public frc::Subsystem {
 		return targetLocs;
 	}
 
-	int latency;
+	int latency; // milliseconds
 	bool newData = false;
 };
