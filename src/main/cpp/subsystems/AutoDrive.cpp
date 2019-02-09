@@ -9,7 +9,7 @@ currentPosition{ 0, 0, 0, 0 } {}
 constexpr double maxCentripetal = 6*12, // in/sec^2
  topSpeed = 10*12, // estimated top speed of the robot at full power, inches/sec
  reachTopSpeed = 1, // estimated seconds to reach top speed from stop
- maxPower = 0.75, // maximum power the auton will run the motors at
+ maxPower = 0.4, // maximum power the auton will run the motors at
  minForwardPower = 0.25; // below this the robot won't move
 
 

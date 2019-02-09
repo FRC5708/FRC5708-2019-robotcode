@@ -34,6 +34,8 @@ public:
 
 	AutoDrive();
 
+	frc::Command* commandUsing = nullptr;
+
 private:
 	std::chrono::steady_clock clock;
 

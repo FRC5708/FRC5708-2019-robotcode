@@ -1,4 +1,5 @@
 #include "commands/DriveWithJoystick.h"
+#include <iostream>
 
 double currentLeftPower=0.0;
 double currentRightPower=0.0;
@@ -55,6 +56,14 @@ void DriveWithJoystick::Execute() {
 		}
 	}
 	power = inputTransform(power, 0.2, 0.05);
+
+	if (Robot::autoDrive.commandUsing != nullptr) {
+		if (power < 0.3 && turn < 0.3) return;
+		else {
+			std::cout << "cancelling auto drive" << std::endl;
+			Robot::autoDrive.commandUsing->Cancel();
+		} 
+	}
 
 	//Robot::drivetrain.DrivePolar(power, turn);
 	double v = (1-fabs(turn)) * (power) + power;
