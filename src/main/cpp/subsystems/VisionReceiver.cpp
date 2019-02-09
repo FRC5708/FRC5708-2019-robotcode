@@ -88,19 +88,20 @@ void VisionReceiver::Periodic() {
 		//TODO: correct for latency
 		AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
 		targetLocs.clear();
-		TargetData i=readTapes.at(readTapes.size()-1);
 		if(latency > 500){ //If data is really old
 			goto CLEAR;
 		}
-		TargetLoc target;
-		double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
+		for (auto i : readTapes) {
+			TargetLoc target;
+			double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
 
-		target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
-		target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
+			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
+			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
 
-		target.angle = i.tapeAngle;
+			target.angle = i.tapeAngle;
 
-		targetLocs.push_back(target);
+			targetLocs.push_back(target);
+		}
 		
 		newData = true;
 	}
