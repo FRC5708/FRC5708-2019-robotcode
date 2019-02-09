@@ -46,4 +46,5 @@ class Robot : public frc::TimedRobot {
 	//ExampleCommand m_defaultAuto;
 	//MyAutoCommand m_myAuto;
 	frc::SendableChooser<frc::Command*> m_chooser;
+	frc::Command* driveCommand;
 };
