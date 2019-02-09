@@ -6,14 +6,13 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
+#include <iostream>
 
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-<<<<<<< HEAD
 #include <frc/AnalogGyro.h>
-=======
+#include <frc/ADXRS450_Gyro.h>
 #include "commands/DriveWithJoystick.h"
->>>>>>> master
 
 frc::Joystick* Robot::joystick;
 OI* Robot::m_oi;
@@ -28,13 +27,10 @@ void Robot::RobotInit() {
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::joystick = new frc::Joystick(0);
-<<<<<<< HEAD
-	Robot::gyro = new frc::AnalogGyro(0);
+	Robot::gyro = new frc::ADXRS450_Gyro();
 	Robot::m_oi = new OI();
-=======
 
 	driveCommand = new DriveWithJoystick();
->>>>>>> master
 }
 
 /**
@@ -101,7 +97,9 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
-void Robot::TestPeriodic() {}
+void Robot::TestPeriodic() {
+	std::cout << "gyro angle: " << Robot::gyro->GetAngle() << std::endl;
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

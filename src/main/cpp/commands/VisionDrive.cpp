@@ -7,6 +7,7 @@ VisionDrive::VisionDrive(bool retry) : retry(retry) {
 
 // Called just before this Command runs the first time
 void VisionDrive::Initialize() {
+	Robot::autoDrive.commandUsing = this;
 	gotFirstData = false;
 
 	startingPoint = Robot::autoDrive.currentPosition.loc;
@@ -80,7 +81,9 @@ void VisionDrive::processVisionData() {
 bool VisionDrive::IsFinished() { return done; }
 
 // Called once after isFinished returns true
-void VisionDrive::End() {}
+void VisionDrive::End() {
+	Robot::autoDrive.commandUsing = nullptr;
+}
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
