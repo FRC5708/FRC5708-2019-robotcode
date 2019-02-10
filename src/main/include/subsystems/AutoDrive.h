@@ -20,8 +20,10 @@ public:
 
 	struct Target {
 		Point loc;
-		bool isAngled, slowDown;
-		double angle;
+
+		bool isAngled, // whether angle is set
+		 slowDown; // whether to slow down near the target
+		double angle; // angle to end up at
 	};
 	Target target;
 
