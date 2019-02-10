@@ -21,6 +21,7 @@ void AutoDrive::updatePower() {
 	 kTurnReduction = 0.5,
 	 kForwardPower = 0.05;
 
+	// Where to point in order to give enough space for the robot to turn
 	Point curveAimOffset;
 	if (target.isAngled) {
 
@@ -54,7 +55,9 @@ void AutoDrive::updatePower() {
 	}
 	else {
 		pointAngle = target.angle;
-		maxTurnPower = 0.5;
+
+		// it will try to turn at this power, unless it is close to the target or already turning too fast
+		maxTurnPower = std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
 	double angleDifference = pointAngle/M_PI*180 - Robot::gyro->GetAngle();
