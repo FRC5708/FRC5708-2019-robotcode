@@ -2,7 +2,7 @@
 #include "Robot.h"
 
 #include <algorithm>
-
+#include <iostream>
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive"), 
 currentPosition{ 0, 0, 0, 0 } {}
 
@@ -15,12 +15,12 @@ constexpr double maxCentripetal = 6*12, // in/sec^2
 
 // NOTE: assumes gyro is clockwise=positive
 void AutoDrive::updatePower() {
-	updatePosition();
 
 	constexpr double kTurning = 0.05,
 	 kTurnReduction = 0.5,
 	 kForwardPower = 0.05;
 
+	// Where to point in order to give enough space for the robot to turn
 	Point curveAimOffset;
 	if (target.isAngled) {
 
@@ -54,13 +54,15 @@ void AutoDrive::updatePower() {
 	}
 	else {
 		pointAngle = target.angle;
-		maxTurnPower = 0.5;
+
+		// it will try to turn at this power, unless it is close to the target or already turning too fast
+		maxTurnPower = std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
-	double angleDifference = pointAngle/M_PI*180 - Robot::gyro->GetAngle();
+	double angleDifference = pointAngle/M_PI*180 - Robot::drivetrain.GetGyroAngle();
 	double turnPower = kTurning * (angleDifference);
 
-	double currentCentripetal = fabs(Robot::gyro->GetRate()/180*M_PI * Robot::drivetrain.GetRate());
+	double currentCentripetal = fabs(Robot::drivetrain.GetGyroRate()/180*M_PI * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
 		turnPower /= pow(2, (currentCentripetal - maxCentripetal) * kTurnReduction);
 	}
@@ -74,7 +76,7 @@ void AutoDrive::updatePower() {
 		 + pow(target.loc.y - currentPosition.loc.y, 2)));
 	}
 	else forwardPower = maxPower;
-
+	std::cout << "Driving polar with <" << forwardPower << "," << -turnPower << "> ..." << std::endl;
 	Robot::drivetrain.DrivePolar(forwardPower, -turnPower);
 }
 
@@ -83,12 +85,14 @@ bool AutoDrive::passedTarget(Point beginning) {
 	return pow(currentPosition.loc.x - beginning.x, 2) + pow(currentPosition.loc.x - beginning.x, 2)
 	> pow(target.loc.x - beginning.x, 2) + pow(target.loc.y - beginning.y, 2);
 }
-
+void AutoDrive::Periodic() {
+	updatePosition();
+}
 void AutoDrive::updatePosition() {
 	RobotPosition newPos;
 
 	newPos.encoderDistance = Robot::drivetrain.GetDistance();
-	newPos.angle = Robot::gyro->GetAngle();
+	newPos.angle = Robot::drivetrain.GetGyroAngle();
 	double distance = newPos.encoderDistance - currentPosition.encoderDistance;
 	
 	newPos.loc = { currentPosition.loc.x + distance * sin(newPos.angle/180*M_PI),

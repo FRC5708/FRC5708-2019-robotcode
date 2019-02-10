@@ -66,13 +66,57 @@ void Drivetrain::ResetDistance(){
 	leftEncoder->SetDistancePerPulse(1.0/360.0);
 	rightEncoder->SetDistancePerPulse(1.0/360.0);
 }
+constexpr double ROBOT_WIDTH = 27; // inches
 
 double Drivetrain::GetDistance() {
-	return (leftEncoder->GetDistance() + rightEncoder->GetDistance())/2.0 * WheelCircumference;
+	double leftDistance = leftEncoder->GetDistance(), rightDistance = rightEncoder->GetDistance();
+	if (fabs(leftDistance) < 0.01) {
+		// emulate with gyro
+		return rightDistance * WheelCircumference + 
+		Robot::gyro->GetAngle() / 180.0 * M_PI * (ROBOT_WIDTH / 2.0);
+	}
+	else if (fabs(rightDistance) < 0.01) {
+		return leftDistance * WheelCircumference - 
+		Robot::gyro->GetAngle() / 180.0 * M_PI * (ROBOT_WIDTH / 2.0);
+	}
+	else {
+		// both encoders, yay!
+		return (leftDistance + rightDistance)/2.0 * WheelCircumference;
+	}
 }
 double Drivetrain::GetRate() {
-	return (leftEncoder->GetRate() + rightEncoder->GetRate())/2.0 * WheelCircumference;
+	double leftDistance = leftEncoder->GetDistance(), rightDistance = rightEncoder->GetDistance();
+	if (fabs(leftDistance) < 0.01) {
+		// emulate with gyro
+		return leftEncoder->GetRate() * WheelCircumference
+		 + Robot::gyro->GetRate() / 180.0 * M_PI * (ROBOT_WIDTH / 2.0);
+	}
+	else if (fabs(rightDistance) < 0.01) {
+		return rightEncoder->GetRate() * WheelCircumference
+		 - Robot::gyro->GetRate() / 180.0 * M_PI * (ROBOT_WIDTH / 2.0);
+	}
+	else {
+		// both encoders, yay!
+		return (leftEncoder->GetRate() + rightEncoder->GetRate())/2.0 * WheelCircumference;
+	}
 }
+double Drivetrain::GetGyroAngle() {
+	double gyroAngle = Robot::gyro->GetAngle();
+	if (fabs(gyroAngle) < 0.01) {
 
+		// emulate with encoders
+		return (leftEncoder->GetDistance() - rightEncoder->GetDistance())
+		* WheelCircumference / ROBOT_WIDTH / M_PI * 180;
+	}
+	else return gyroAngle;
+}
+double Drivetrain::GetGyroRate() {
+	double gyroAngle = Robot::gyro->GetAngle();
+	if (fabs(gyroAngle) < 0.01) {
 
-
+		// emulate with encoders
+		return (leftEncoder->GetRate() - rightEncoder->GetRate())
+		* WheelCircumference / ROBOT_WIDTH / M_PI * 180;
+	}
+	else return Robot::gyro->GetRate();
+}
