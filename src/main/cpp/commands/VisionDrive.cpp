@@ -1,5 +1,6 @@
 #include "commands/VisionDrive.h"
 #include "Robot.h"
+#include <iostream>
 
 VisionDrive::VisionDrive(bool retry) : retry(retry) {
 	Requires(&Robot::autoDrive);
@@ -20,6 +21,7 @@ void VisionDrive::Initialize() {
 void VisionDrive::Execute() {
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
+		std::cout << "Proccessing vision data..." << std::endl;
 		processVisionData();
 	}
 
@@ -78,10 +80,14 @@ void VisionDrive::processVisionData() {
 }
 
 // Make this return true when this Command no longer needs to run execute()
-bool VisionDrive::IsFinished() { return done; }
+bool VisionDrive::IsFinished() { 
+	if (IsCanceled()) done = true;
+	return done;
+}
 
 // Called once after isFinished returns true
 void VisionDrive::End() {
+	std::cout << "ending VisionDrive" << std::endl;
 	Robot::autoDrive.commandUsing = nullptr;
 }
 

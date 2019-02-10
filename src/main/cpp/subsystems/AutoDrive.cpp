@@ -2,7 +2,7 @@
 #include "Robot.h"
 
 #include <algorithm>
-
+#include <iostream>
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive"), 
 currentPosition{ 0, 0, 0, 0 } {}
 
@@ -15,7 +15,6 @@ constexpr double maxCentripetal = 6*12, // in/sec^2
 
 // NOTE: assumes gyro is clockwise=positive
 void AutoDrive::updatePower() {
-	updatePosition();
 
 	constexpr double kTurning = 0.05,
 	 kTurnReduction = 0.5,
@@ -77,7 +76,7 @@ void AutoDrive::updatePower() {
 		 + pow(target.loc.y - currentPosition.loc.y, 2)));
 	}
 	else forwardPower = maxPower;
-
+	std::cout << "Driving polar with <" << forwardPower << "," << -turnPower << "> ..." << std::endl;
 	Robot::drivetrain.DrivePolar(forwardPower, -turnPower);
 }
 
@@ -86,7 +85,9 @@ bool AutoDrive::passedTarget(Point beginning) {
 	return pow(currentPosition.loc.x - beginning.x, 2) + pow(currentPosition.loc.x - beginning.x, 2)
 	> pow(target.loc.x - beginning.x, 2) + pow(target.loc.y - beginning.y, 2);
 }
-
+void AutoDrive::Periodic() {
+	updatePosition();
+}
 void AutoDrive::updatePosition() {
 	RobotPosition newPos;
 
