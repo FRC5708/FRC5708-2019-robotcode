@@ -60,10 +60,10 @@ void AutoDrive::updatePower() {
 		maxTurnPower = std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
-	double angleDifference = pointAngle/M_PI*180 - Robot::gyro->GetAngle();
+	double angleDifference = pointAngle/M_PI*180 - Robot::drivetrain.GetGyroAngle();
 	double turnPower = kTurning * (angleDifference);
 
-	double currentCentripetal = fabs(Robot::gyro->GetRate()/180*M_PI * Robot::drivetrain.GetRate());
+	double currentCentripetal = fabs(Robot::drivetrain.GetGyroRate()/180*M_PI * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
 		turnPower /= pow(2, (currentCentripetal - maxCentripetal) * kTurnReduction);
 	}
@@ -91,7 +91,7 @@ void AutoDrive::updatePosition() {
 	RobotPosition newPos;
 
 	newPos.encoderDistance = Robot::drivetrain.GetDistance();
-	newPos.angle = Robot::gyro->GetAngle();
+	newPos.angle = Robot::drivetrain.GetGyroAngle();
 	double distance = newPos.encoderDistance - currentPosition.encoderDistance;
 	
 	newPos.loc = { currentPosition.loc.x + distance * sin(newPos.angle/180*M_PI),
