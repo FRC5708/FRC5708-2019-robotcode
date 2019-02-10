@@ -6,6 +6,8 @@
 class AutoDrive : public frc::Subsystem {
 
 public: 
+	virtual void Periodic() override;
+
 	struct Point { double x, y; };
 
 	// inches and degrees. Measured from center of hab, against wall, facing forward.
