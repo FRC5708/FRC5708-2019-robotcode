@@ -20,6 +20,8 @@ public:
 	void ResetDistance();
 	double GetDistance();
 	double GetRate();
+	double GetGyroAngle();
+	double GetGyroRate();
 
 	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], false);
 	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], true);
@@ -30,7 +32,6 @@ private:
 	frc::SpeedController* FRMotor = new frc::Spark(FRMotorChannel);
 	frc::SpeedController* BRMotor = new frc::Spark(BRMotorChannel);
 };
-
 
 
 #endif  // Drivetrain_H

@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 
-constexpr char VISION_PORT[] = "5800";
+constexpr char VISION_PORT[] = "5808";
 
 VisionReceiver::VisionReceiver() : Subsystem("VisionReceiver"),
 visionDataStream(&visionDataStreamBuf) {
