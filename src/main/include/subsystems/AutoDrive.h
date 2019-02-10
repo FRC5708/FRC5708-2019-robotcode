@@ -2,10 +2,14 @@
 
 #include <frc/commands/Subsystem.h>
 #include <chrono>
+#include <iostream>
+#include <fstream>
+
 
 class AutoDrive : public frc::Subsystem {
 
 public: 
+	std::ofstream output;
 	virtual void Periodic() override;
 
 	struct Point { double x, y; };
@@ -25,7 +29,7 @@ public:
 
 		bool isAngled, // whether angle is set
 		 slowDown; // whether to slow down near the target
-		double angle; // angle to end up at
+		double angle; // angle to end up at, in degrees
 	};
 	Target target;
 
