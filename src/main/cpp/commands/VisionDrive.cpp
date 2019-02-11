@@ -22,7 +22,7 @@ void VisionDrive::Execute() {
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
 		std::cout << "Proccessing vision data..." << std::endl;
-		processVisionData();
+		if (!gotFirstData) processVisionData();
 	}
 
 	if (gotFirstData) {
@@ -33,8 +33,9 @@ void VisionDrive::Execute() {
 			currentTarget.loc.x - approachDist*sin(currentTarget.angle),
 			currentTarget.loc.y - approachDist*cos(currentTarget.angle)
 		};
-		Robot::autoDrive.target.angle = currentTarget.angle;
+		
 		Robot::autoDrive.target.isAngled = true;
+		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.slowDown = false;
 
 		if (Robot::autoDrive.passedTarget(startingPoint)) {

@@ -58,7 +58,7 @@ void DriveWithJoystick::Execute() {
 	power = inputTransform(power, 0.2, 0.05);
 
 	if (Robot::autoDrive.commandUsing != nullptr) {
-		if (power < 0.3 && turn < 0.3) return;
+		if (fabs(power) < 0.3 && fabs(turn) < 0.3) return;
 		else {
 			std::cout << "cancelling auto drive" << std::endl;
 			Robot::autoDrive.commandUsing->Cancel();

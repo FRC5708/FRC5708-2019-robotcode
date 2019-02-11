@@ -98,7 +98,7 @@ void VisionReceiver::Periodic() {
 			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
 			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
 
-			target.angle = i.tapeAngle;
+			target.angle = robPos.angle/180*M_PI + i.tapeAngle;
 
 			targetLocs.push_back(target);
 		}
