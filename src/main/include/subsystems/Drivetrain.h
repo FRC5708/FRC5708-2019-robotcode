@@ -21,7 +21,7 @@ public:
 	double GetDistance();
 	double GetRate();
 	Degree GetGyroAngle();
-	double GetGyroRate();
+	Degree GetGyroRate();
 
 	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], true);
 	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], false);

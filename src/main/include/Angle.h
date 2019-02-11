@@ -2,6 +2,8 @@
 #ifndef ANGLE_H_
 #define ANGLE_H_
 #include "math.h"
+#include <type_traits>
+
 struct Radian;
 struct Degree;
 struct Radian{
@@ -34,6 +36,24 @@ struct Degree{
 	Degree operator /(T);
 	operator double();
 };
+
+template<class T> Radian Radian::operator *(T multer){
+	static_assert(std::is_arithmetic<T>::value ,"Multiplication must be done with arithmetic type.");
+    return Radian(this->value * multer);
+}
+template<class T> Radian Radian::operator /(T multer){
+	static_assert(std::is_arithmetic<T>::value ,"Division must be done with arithmetic type.");
+    return Radian(this->value / multer);
+}
+
+template<class T> Degree Degree::operator *(T multer){
+	static_assert(std::is_arithmetic<T>::value ,"Multiplication must be done with arithmetic type.");
+    return Degree(this->value * multer);
+}
+template<class T> Degree Degree::operator /(T multer){
+	static_assert(std::is_arithmetic<T>::value ,"Division must be done with arithmetic type.");
+    return Degree(this->value / multer);
+}
 
 
 #endif /* ANGLE_H_ */

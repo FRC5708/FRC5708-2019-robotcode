@@ -55,35 +55,38 @@ void AutoDrive::updatePower() {
 		pointAngle = atan2(target.loc.x - currentPosition.loc.x + curveAimOffset.x,
 		 target.loc.y - currentPosition.loc.y + curveAimOffset.y);
 		maxTurnPower = 0.5;//1;
-		std::cout << "aiming at aim point; ";
+		output << "aiming at aim point; ";
 	}
 	else {
-		std::cout << "aiming towards target; ";
-		pointAngle = target.angle;
+		output << "aiming towards target; ";
+		pointAngle = atan2(target.loc.x - currentPosition.loc.x, target.loc.y - currentPosition.loc.y);
 
 		// it will try to turn at this power, unless it is close to the target or already turning too fast
 		maxTurnPower = 0.5;//std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
-	Degree angleDifference = Degree(pointAngle) - Degree(Robot::drivetrain.GetGyroAngle());
-	double turnPower = kTurning * (angleDifference);
+	// between -180 and 180
+	Degree angleDifference = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
+	double turnPower = kTurning * angleDifference;
 
-	double currentCentripetal = fabs(Robot::drivetrain.GetGyroRate()/180*M_PI * Robot::drivetrain.GetRate());
+	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
-		std::cout << "turning less; ";
+		output << "turning less; ";
 		turnPower /= pow(2, (currentCentripetal - maxCentripetal) * kTurnReduction);
 	}
 	if (fabs(turnPower) > maxTurnPower) turnPower = copysign(maxTurnPower, turnPower);
 
-	double forwardPower;
-	if (target.slowDown) {
-		forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
-			// distance to target:
-			sqrt(pow(target.loc.x - currentPosition.loc.x, 2)
-		 + pow(target.loc.y - currentPosition.loc.y, 2)));
+	double forwardPower = 0;
+	if (fabs(angleDifference) < 60) {
+		if (target.slowDown) {
+			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
+				// distance to target:
+				sqrt(pow(target.loc.x - currentPosition.loc.x, 2)
+			+ pow(target.loc.y - currentPosition.loc.y, 2)));
+		}
+		else forwardPower = maxPower;
 	}
-	else forwardPower = maxPower;
-	std::cout << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << std::endl;
+	output << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << std::endl;
 	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> ..." << std::endl;
 	Robot::drivetrain.DrivePolar(forwardPower, turnPower);
 }
