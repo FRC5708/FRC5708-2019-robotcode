@@ -23,8 +23,8 @@ public:
 	Degree GetGyroAngle();
 	double GetGyroRate();
 
-	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], false);
-	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], true);
+	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], true);
+	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], false);
 private:
 
 	frc::SpeedController* FLMotor = new frc::Spark(FLMotorChannel);

@@ -3,10 +3,14 @@
 #include <frc/commands/Subsystem.h>
 #include <chrono>
 #include "Angle.h"
+#include <iostream>
+#include <fstream>
+
 
 class AutoDrive : public frc::Subsystem {
 
 public: 
+	std::ofstream output;
 	virtual void Periodic() override;
 
 	struct Point { double x, y; };
