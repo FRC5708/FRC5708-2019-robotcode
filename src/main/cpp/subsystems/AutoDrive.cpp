@@ -34,15 +34,15 @@ void AutoDrive::updatePower() {
 		// allow for a turn with 3/4 of the maxCentripetal
 		double turningRadius = pow(expectedSpeed, 2) / (maxCentripetal * 0.75);
 
-		double targetAngle = target.angle/180*M_PI;
-		double sideRobotAngle = (Robot::gyro->GetAngle() - 90)/180*M_PI;
+		Radian targetAngle = target.angle; //Conversion between Radians and Degrees done implicitly. 
+		Radian sideRobotAngle = Degree(Robot::gyro->GetAngle() - 90.0);
 
 		curveAimOffset.x = turningRadius * (sin(targetAngle) - sin(sideRobotAngle));
 		curveAimOffset.y = turningRadius * (cos(targetAngle) - cos(sideRobotAngle));
 	}
 	else curveAimOffset = { 0, 0 };
 
-	double pointAngle;
+	Radian pointAngle;
 	double maxTurnPower;
 	// if we haven't passed the aim point
 	if (fabs(target.loc.x - currentPosition.loc.x) > fabs(curveAimOffset.x) &&
@@ -59,7 +59,7 @@ void AutoDrive::updatePower() {
 		maxTurnPower = std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
-	double angleDifference = pointAngle/M_PI*180 - Robot::drivetrain.GetGyroAngle();
+	Degree angleDifference = Degree(pointAngle) - Degree(Robot::drivetrain.GetGyroAngle());
 	double turnPower = kTurning * (angleDifference);
 
 	double currentCentripetal = fabs(Robot::drivetrain.GetGyroRate()/180*M_PI * Robot::drivetrain.GetRate());
@@ -95,8 +95,8 @@ void AutoDrive::updatePosition() {
 	newPos.angle = Robot::drivetrain.GetGyroAngle();
 	double distance = newPos.encoderDistance - currentPosition.encoderDistance;
 	
-	newPos.loc = { currentPosition.loc.x + distance * sin(newPos.angle/180*M_PI),
-	                 currentPosition.loc.y + distance * cos(newPos.angle/180*M_PI) };
+	newPos.loc = { currentPosition.loc.x + distance * sin(Radian(newPos.angle)),
+	                 currentPosition.loc.y + distance * cos(Radian(newPos.angle)) };
 
 	currentPosition = newPos;
 }
