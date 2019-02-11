@@ -33,7 +33,7 @@ void VisionDrive::Execute() {
 			currentTarget.loc.x - approachDist*sin(currentTarget.angle),
 			currentTarget.loc.y - approachDist*cos(currentTarget.angle)
 		};
-		Robot::autoDrive.target.angle = currentTarget.angle*180/M_PI;
+		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.slowDown = false;
 

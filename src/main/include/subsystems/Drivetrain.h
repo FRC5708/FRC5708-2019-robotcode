@@ -7,7 +7,7 @@
 #include <vector>
 #include "RobotMap.h"
 #include <cmath>
-
+#include "Angle.h"
 
 
 class Drivetrain : public frc::Subsystem {
@@ -20,7 +20,7 @@ public:
 	void ResetDistance();
 	double GetDistance();
 	double GetRate();
-	double GetGyroAngle();
+	Degree GetGyroAngle();
 	double GetGyroRate();
 
 	frc::Encoder* leftEncoder = new frc::Encoder(LeftEncoderChannel[0],LeftEncoderChannel[1], false);

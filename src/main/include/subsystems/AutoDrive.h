@@ -2,6 +2,7 @@
 
 #include <frc/commands/Subsystem.h>
 #include <chrono>
+#include "Angle.h"
 
 class AutoDrive : public frc::Subsystem {
 
@@ -15,7 +16,7 @@ public:
 	// clockwise positive, counterclockwise negative.
 	struct RobotPosition {
 		Point loc;
-		double angle; 
+		Degree angle; 
 		double encoderDistance; // revolutions
 	};
 	RobotPosition currentPosition;
@@ -25,7 +26,7 @@ public:
 
 		bool isAngled, // whether angle is set
 		 slowDown; // whether to slow down near the target
-		double angle; // angle to end up at
+		Degree angle; // angle to end up at
 	};
 	Target target;
 

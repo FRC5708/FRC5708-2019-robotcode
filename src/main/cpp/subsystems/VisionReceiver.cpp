@@ -75,7 +75,7 @@ void VisionReceiver::Periodic() {
 			int isPort, num;
 			TargetData data;
 			sscanf(line.c_str(), "#%d: isPort=%d distance=%lf tapeAngle=%lf robotAngle=%lf",
-			&num, &isPort, &data.distance, &data.tapeAngle, &data.robotAngle);
+			&num, &isPort, &data.distance, &data.tapeAngle.value, &data.robotAngle.value);
 			readTapes.push_back(data);
 			
 	}
@@ -93,7 +93,7 @@ void VisionReceiver::Periodic() {
 		}
 		for (auto i : readTapes) {
 			TargetLoc target;
-			double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
+			Radian wholeAngle = robPos.angle + i.robotAngle;
 
 			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
 			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
