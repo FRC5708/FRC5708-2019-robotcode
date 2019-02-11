@@ -59,7 +59,7 @@ void AutoDrive::updatePower() {
 	}
 	else {
 		std::cout << "aiming towards target; ";
-		pointAngle = target.angle/180*M_PI;
+		pointAngle = target.angle;
 
 		// it will try to turn at this power, unless it is close to the target or already turning too fast
 		maxTurnPower = 0.5;//std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
