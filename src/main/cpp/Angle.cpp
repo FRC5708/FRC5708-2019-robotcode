@@ -22,14 +22,6 @@ Radian Radian::operator -(Radian summer){
 Radian Radian::operator -(Degree summer){
 	return Radian(this->value-summer.value*2* M_PI / 360.0);
 }
-template<class T> Radian Radian::operator *(T multer){
-	static_assert(std::is_arithmetic<T>::value ,"Multiplication must be done with arithmetic type.");
-    return Radian(this->value * multer);
-}
-template<class T> Radian Radian::operator /(T multer){
-	static_assert(std::is_arithmetic<T>::value ,"Division must be done with arithmetic type.");
-    return Radian(this->value / multer);
-}
 Radian::operator double(){
 	return this->value;
 }
@@ -56,11 +48,6 @@ Degree Degree::operator -(Radian summer){
 Degree Degree::operator -(Degree summer){
 	return Degree(this->value+summer.value);
 }
-template<class T> Degree Degree::operator *(T multer){
-	static_assert(std::is_arithmetic<T>::value ,"Multiplication must be done with arithmetic type.");
-    return Degree(this->value * multer);
-}
-template<class T> Degree Degree::operator /(T multer){
-	static_assert(std::is_arithmetic<T>::value ,"Division must be done with arithmetic type.");
-    return Degree(this->value / multer);
+Degree::operator double(){
+	return this->value;
 }
