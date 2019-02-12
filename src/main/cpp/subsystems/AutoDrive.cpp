@@ -67,6 +67,7 @@ void AutoDrive::updatePower() {
 
 	// between -180 and 180
 	Degree angleDifference = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
+	output << "angleDifference: " << angleDifference << "; ";
 	double turnPower = kTurning * angleDifference;
 
 	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
@@ -87,7 +88,7 @@ void AutoDrive::updatePower() {
 		else forwardPower = maxPower;
 	}
 	output << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << std::endl;
-	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> ..." << std::endl;
+	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> theta=" << Degree(pointAngle) << std::endl;
 	Robot::drivetrain.DrivePolar(forwardPower, turnPower);
 }
 
