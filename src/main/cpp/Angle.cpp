@@ -43,10 +43,10 @@ Degree Degree::operator +(Degree summer){
 	return Degree(this->value+summer.value);
 }
 Degree Degree::operator -(Radian summer){
-	return Degree(this->value+summer.value*360/2/M_PI);
+	return Degree(this->value-summer.value*360/2/M_PI);
 }
 Degree Degree::operator -(Degree summer){
-	return Degree(this->value+summer.value);
+	return Degree(this->value-summer.value);
 }
 Degree::operator double(){
 	return this->value;
