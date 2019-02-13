@@ -6,10 +6,13 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
+#include <iostream>
 
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/AnalogGyro.h>
+#include <frc/ADXRS450_Gyro.h>
+#include "commands/DriveWithJoystick.h"
 
 frc::Joystick* Robot::joystick;
 OI* Robot::m_oi;
@@ -18,14 +21,19 @@ AutoDrive Robot::autoDrive;
 VisionReceiver Robot::visionReceiver;
 frc::Gyro* Robot::gyro;
 
+Robot* Robot::instance;
+
 void Robot::RobotInit() {
+	instance = this;
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
 	//m_chooser.AddOption("My Auto", &m_myAuto);
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::joystick = new frc::Joystick(0);
-	Robot::gyro = new frc::AnalogGyro(0);
+	Robot::gyro = new frc::ADXRS450_Gyro();
 	Robot::m_oi = new OI();
+
+	driveCommand = new DriveWithJoystick();
 }
 
 /**
@@ -43,7 +51,9 @@ void Robot::RobotPeriodic() {}
  * can use it to reset any subsystem information you want to clear when the
  * robot is disabled.
  */
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+	frc::Scheduler::GetInstance()->RemoveAll();
+}
 
 void Robot::DisabledPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
@@ -85,11 +95,14 @@ void Robot::TeleopInit() {
 		m_autonomousCommand->Cancel();
 		m_autonomousCommand = nullptr;
 	}
+	driveCommand->Start();
 }
 
 void Robot::TeleopPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
-void Robot::TestPeriodic() {}
+void Robot::TestPeriodic() {
+	std::cout << "gyro angle: " << Robot::gyro->GetAngle() << std::endl;
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

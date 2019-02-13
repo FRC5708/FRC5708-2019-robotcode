@@ -2,10 +2,17 @@
 
 #include <frc/commands/Subsystem.h>
 #include <chrono>
+#include "Angle.h"
+#include <iostream>
+#include <fstream>
+
 
 class AutoDrive : public frc::Subsystem {
 
 public: 
+	std::ofstream output;
+	virtual void Periodic() override;
+
 	struct Point { double x, y; };
 
 	// inches and degrees. Measured from center of hab, against wall, facing forward.
@@ -13,15 +20,19 @@ public:
 	// clockwise positive, counterclockwise negative.
 	struct RobotPosition {
 		Point loc;
-		double angle; 
+		Degree angle; 
 		double encoderDistance; // revolutions
 	};
-	RobotPosition currentPosition;
+	RobotPosition& getCurrentPos() { return positions[currentPosIndex]; }
+	RobotPosition& getPastPos(double milliseconds);
+	void resetPosition() { for (auto i : positions) { i = { 0, 0, 0, 0 }; } }
 
 	struct Target {
 		Point loc;
-		bool isAngled, slowDown;
-		double angle;
+
+		bool isAngled, // whether angle is set
+		 slowDown; // whether to slow down near the target
+		Degree angle; // angle to end up at
 	};
 	Target target;
 
@@ -34,8 +45,14 @@ public:
 
 	AutoDrive();
 
+	frc::Command* commandUsing = nullptr;
+
 private:
+	void updatePosition();
+	
 	std::chrono::steady_clock clock;
 
-	void updatePosition();
+	static constexpr int posCount = 500;
+	RobotPosition positions[posCount]; // 10 seconds
+	int currentPosIndex = 0;
 };

@@ -25,9 +25,11 @@ class Robot : public frc::TimedRobot {
 	static frc::Joystick* joystick;
 	static OI* m_oi;
 	static Drivetrain drivetrain;
-  static AutoDrive autoDrive;
-  static VisionReceiver visionReceiver;
+    static AutoDrive autoDrive;
+    static VisionReceiver visionReceiver;
 	static frc::Gyro* gyro;
+
+	static Robot* instance;
 
 	void RobotInit() override;
 	void RobotPeriodic() override;
@@ -46,4 +48,5 @@ class Robot : public frc::TimedRobot {
 	//ExampleCommand m_defaultAuto;
 	//MyAutoCommand m_myAuto;
 	frc::SendableChooser<frc::Command*> m_chooser;
+	frc::Command* driveCommand;
 };

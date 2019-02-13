@@ -1,5 +1,6 @@
 #include "commands/VisionDrive.h"
 #include "Robot.h"
+#include <iostream>
 
 VisionDrive::VisionDrive(bool retry) : retry(retry) {
 	Requires(&Robot::autoDrive);
@@ -7,9 +8,10 @@ VisionDrive::VisionDrive(bool retry) : retry(retry) {
 
 // Called just before this Command runs the first time
 void VisionDrive::Initialize() {
+	Robot::autoDrive.commandUsing = this;
 	gotFirstData = false;
 
-	startingPoint = Robot::autoDrive.currentPosition.loc;
+	startingPoint = Robot::autoDrive.getCurrentPos().loc;
 
 	if (Robot::visionReceiver.targetLocs.size() > 0) processVisionData();
 	else if (!retry) done = true;
@@ -19,7 +21,8 @@ void VisionDrive::Initialize() {
 void VisionDrive::Execute() {
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
-		processVisionData();
+		std::cout << "Proccessing vision data..." << std::endl;
+		if (!gotFirstData) processVisionData();
 	}
 
 	if (gotFirstData) {
@@ -30,8 +33,9 @@ void VisionDrive::Execute() {
 			currentTarget.loc.x - approachDist*sin(currentTarget.angle),
 			currentTarget.loc.y - approachDist*cos(currentTarget.angle)
 		};
-		Robot::autoDrive.target.angle = currentTarget.angle*180/M_PI;
+		
 		Robot::autoDrive.target.isAngled = true;
+		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.slowDown = false;
 
 		if (Robot::autoDrive.passedTarget(startingPoint)) {
@@ -48,9 +52,6 @@ void VisionDrive::Execute() {
 }
 
 void VisionDrive::processVisionData() {
-
-	//TODO: correct for latency
-	AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
 
 	double locationTolerance = 8; // inches
 	if (!gotFirstData) locationTolerance = INFINITY;
@@ -77,11 +78,18 @@ void VisionDrive::processVisionData() {
 }
 
 // Make this return true when this Command no longer needs to run execute()
-bool VisionDrive::IsFinished() { return done; }
+bool VisionDrive::IsFinished() { 
+	if (IsCanceled()) done = true;
+	return done;
+}
 
 // Called once after isFinished returns true
-void VisionDrive::End() {}
+void VisionDrive::End() {
+	std::cout << "ending VisionDrive" << std::endl;
+	Robot::autoDrive.commandUsing = nullptr;
+}
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
-void VisionDrive::Interrupted() {}
+// default implementation calls End()
+//void VisionDrive::Interrupted() {}

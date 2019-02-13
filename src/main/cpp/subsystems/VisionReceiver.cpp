@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 
-constexpr char VISION_PORT[] = "5800";
+constexpr char VISION_PORT[] = "5808";
 
 VisionReceiver::VisionReceiver() : Subsystem("VisionReceiver"),
 visionDataStream(&visionDataStreamBuf) {
@@ -67,11 +67,11 @@ void VisionReceiver::Periodic() {
 				int isPort, num;
 				TargetData data;
 				sscanf(line.c_str(), "#%d: isPort=%d distance=%lf tapeAngle=%lf robotAngle=%lf",
-				&num, &isPort, &data.distance, &data.tapeAngle, &data.robotAngle);
+				&num, &isPort, &data.distance, &data.tapeAngle.value, &data.robotAngle.value);
 				readTapes.push_back(data);
 			}
 			else if(line[0] == '@') {
-				sscanf(line.c_str(), "@%d", &latency);
+				sscanf(line.c_str(), "@%d", &processingTime);
 			}
 			else {
 				perror("Vision data parse error, invalid header");
@@ -79,20 +79,21 @@ void VisionReceiver::Periodic() {
 			}
 		}
 	}
-	else if (recieveSize < 0 && errno != EAGAIN) {
+	else if (recieveSize < 0 && errno != EWOULDBLOCK) {
 		perror("vision data recieve error");
 		return;
 	}
 	// else do nothing
 	
 	if (readTapes.size() != 0) {
+		
+		// Milliseconds. Network, camera, etc.
+		constexpr double extraLatency = 20;
 
-		//TODO: correct for latency
-		AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
-		targetLocs.clear();
-		if(latency > 500) { //If data is really old
+		if(processingTime + extraLatency > 1000){ //If data is really old
 			goto CLEAR;
 		}
+        AutoDrive::RobotPosition& robPos = Robot::autoDrive.getPastPos(processingTime + extraLatency);
 		// What if there is some garbage data very close to the robot?
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
