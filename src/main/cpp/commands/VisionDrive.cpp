@@ -11,7 +11,7 @@ void VisionDrive::Initialize() {
 	Robot::autoDrive.commandUsing = this;
 	gotFirstData = false;
 
-	startingPoint = Robot::autoDrive.currentPosition.loc;
+	startingPoint = Robot::autoDrive.getCurrentPos().loc;
 
 	if (Robot::visionReceiver.targetLocs.size() > 0) processVisionData();
 	else if (!retry) done = true;
@@ -52,9 +52,6 @@ void VisionDrive::Execute() {
 }
 
 void VisionDrive::processVisionData() {
-
-	//TODO: correct for latency
-	AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
 
 	double locationTolerance = 8; // inches
 	if (!gotFirstData) locationTolerance = INFINITY;

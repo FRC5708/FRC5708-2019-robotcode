@@ -60,14 +60,13 @@ void VisionReceiver::Periodic() {
 		buf[recieveSize] = '\0';
 		visionDataStream << buf;
 	}
-	else if (recieveSize < 0 && errno != EAGAIN) {
+	else if (recieveSize < 0 && errno != EWOULDBLOCK) {
 		perror("vision data recieve error");
 		return;
 	}
 	else{
 		return;
 	}
-
 	
 	std::string line;
 	while (std::getline(visionDataStream, line) && line[0] == '#') {
@@ -83,14 +82,20 @@ void VisionReceiver::Periodic() {
 		perror("Vision data parse error, invalid header");
 		goto CLEAR;
 	}
+
 	if (readTapes.size() != 0) {
-		sscanf(line.c_str(), "@%d", &latency);
-		//TODO: correct for latency
-		AutoDrive::RobotPosition robPos = Robot::autoDrive.currentPosition;
-		targetLocs.clear();
-		if(latency > 500){ //If data is really old
+		int processingTime;
+		sscanf(line.c_str(), "@%d", &processingTime);
+		
+		// Milliseconds. Network, camera, etc.
+		constexpr double extraLatency = 20;
+
+		if(processingTime + extraLatency > 1000){ //If data is really old
 			goto CLEAR;
 		}
+
+		AutoDrive::RobotPosition& robPos = Robot::autoDrive.getPastPos(processingTime + extraLatency);
+		targetLocs.clear();
 		for (auto i : readTapes) {
 			TargetLoc target;
 			Radian wholeAngle = robPos.angle + i.robotAngle;
