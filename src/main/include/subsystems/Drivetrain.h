@@ -17,6 +17,7 @@ public:
 	double Limit(double number);
 	void Drive(double left, double right);				//Drives left and right wheels accordingly
 	void DrivePolar(double moveValue, double rotateValue);	//Drives at moveValue and rotateValue
+	void Periodic() override;
 	void ResetDistance();
 	double GetDistance();
 	double GetRate();
@@ -31,6 +32,8 @@ private:
 	frc::SpeedController* BLMotor = new frc::Spark(BLMotorChannel);
 	frc::SpeedController* FRMotor = new frc::Spark(FRMotorChannel);
 	frc::SpeedController* BRMotor = new frc::Spark(BRMotorChannel);
+
+	int ticksSinceLastDrive = 0;
 };
 
 

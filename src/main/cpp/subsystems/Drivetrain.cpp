@@ -1,5 +1,6 @@
 #include "subsystems/Drivetrain.h"
 #include "Robot.h"
+#include <frc/DriverStation.h>
 #include <iostream>
 #include <math.h>
 
@@ -23,11 +24,23 @@ double Drivetrain::Limit(double number) {
 	return number;
 }
 
+void Drivetrain::Periodic() {
+	if (ticksSinceLastDrive >= 2) {
+		Drive(0, 0);
+		std::cout << "Drivetrain has not been called, and has been reset. This is a BUG." << std::endl;
+	}
+	if (frc::DriverStation::GetInstance().IsEnabled()) {
+		++ticksSinceLastDrive;
+	}
+}
+
 void Drivetrain::Drive(double left, double right) {
 	FLMotor->Set(left);
 	BLMotor->Set(left);
 	FRMotor->Set(right);
 	BRMotor->Set(right);
+
+	ticksSinceLastDrive = 0;
 }
 
 void Drivetrain::DrivePolar(double moveValue, double rotateValue) {
