@@ -23,7 +23,9 @@ public:
 		Degree angle; 
 		double encoderDistance; // revolutions
 	};
-	RobotPosition currentPosition;
+	RobotPosition& getCurrentPos() { return positions[currentPosIndex]; }
+	RobotPosition& getPastPos(double milliseconds);
+	void resetPosition() { for (auto i : positions) { i = { 0, 0, 0, 0 }; } }
 
 	struct Target {
 		Point loc;
@@ -46,7 +48,11 @@ public:
 	frc::Command* commandUsing = nullptr;
 
 private:
+	void updatePosition();
+	
 	std::chrono::steady_clock clock;
 
-	void updatePosition();
+	static constexpr int posCount = 500;
+	RobotPosition positions[posCount]; // 10 seconds
+	int currentPosIndex = 0;
 };

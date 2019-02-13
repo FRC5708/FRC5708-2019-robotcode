@@ -5,8 +5,8 @@
 #include <iostream>
 #include <fstream>
 
-AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive"), 
-currentPosition{ 0, 0, 0, 0 } {
+AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
+	resetPosition();
 	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
@@ -28,8 +28,8 @@ void AutoDrive::updatePower() {
 	Point curveAimOffset;
 	if (target.isAngled) {
 
-		double targetDistance = sqrt(pow(target.loc.x - currentPosition.loc.x, 2) + 
-		pow(target.loc.y - currentPosition.loc.y, 2));
+		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
+		pow(target.loc.y - getCurrentPos().loc.y, 2));
 
 		double expectedSpeed = targetDistance / reachTopSpeed;
 		if (target.slowDown) expectedSpeed /= 2;
@@ -49,17 +49,17 @@ void AutoDrive::updatePower() {
 	Radian pointAngle;
 	double maxTurnPower;
 	// if we haven't passed the aim point
-	if (fabs(target.loc.x - currentPosition.loc.x) > fabs(curveAimOffset.x) &&
-		fabs(target.loc.y - currentPosition.loc.y) > fabs(curveAimOffset.y)) {
+	if (fabs(target.loc.x - getCurrentPos().loc.x) > fabs(curveAimOffset.x) &&
+		fabs(target.loc.y - getCurrentPos().loc.y) > fabs(curveAimOffset.y)) {
 		// Point towards the curve aim point
-		pointAngle = atan2(target.loc.x - currentPosition.loc.x + curveAimOffset.x,
-		 target.loc.y - currentPosition.loc.y + curveAimOffset.y);
+		pointAngle = atan2(target.loc.x - getCurrentPos().loc.x + curveAimOffset.x,
+		 target.loc.y - getCurrentPos().loc.y + curveAimOffset.y);
 		maxTurnPower = 0.5;//1;
 		output << "aiming at aim point; ";
 	}
 	else {
 		output << "aiming towards target; ";
-		pointAngle = atan2(target.loc.x - currentPosition.loc.x, target.loc.y - currentPosition.loc.y);
+		pointAngle = atan2(target.loc.x - getCurrentPos().loc.x, target.loc.y - getCurrentPos().loc.y);
 
 		// it will try to turn at this power, unless it is close to the target or already turning too fast
 		maxTurnPower = 0.5;//std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
@@ -81,8 +81,8 @@ void AutoDrive::updatePower() {
 		if (target.slowDown) {
 			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
 				// distance to target:
-				sqrt(pow(target.loc.x - currentPosition.loc.x, 2)
-			+ pow(target.loc.y - currentPosition.loc.y, 2)));
+				sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2)
+			+ pow(target.loc.y - getCurrentPos().loc.y, 2)));
 		}
 		else forwardPower = maxPower;
 	}
@@ -93,26 +93,39 @@ void AutoDrive::updatePower() {
 
 bool AutoDrive::passedTarget(Point beginning) {
 	// if we are farther from beginning than the target
-	return pow(currentPosition.loc.x - beginning.x, 2) + pow(currentPosition.loc.x - beginning.x, 2)
+	return pow(getCurrentPos().loc.x - beginning.x, 2) + pow(getCurrentPos().loc.x - beginning.x, 2)
 	> pow(target.loc.x - beginning.x, 2) + pow(target.loc.y - beginning.y, 2);
 }
+
 void AutoDrive::Periodic() {
 	updatePosition();
 }
 void AutoDrive::updatePosition() {
-	RobotPosition newPos;
+	int newPosIdx = (currentPosIndex + 1) % posCount;
+	RobotPosition& newPos = positions[newPosIdx];
 
 	newPos.encoderDistance = Robot::drivetrain.GetDistance();
 	newPos.angle = Robot::drivetrain.GetGyroAngle();
-	double distance = newPos.encoderDistance - currentPosition.encoderDistance;
+	double distance = newPos.encoderDistance - getCurrentPos().encoderDistance;
 	
-	newPos.loc = { currentPosition.loc.x + distance * sin(Radian(newPos.angle)),
-	                 currentPosition.loc.y + distance * cos(Radian(newPos.angle)) };
+	newPos.loc = { getCurrentPos().loc.x + distance * sin(Radian(newPos.angle)),
+	                 getCurrentPos().loc.y + distance * cos(Radian(newPos.angle)) };
 
 
-	if (newPos.loc.x != currentPosition.loc.x || newPos.loc.y != currentPosition.loc.y) {
-		output << "Current position: <" << currentPosition.loc.x 
-		<< "," << currentPosition.loc.y << ">, theta=" << currentPosition.angle << std::endl;
+	if (newPos.loc.x != getCurrentPos().loc.x || newPos.loc.y != getCurrentPos().loc.y) {
+		output << "Current position: <" << getCurrentPos().loc.x 
+		<< "," << getCurrentPos().loc.y << ">, theta=" << getCurrentPos().angle << std::endl;
 	}
-	currentPosition = newPos;
+
+	currentPosIndex = newPosIdx;
+}
+
+AutoDrive::RobotPosition& AutoDrive::getPastPos(double milliseconds) {
+	int idxPast = round(milliseconds / Robot::instance->GetPeriod());
+
+	if (idxPast >= posCount) {
+		std::cerr << "requested time " << milliseconds << " too far in the past";
+		abort();
+	}
+	return positions[(currentPosIndex - idxPast + posCount) % posCount];
 }
