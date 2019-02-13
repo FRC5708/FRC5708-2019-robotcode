@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "Angle.h"
 
 class VisionReceiver : public frc::Subsystem {
  private:
@@ -17,7 +18,8 @@ class VisionReceiver : public frc::Subsystem {
 	int sockfd;
 
 	struct TargetData {
-		double distance, tapeAngle, robotAngle;
+		double distance;
+		Radian tapeAngle, robotAngle;
 	};
 	std::vector<TargetData> readTapes;
 
@@ -31,7 +33,7 @@ class VisionReceiver : public frc::Subsystem {
 	struct TargetLoc {
 		AutoDrive::Point loc;
 		// angle (radians) from facing directly away from Hab. clockwise=positive.
-		double angle;
+		Radian angle;
 	};
 	std::vector<TargetLoc> targetLocs;
 	std::vector<TargetLoc>& grabData() {
@@ -39,6 +41,6 @@ class VisionReceiver : public frc::Subsystem {
 		return targetLocs;
 	}
 
-	int latency; // milliseconds
+	int processingTime; // milliseconds
 	bool newData = false;
 };
