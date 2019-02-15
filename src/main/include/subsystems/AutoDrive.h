@@ -24,7 +24,7 @@ public:
 		double encoderDistance; // revolutions
 	};
 	RobotPosition& getCurrentPos() { return positions[currentPosIndex]; }
-	RobotPosition& getPastPos(double milliseconds);
+	RobotPosition getPastPos(double milliseconds);
 	void resetPosition() { for (auto i : positions) { i = { 0, 0, 0, 0 }; } }
 
 	struct Target {

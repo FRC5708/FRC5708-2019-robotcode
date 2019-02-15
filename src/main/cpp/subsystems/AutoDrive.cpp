@@ -26,7 +26,7 @@ void AutoDrive::updatePower() {
 
 	// Where to point in order to give enough space for the robot to turn
 	Point curveAimOffset;
-	if (target.isAngled) {
+	if (false/*target.isAngled*/) {
 
 		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
 		pow(target.loc.y - getCurrentPos().loc.y, 2));
@@ -65,10 +65,10 @@ void AutoDrive::updatePower() {
 		maxTurnPower = 0.5;//std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
 	}
 
-	// between -180 and 180
-	Degree angleDifference = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
-	output << "angleDifference: " << angleDifference << "; ";
-	double turnPower = kTurning * angleDifference;
+	//// between -180 and 180
+	//Degree pointAngle = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
+	output << "pointAngle: " << pointAngle << "; ";
+	double turnPower = kTurning * pointAngle;
 
 	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
@@ -78,7 +78,7 @@ void AutoDrive::updatePower() {
 	if (fabs(turnPower) > maxTurnPower) turnPower = copysign(maxTurnPower, turnPower);
 
 	double forwardPower = 0;
-	if (fabs(angleDifference) < 60) {
+	if (fabs(pointAngle) < 60) {
 		if (target.slowDown) {
 			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
 				// distance to target:
@@ -121,12 +121,13 @@ void AutoDrive::updatePosition() {
 	currentPosIndex = newPosIdx;
 }
 
-AutoDrive::RobotPosition& AutoDrive::getPastPos(double milliseconds) {
-	int idxPast = round(milliseconds / Robot::instance->GetPeriod());
-
+AutoDrive::RobotPosition AutoDrive::getPastPos(double milliseconds) {
+	int idxPast = round(milliseconds / (Robot::instance->GetPeriod() * 1000));
+	std::cout << "idxPast: " << idxPast << std::endl;
 	if (idxPast >= posCount) {
 		std::cerr << "requested time " << milliseconds << " too far in the past";
-		abort();
+		return { 0, 0, 0, 0 };
+		//abort();
 	}
 	return positions[(currentPosIndex - idxPast + posCount) % posCount];
 }
