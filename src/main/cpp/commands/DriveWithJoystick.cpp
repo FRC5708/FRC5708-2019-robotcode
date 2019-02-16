@@ -39,6 +39,7 @@ void powerRampup(double input, double* outputVar) {
 void DriveWithJoystick::Execute() {
 	double turn = 0;
 	double power = 0;
+	int lift = 0;
 
 	switch (joyMode){
 		case SINGLE_JOY: {
@@ -51,6 +52,7 @@ void DriveWithJoystick::Execute() {
 			turn = Robot::joystick->GetX();
 			power = Robot::joystick->GetRawAxis(3)-Robot::joystick->GetRawAxis(2);
 			turn = inputTransform(turn, 0, 0.1);
+			lift = Robot::joystick->GetPOV()-Robot::joystick->GetPOV(4);
 			break;
 		}
 	}
@@ -66,6 +68,7 @@ void DriveWithJoystick::Execute() {
 	//powerRampup(right, &currentRightPower);
 	
 	Robot::drivetrain.Drive(left, right);
+	if (lift != 0) Robot::lift.Elevate(lift);
 }
 
 // Make this return true when this Command no longer needs to run execute()
