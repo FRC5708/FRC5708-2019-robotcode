@@ -53,8 +53,8 @@ public:
 	EncoderConfig config_r= {0/*encoder_position*/, 1000/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / testing_speed/*kv*/, 0.0/*ka*/}; 
 	EncoderFollower follower_l;
 	EncoderFollower follower_r;
-	Segment leftTrajectory[1];
-	Segment rightTrajectory[1];
+	Segment* leftTrajectory;
+	Segment* rightTrajectory;
 	void pathfinderGeneratePath();
 	void pathfinderFollowPath();
 	void pathfinderDo();

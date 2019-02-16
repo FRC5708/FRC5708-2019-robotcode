@@ -120,6 +120,8 @@ void AutoDrive::pathfinderGeneratePath(){
 	pathfinder_generate(&candidate, trajectory);
 	std::cout << "@Generate" << std::endl;
 	double wheelbase_width = 0.6;
+	leftTrajectory = (Segment*)malloc(sizeof(Segment) * length);
+	rightTrajectory = (Segment*)malloc(sizeof(Segment) * length);
 	pathfinder_modify_tank(trajectory, length, leftTrajectory, rightTrajectory, wheelbase_width);
 	std::cout << "@Modify_Tank" << std::endl;
 	follower_l.last_error = 0; follower_l.segment = 0; follower_l.finished = 0;
