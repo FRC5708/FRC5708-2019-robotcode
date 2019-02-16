@@ -85,3 +85,8 @@ model {
         }
     }
 }
+model {
+    frcUserProgram(NativeExecutableSpec) {
+        lib library: "pathfinder"
+    }
+}

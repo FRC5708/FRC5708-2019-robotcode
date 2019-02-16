@@ -4,12 +4,13 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <pathfinder.h>
 
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
 	resetPosition();
 	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
 }
-
+/*
 constexpr double maxCentripetal = 6*12, // in/sec^2
  topSpeed = 4*12, // estimated top speed of the robot at full power, inches/sec
  reachTopSpeed = 1, // estimated seconds to reach top speed from stop
@@ -97,30 +98,45 @@ bool AutoDrive::passedTarget(Point beginning) {
 	return pow(getCurrentPos().loc.x - beginning.x, 2) + pow(getCurrentPos().loc.x - beginning.x, 2)
 	> pow(target.loc.x - beginning.x, 2) + pow(target.loc.y - beginning.y, 2);
 }
-
+*/
 void AutoDrive::Periodic() {
-	updatePosition();
-}
-void AutoDrive::updatePosition() {
-	int newPosIdx = (currentPosIndex + 1) % posCount;
-	RobotPosition& newPos = positions[newPosIdx];
-
-	newPos.encoderDistance = Robot::drivetrain.GetDistance();
-	newPos.angle = Robot::drivetrain.GetGyroAngle();
-	double distance = newPos.encoderDistance - getCurrentPos().encoderDistance;
-	
-	newPos.loc = { getCurrentPos().loc.x + distance * sin(Radian(newPos.angle)),
-	                 getCurrentPos().loc.y + distance * cos(Radian(newPos.angle)) };
-
-
-	if (newPos.loc.x != getCurrentPos().loc.x || newPos.loc.y != getCurrentPos().loc.y) {
-		output << "Current position: <" << getCurrentPos().loc.x 
-		<< "," << getCurrentPos().loc.y << ">, theta=" << getCurrentPos().angle << std::endl;
-	}
-
-	currentPosIndex = newPosIdx;
+	pathfinderDo();
+	//updatePosition();
 }
 
+void AutoDrive::pathfinderGeneratePath(){
+	Waypoint points[1];
+	points[0]=Waypoint{target.loc.x,target.loc.y,target.angle};
+	TrajectoryCandidate candidate;
+	pathfinder_prepare(points, 1/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_HIGH, 0.001/*time_step*/, 15.0/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
+	int length = candidate.length;
+	Segment *trajectory = new Segment;
+	pathfinder_generate(&candidate, trajectory);
+	double wheelbase_width = 0.6;
+	pathfinder_modify_tank(trajectory, length, leftTrajectory, rightTrajectory, wheelbase_width);
+	free(trajectory);
+	follower_l.last_error = 0; follower_l.segment = 0; follower_l.finished = 0;
+	follower_r.last_error = 0; follower_r.segment = 0; follower_r.finished = 0;
+	config_l.initial_position=Robot::drivetrain.leftEncoder->GetDistance();
+	config_r.initial_position=Robot::drivetrain.rightEncoder->GetDistance();
+}
+void AutoDrive::pathfinderFollowPath(){
+	double l = pathfinder_follow_encoder(config_l, &follower_l, leftTrajectory, 1, Robot::drivetrain.leftEncoder->GetDistance()/*enc_l_value*/);
+	double r = pathfinder_follow_encoder(config_r, &follower_r, rightTrajectory,1, Robot::drivetrain.rightEncoder->GetDistance()/*enc_r_value*/);
+	double gyro_heading =  Robot::drivetrain.GetGyroAngle() ; 
+	double desired_heading = r2d(follower_l.heading);
+	double angle_difference = desired_heading - gyro_heading;    // Make sure to bound this from -180 to 180, otherwise you will get super large values
+	if(angle_difference>180.0) angle_difference-=180;
+	if(angle_difference<-180.0) angle_difference+=180;
+	double turn = 0.8 * (-1.0/80.0)/*right values?*/ * angle_difference;
+
+	Robot::drivetrain.Drive(l + turn,r - turn);
+}
+void AutoDrive::pathfinderDo(){
+    pathfinderGeneratePath();
+	pathfinderFollowPath();
+}
+/*
 AutoDrive::RobotPosition& AutoDrive::getPastPos(double milliseconds) {
 	int idxPast = round(milliseconds / Robot::instance->GetPeriod());
 
@@ -129,4 +145,4 @@ AutoDrive::RobotPosition& AutoDrive::getPastPos(double milliseconds) {
 		abort();
 	}
 	return positions[(currentPosIndex - idxPast + posCount) % posCount];
-}
+}*/

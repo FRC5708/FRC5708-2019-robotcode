@@ -37,7 +37,7 @@ void VisionDrive::Execute() {
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.slowDown = false;
-
+		/*
 		if (Robot::autoDrive.passedTarget(startingPoint)) {
 			Robot::autoDrive.target.loc = currentTarget.loc;
 			Robot::autoDrive.target.slowDown = true;
@@ -45,10 +45,10 @@ void VisionDrive::Execute() {
 			if (Robot::autoDrive.passedTarget(startingPoint)) {
 				done = true;
 			}
-		}
+		}*/
 	}
 
-	Robot::autoDrive.updatePower();
+	Robot::autoDrive.pathfinderGeneratePath();
 }
 
 void VisionDrive::processVisionData() {
