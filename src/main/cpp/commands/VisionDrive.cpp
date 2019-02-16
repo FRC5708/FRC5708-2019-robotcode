@@ -48,7 +48,6 @@ void VisionDrive::Execute() {
 			}
 		}*/
 	}
-
 	Robot::autoDrive.pathfinderGeneratePath();
 }
 

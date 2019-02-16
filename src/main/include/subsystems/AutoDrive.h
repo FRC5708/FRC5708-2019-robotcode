@@ -47,8 +47,10 @@ public:
 	AutoDrive();
 
 	frc::Command* commandUsing = nullptr;
-	EncoderConfig config_l= {0/*encoder_position*/, 1000/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / 120.0/*kv*/, 0.0/*ka*/}; 
-	EncoderConfig config_r= {0/*encoder_position*/, 1000/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / 120.0/*kv*/, 0.0/*ka*/}; 
+	int max_speed = 120;
+	double testing_speed = max_speed / 4;
+	EncoderConfig config_l= {0/*encoder_position*/, 1000/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / testing_speed/*kv*/, 0.0/*ka*/}; 
+	EncoderConfig config_r= {0/*encoder_position*/, 1000/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / testing_speed/*kv*/, 0.0/*ka*/}; 
 	EncoderFollower follower_l;
 	EncoderFollower follower_r;
 	Segment leftTrajectory[1];
@@ -56,6 +58,7 @@ public:
 	void pathfinderGeneratePath();
 	void pathfinderFollowPath();
 	void pathfinderDo();
+	bool pathExists=false;
 
 private:
 	void updatePosition();

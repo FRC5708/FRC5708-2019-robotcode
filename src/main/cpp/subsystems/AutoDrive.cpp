@@ -105,44 +105,49 @@ void AutoDrive::Periodic() {
 }
 
 void AutoDrive::pathfinderGeneratePath(){
-	Waypoint points[1]; 
-	points[0]=Waypoint{target.loc.x,target.loc.y,target.angle};
+	pathExists=true;
+	Waypoint points[2];
+	points[0]=Waypoint{0,0,0};
+	points[1]=Waypoint{target.loc.x - getCurrentPos().loc.x,target.loc.y - getCurrentPos().loc.y,target.angle};
 	TrajectoryCandidate candidate;
-	pathfinder_prepare(points, 1/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_HIGH, 0.001/*time_step*/, 15.0/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
+	pathfinder_prepare(points, 2/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_LOW, 0.001/*time_step*/, 15.0/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
 	int length = candidate.length;
-	Segment *trajectory = new Segment;
+	Segment *trajectory = (Segment*) malloc(2*sizeof(Segment));
 	pathfinder_generate(&candidate, trajectory);
 	double wheelbase_width = 0.6;
 	pathfinder_modify_tank(trajectory, length, leftTrajectory, rightTrajectory, wheelbase_width);
-	free(trajectory);
 	follower_l.last_error = 0; follower_l.segment = 0; follower_l.finished = 0;
 	follower_r.last_error = 0; follower_r.segment = 0; follower_r.finished = 0;
 	config_l.initial_position=Robot::drivetrain.leftEncoder->GetDistance();
 	config_r.initial_position=Robot::drivetrain.rightEncoder->GetDistance();
+	std::cout << "New path generated ..." << std::endl;
 }
 void AutoDrive::pathfinderFollowPath(){
-	double l = pathfinder_follow_encoder(config_l, &follower_l, leftTrajectory, 1, Robot::drivetrain.leftEncoder->GetDistance()/*enc_l_value*/);
-	double r = pathfinder_follow_encoder(config_r, &follower_r, rightTrajectory,1, Robot::drivetrain.rightEncoder->GetDistance()/*enc_r_value*/);
+	std::cout << "Following path ... " << std::endl;
+	double l = pathfinder_follow_encoder(config_l, &follower_l, leftTrajectory, 2, Robot::drivetrain.leftEncoder->GetDistance()/*enc_l_value*/);
+	double r = pathfinder_follow_encoder(config_r, &follower_r, rightTrajectory,2, Robot::drivetrain.rightEncoder->GetDistance()/*enc_r_value*/);
+	std::cout << "L: " << l << " R: " << r << std::endl;
 	double gyro_heading =  Robot::drivetrain.GetGyroAngle() ; 
 	double desired_heading = r2d(follower_l.heading);
 	double angle_difference = desired_heading - gyro_heading;    // Make sure to bound this from -180 to 180, otherwise you will get super large values
 	if(angle_difference>180.0) angle_difference-=180;
 	if(angle_difference<-180.0) angle_difference+=180;
 	double turn = 0.8 * (-1.0/80.0)/*right values?*/ * angle_difference;
+	std::cout << "Attempting to drive <" << l + turn << "," << r - turn << ">" << std::endl;
 
 	Robot::drivetrain.Drive(l + turn,r - turn);
 }
 void AutoDrive::pathfinderDo(){
   	//  pathfinderGeneratePath();
-	pathfinderFollowPath();
+	if(pathExists) pathfinderFollowPath();
 }
-/*
-AutoDrive::RobotPosition& AutoDrive::getPastPos(double milliseconds) {
-	int idxPast = round(milliseconds / Robot::instance->GetPeriod());
+
+AutoDrive::RobotPosition AutoDrive::getPastPos(double milliseconds) {
+	int idxPast = round(milliseconds / (Robot::instance->GetPeriod() * 1000));
 
 	if (idxPast >= posCount) {
 		std::cerr << "requested time " << milliseconds << " too far in the past";
-		abort();
+		return {0, 0, 0, 0};
 	}
 	return positions[(currentPosIndex - idxPast + posCount) % posCount];
-}*/
+}
