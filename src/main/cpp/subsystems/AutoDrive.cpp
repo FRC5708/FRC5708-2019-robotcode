@@ -26,7 +26,7 @@ void AutoDrive::updatePower() {
 
 	// Where to point in order to give enough space for the robot to turn
 	Point curveAimOffset;
-	if (false/*target.isAngled*/) {
+	if (target.isAngled) {
 
 		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
 		pow(target.loc.y - getCurrentPos().loc.y, 2));
@@ -66,9 +66,9 @@ void AutoDrive::updatePower() {
 	}
 
 	//// between -180 and 180
-	//Degree pointAngle = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
-	output << "pointAngle: " << pointAngle << "; ";
-	double turnPower = kTurning * pointAngle;
+	Degree angleDifference = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
+	output << "angleDifference: " << angleDifference << "; ";
+	double turnPower = kTurning * angleDifference;
 
 	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
@@ -78,7 +78,7 @@ void AutoDrive::updatePower() {
 	if (fabs(turnPower) > maxTurnPower) turnPower = copysign(maxTurnPower, turnPower);
 
 	double forwardPower = 0;
-	if (fabs(pointAngle) < 60) {
+	if (fabs(angleDifference) < 30) {
 		if (target.slowDown) {
 			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
 				// distance to target:

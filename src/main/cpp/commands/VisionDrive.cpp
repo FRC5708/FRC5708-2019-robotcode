@@ -10,6 +10,7 @@ VisionDrive::VisionDrive(bool retry) : retry(retry) {
 void VisionDrive::Initialize() {
 	Robot::autoDrive.commandUsing = this;
 	gotFirstData = false;
+	done = false;
 
 	startingPoint = Robot::autoDrive.getCurrentPos().loc;
 
@@ -19,6 +20,7 @@ void VisionDrive::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void VisionDrive::Execute() {
+	if (done) Initialize();
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
 		//std::cout << "Proccessing vision data..." << std::endl;
