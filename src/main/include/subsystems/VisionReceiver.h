@@ -12,16 +12,12 @@ class VisionReceiver : public frc::Subsystem {
 	void setupSocket();
 	void pollForData();
 
-	std::stringbuf visionDataStreamBuf;
-	std::iostream visionDataStream;
-
 	int sockfd;
 
 	struct TargetData {
 		double distance;
 		Radian tapeAngle, robotAngle;
 	};
-	std::vector<TargetData> readTapes;
 
  public:
 	VisionReceiver();

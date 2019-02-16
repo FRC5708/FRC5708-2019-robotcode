@@ -31,7 +31,7 @@ void AutoDrive::updatePower() {
 
 		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
 		pow(target.loc.y - getCurrentPos().loc.y, 2));
-
+ 
 		double expectedSpeed = targetDistance / reachTopSpeed;
 		if (target.slowDown) expectedSpeed /= 2;
 		expectedSpeed = std::max(Robot::drivetrain.GetRate(), std::min(expectedSpeed, topSpeed));
@@ -105,7 +105,7 @@ void AutoDrive::Periodic() {
 }
 
 void AutoDrive::pathfinderGeneratePath(){
-	Waypoint points[1];
+	Waypoint points[1]; 
 	points[0]=Waypoint{target.loc.x,target.loc.y,target.angle};
 	TrajectoryCandidate candidate;
 	pathfinder_prepare(points, 1/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_HIGH, 0.001/*time_step*/, 15.0/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
@@ -133,7 +133,7 @@ void AutoDrive::pathfinderFollowPath(){
 	Robot::drivetrain.Drive(l + turn,r - turn);
 }
 void AutoDrive::pathfinderDo(){
-    pathfinderGeneratePath();
+  	//  pathfinderGeneratePath();
 	pathfinderFollowPath();
 }
 /*

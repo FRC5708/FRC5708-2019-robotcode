@@ -10,8 +10,7 @@
 
 constexpr char VISION_PORT[] = "5808";
 
-VisionReceiver::VisionReceiver() : Subsystem("VisionReceiver"),
-visionDataStream(&visionDataStreamBuf) {
+VisionReceiver::VisionReceiver() : Subsystem("VisionReceiver") {
 	setupSocket();
 }
 
@@ -51,7 +50,12 @@ void VisionReceiver::setupSocket() {
 }
 
 void VisionReceiver::Periodic() {
-
+	//std::cout << "VisionReciever::Periodic : " << std::endl;
+	
+	std::vector<TargetData> readTapes;
+	
+	std::stringbuf visionDataStreamBuf;
+	std::iostream visionDataStream(&visionDataStreamBuf);
 
 	char buf[66537];
 	ssize_t recieveSize = recvfrom(sockfd, buf, sizeof(buf) - 1, 
@@ -93,15 +97,15 @@ void VisionReceiver::Periodic() {
 		if(processingTime + extraLatency > 1000){ //If data is really old
 			goto CLEAR;
 		}
-        AutoDrive::RobotPosition& robPos = Robot::autoDrive.getPastPos(processingTime + extraLatency);
+        AutoDrive::RobotPosition robPos = Robot::autoDrive.getPastPos(processingTime + extraLatency);
 		// What if there is some garbage data very close to the robot?
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
 			TargetLoc target;
-			double wholeAngle = robPos.angle/180*M_PI + i.robotAngle;
+			Radian wholeAngle = robPos.angle + i.robotAngle;
 
-			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
-			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
+			target.loc.x = robPos.loc.x + i.distance*sin(-wholeAngle);
+			target.loc.y = robPos.loc.y + i.distance*cos(-wholeAngle);
 
 			target.angle = i.tapeAngle;
 

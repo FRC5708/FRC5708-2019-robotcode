@@ -45,12 +45,11 @@ void Drivetrain::Drive(double left, double right) {
 
 void Drivetrain::DrivePolar(double moveValue, double rotateValue) {
 
-	double leftMotorOutput;
-	double rightMotorOutput;
-
 	moveValue = Limit(moveValue);
 	rotateValue = Limit(rotateValue);
-
+	/*
+	double leftMotorOutput;
+	double rightMotorOutput;
 
 	if (moveValue > 0.0) {
 		if (rotateValue > 0.0) {
@@ -68,7 +67,13 @@ void Drivetrain::DrivePolar(double moveValue, double rotateValue) {
 			leftMotorOutput = moveValue - rotateValue;
 			rightMotorOutput = -std::max(-moveValue, -rotateValue);
 		}
-	}
+	}*/
+
+	double v = (1-fabs(rotateValue)) * (moveValue) + moveValue;
+	double w = (1-fabs(moveValue)) * (rotateValue) + rotateValue;
+	double rightMotorOutput = (v+w)/2;
+	double leftMotorOutput = (v-w)/2;
+
 	Drive(leftMotorOutput,rightMotorOutput);
 }
 

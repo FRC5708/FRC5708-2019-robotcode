@@ -21,7 +21,7 @@ void VisionDrive::Initialize() {
 void VisionDrive::Execute() {
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
-		std::cout << "Proccessing vision data..." << std::endl;
+		//std::cout << "Proccessing vision data..." << std::endl;
 		if (!gotFirstData) processVisionData();
 	}
 
@@ -29,10 +29,10 @@ void VisionDrive::Execute() {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 12;
 
-		Robot::autoDrive.target.loc = { 
+		/*Robot::autoDrive.target.loc = { 
 			currentTarget.loc.x - approachDist*sin(currentTarget.angle),
 			currentTarget.loc.y - approachDist*cos(currentTarget.angle)
-		};
+		};*/
 		
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
@@ -43,6 +43,7 @@ void VisionDrive::Execute() {
 			Robot::autoDrive.target.slowDown = true;
 
 			if (Robot::autoDrive.passedTarget(startingPoint)) {
+				std::cout << "passed target!" << std::endl;
 				done = true;
 			}
 		}*/
