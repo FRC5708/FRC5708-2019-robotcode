@@ -8,7 +8,7 @@
 
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
 	resetPosition();
-	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
+	output.open("/home/lvuser/position_output.txt", std::ofstream::out /*| std::ofstream::trunc*/);
 }
 /*
 constexpr double maxCentripetal = 6*12, // in/sec^2
@@ -105,17 +105,23 @@ void AutoDrive::Periodic() {
 }
 
 void AutoDrive::pathfinderGeneratePath(){
+	if(pathExists) return;
 	pathExists=true;
 	Waypoint points[2];
 	points[0]=Waypoint{0,0,0};
 	points[1]=Waypoint{target.loc.x - getCurrentPos().loc.x,target.loc.y - getCurrentPos().loc.y,target.angle};
+	std::cout << "Generated path: Waypoint <" << target.loc.x - getCurrentPos().loc.x << "," << target.loc.y - getCurrentPos().loc.y << "," << target.angle << "> ..." << std::endl;
 	TrajectoryCandidate candidate;
-	pathfinder_prepare(points, 2/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_LOW, 0.001/*time_step*/, 15.0/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
+	pathfinder_prepare(points, 2/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_LOW, 0.001/*time_step*/, 120.0 / 4/*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
 	int length = candidate.length;
-	Segment *trajectory = (Segment*) malloc(2*sizeof(Segment));
+	std::cout << "@Length: " << length << std::endl;
+	Segment *trajectory = (Segment*) malloc(length*sizeof(Segment));
+	std::cout << "@Malloc" << std::endl;
 	pathfinder_generate(&candidate, trajectory);
+	std::cout << "@Generate" << std::endl;
 	double wheelbase_width = 0.6;
 	pathfinder_modify_tank(trajectory, length, leftTrajectory, rightTrajectory, wheelbase_width);
+	std::cout << "@Modify_Tank" << std::endl;
 	follower_l.last_error = 0; follower_l.segment = 0; follower_l.finished = 0;
 	follower_r.last_error = 0; follower_r.segment = 0; follower_r.finished = 0;
 	config_l.initial_position=Robot::drivetrain.leftEncoder->GetDistance();
@@ -140,6 +146,7 @@ void AutoDrive::pathfinderFollowPath(){
 void AutoDrive::pathfinderDo(){
   	//  pathfinderGeneratePath();
 	if(pathExists) pathfinderFollowPath();
+	std::cout << "Path " << pathExists << std::endl;
 }
 
 AutoDrive::RobotPosition AutoDrive::getPastPos(double milliseconds) {
