@@ -33,5 +33,6 @@ constexpr int FLMotorChannel = 0;
 constexpr int BLMotorChannel = 1;
 constexpr int FRMotorChannel = 2;
 constexpr int BRMotorChannel = 3;
+constexpr int liftMotorChannel = 4;
 
 constexpr double WheelCircumference = 6 * M_PI;
