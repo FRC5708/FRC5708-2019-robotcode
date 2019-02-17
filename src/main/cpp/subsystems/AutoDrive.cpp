@@ -109,13 +109,12 @@ void AutoDrive::Periodic() {
 void AutoDrive::pathfinderGeneratePath(){
 	if(pathExists) return; //Remove this when ready for continuosly updating fun.
 	pathExists=true;
-	Waypoint points[2];
-	points[0]=Waypoint{0,0,0};
-	points[1]=Waypoint{50,50,0};
-	std::cout << "Generated path: Waypoint <" << 0 << "," << 50 << "," << 0 << "> ..." << std::endl;
+	Waypoint points[1];
+	points[0]=Waypoint{50,50,0};
+	std::cout << "Generated path: Waypoint <" << 50 << "," << 50 << "," << 0 << "> ..." << std::endl;
 	TrajectoryCandidate candidate;
-	pathfinder_prepare(points, 2/*change?*/, FIT_HERMITE_CUBIC, PATHFINDER_SAMPLES_LOW, 0.05/*time_step*/, 120.0 /*max_velocity*/, 10.0/*max_accel*/, 10.0/*max=jerk*/, &candidate);
-	int length = candidate.length;
+	pathfinder_prepare(points, 2/*change?*/, FIT_HERMITE_QUINTIC, PATHFINDER_SAMPLES_LOW, 0.001/*time_step*/, 120.0 /*max_velocity*/, 10.0/*max_accel*/, 60.0/*max=jerk*/, &candidate);
+	length = candidate.length;
 	std::cout << "@Length: " << length << std::endl;
 	Segment *trajectory = (Segment*) malloc(length*sizeof(Segment));
 	std::cout << "@Malloc" << std::endl;
@@ -126,27 +125,29 @@ void AutoDrive::pathfinderGeneratePath(){
 	rightTrajectory = (Segment*)malloc(sizeof(Segment) * length);
 	pathfinder_modify_tank(trajectory, length, leftTrajectory, rightTrajectory, wheelbase_width);
 	std::cout << "@Modify_Tank" << std::endl;
-	follower_l.last_error = 0; follower_l.segment = 0; follower_l.finished = 0;
-	follower_r.last_error = 0; follower_r.segment = 0; follower_r.finished = 0;
+	follower_l->last_error = 0; follower_l->segment = 0; follower_l->finished = 0;
+	follower_r->last_error = 0; follower_r->segment = 0; follower_r->finished = 0;
 	Robot::drivetrain.ResetDistance();
-	config_l.initial_position=Robot::drivetrain.leftEncoder->GetRaw();
-	config_r.initial_position=Robot::drivetrain.rightEncoder->GetRaw();
+	config_l.initial_position=Robot::drivetrain.leftEncoder->Get();
+	config_r.initial_position=Robot::drivetrain.rightEncoder->Get();
 	std::cout << "New path generated ..." << std::endl;
+
 	
 }
 void AutoDrive::pathfinderFollowPath(){
 	std::cout << "Following path ... " << std::endl;
-	double l = pathfinder_follow_encoder(config_l, &follower_l, leftTrajectory, 2, Robot::drivetrain.leftEncoder->GetRaw()/*enc_l_value*/);
-	double r = pathfinder_follow_encoder(config_r, &follower_r, rightTrajectory,2, Robot::drivetrain.rightEncoder->GetRaw()/*enc_r_value*/);
+	double l = pathfinder_follow_encoder(config_l, follower_l, leftTrajectory, length, Robot::drivetrain.leftEncoder->Get()/*enc_l_value*/);
+	double r = pathfinder_follow_encoder(config_r, follower_r, rightTrajectory, length, Robot::drivetrain.rightEncoder->Get()/*enc_r_value*/);
 	std::cout << "L: " << l << " R: " << r << std::endl;
 	double gyro_heading =  Robot::drivetrain.GetGyroAngle() ; 
-	double desired_heading = -r2d(follower_l.heading);
+	double desired_heading = r2d(follower_l->heading);
 	double angle_difference = desired_heading - gyro_heading;    // Make sure to bound this from -180 to 180, otherwise you will get super large values
+	std::cout << "@Angle difference: " << angle_difference << std::endl;
 	if(angle_difference>180.0) angle_difference-=180;
 	if(angle_difference<-180.0) angle_difference+=180;
-	double turn = 0.8 * (-1.0/80.0)/*right values?*/ * angle_difference;
+	double turn = 0.8 * (-1.0/80.0) * angle_difference;
 	std::cout << "Attempting to drive <" << l + turn << "," << r - turn << ">" << std::endl;
-
+	
 	Robot::drivetrain.Drive(l + turn,r - turn);
 }
 void AutoDrive::pathfinderDo(){

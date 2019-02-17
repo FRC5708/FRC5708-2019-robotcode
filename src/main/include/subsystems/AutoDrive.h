@@ -47,14 +47,15 @@ public:
 	AutoDrive();
 
 	frc::Command* commandUsing = nullptr;
-	int max_speed = 120;
+	double max_speed = 120;
 	double testing_speed = max_speed;// w/ 4;
-	EncoderConfig config_l= {0/*encoder_position*/, 360/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / testing_speed/*kv*/, 0.0/*ka*/}; 
-	EncoderConfig config_r= {0/*encoder_position*/, 360/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / testing_speed/*kv*/, 0.0/*ka*/}; 
-	EncoderFollower follower_l;
-	EncoderFollower follower_r;
+	EncoderConfig config_l= {0/*encoder_position*/, 360/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / 120.0/*kv*/, 0.0/*ka*/}; 
+	EncoderConfig config_r= {0/*encoder_position*/, 360/*ticks/rev*/, WheelCircumference/*wheel_circ*/, 1.0/*kp*/, 0.0/*ki*/, 0.0/*kd*/, 1.0 / 120.0/*kv*/, 0.0/*ka*/}; 
+	EncoderFollower* follower_l = (EncoderFollower*) malloc(sizeof(EncoderFollower));
+	EncoderFollower* follower_r = (EncoderFollower*) malloc(sizeof(EncoderFollower));
 	Segment* leftTrajectory;
 	Segment* rightTrajectory;
+	int length;
 	void pathfinderGeneratePath();
 	void pathfinderFollowPath();
 	void pathfinderDo();
