@@ -9,6 +9,8 @@
 
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/Spark.h>
+#include <frc/Joystick.h>
 
 ExampleSubsystem Robot::m_subsystem;
 OI Robot::m_oi;
@@ -85,7 +87,7 @@ frc::Spark motor2(1);
 void Robot::TeleopPeriodic() { 
 	frc::Scheduler::GetInstance()->Run();
 
-	if (joystick.getRawButton(1)) {
+	if (joystick.GetRawButton(1)) {
 		motor1.Set(1);
 		motor2.Set(1);
 	}
