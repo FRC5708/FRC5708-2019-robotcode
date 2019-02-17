@@ -16,6 +16,8 @@ class VisionReceiver : public frc::Subsystem {
 
 	struct TargetData {
 		double distance;
+
+		// see 2019-vision-rpi/vision.hpp for descriptions
 		Radian tapeAngle, robotAngle;
 	};
 
@@ -28,7 +30,7 @@ class VisionReceiver : public frc::Subsystem {
 
 	struct TargetLoc {
 		AutoDrive::Point loc;
-		// angle (radians) from facing directly away from Hab. clockwise=positive.
+		// angle (radians) from facing directly towards the Hab (y=0). clockwise=positive.
 		Radian angle;
 	};
 	std::vector<TargetLoc> targetLocs;

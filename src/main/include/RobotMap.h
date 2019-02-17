@@ -35,3 +35,6 @@ constexpr int FRMotorChannel = 2;
 constexpr int BRMotorChannel = 3;
 
 constexpr double WheelCircumference = 6 * M_PI;
+
+constexpr double ROBOT_WIDTH = 27; // inches
+constexpr double ROBOT_LENGTH = 32;

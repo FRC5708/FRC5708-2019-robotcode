@@ -8,6 +8,7 @@ VisionDrive::VisionDrive(bool retry) : retry(retry) {
 
 // Called just before this Command runs the first time
 void VisionDrive::Initialize() {
+	std::cout << "VisionDrive::Initialize()" << std::endl;
 	Robot::autoDrive.commandUsing = this;
 	gotFirstData = false;
 	done = false;
@@ -31,10 +32,10 @@ void VisionDrive::Execute() {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 12;
 
-		/*Robot::autoDrive.target.loc = { 
-			currentTarget.loc.x - approachDist*sin(currentTarget.angle),
-			currentTarget.loc.y - approachDist*cos(currentTarget.angle)
-		};*/
+		Robot::autoDrive.target.loc = { 
+			currentTarget.loc.x - (approachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
+			currentTarget.loc.y - (approachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
+		};
 		
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
@@ -48,21 +49,27 @@ void VisionDrive::Execute() {
 			done = true;
 		}
 
-		//if (Robot::autoDrive.passedTarget(startingPoint)) {
-			Robot::autoDrive.target.loc = currentTarget.loc;
+		if (Robot::autoDrive.passedTarget(startingPoint)) {
+			Robot::autoDrive.target.loc = {
+				currentTarget.loc.x - (ROBOT_LENGTH / 2)*sin(currentTarget.angle),
+				currentTarget.loc.y - (ROBOT_LENGTH / 2)*cos(currentTarget.angle)
+			};
 			Robot::autoDrive.target.slowDown = true;
+			Robot::autoDrive.target.isAngled = false;
+			Robot::autoDrive.output << "driving final foot; ";
 
 			if (Robot::autoDrive.passedTarget(startingPoint)) {
 				std::cout << "passed target!" << std::endl;
 				done = true;
 			}
-		//}
+		}
 	}
 
 	Robot::autoDrive.updatePower();
 }
 
 void VisionDrive::processVisionData() {
+		std::cout << "Proccessing vision data..." << std::endl;
 
 	double locationTolerance = 8; // inches
 	if (!gotFirstData) locationTolerance = INFINITY;

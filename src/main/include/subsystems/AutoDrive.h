@@ -15,6 +15,7 @@ public:
 
 	struct Point { double x, y; };
 
+	// position of the CENTER of the robot.
 	// inches and degrees. Measured from center of hab, against wall, facing forward.
 	// left is negative, right positive. Forward is positive, behind the wall would be negative.
 	// clockwise positive, counterclockwise negative.
@@ -37,6 +38,7 @@ public:
 	Target target;
 
 	bool passedTarget(Point from);
+	bool atTarget(Point compare, double dist = 2);
 
 	// Call this from the command that is using AutoDrive.
 	// Wpilib's scheduler calls subsystems before commands, 
@@ -49,6 +51,10 @@ public:
 
 private:
 	void updatePosition();
+
+	Point getCurveAimOffset(double radius);
+	Point matchingPair(double x, double y1, double y2, AutoDrive::Point center, double comp);
+	Point tangentPoint(AutoDrive::Point center, AutoDrive::Point currentPos, double radius);
 	
 	std::chrono::steady_clock clock;
 

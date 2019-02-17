@@ -102,15 +102,16 @@ void VisionReceiver::Periodic() {
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
 			TargetLoc target;
-			Radian wholeAngle = -robPos.angle + i.robotAngle;
+			Radian wholeAngle = robPos.angle + i.robotAngle;
+			double wholeDistance = i.distance + ROBOT_LENGTH / 2;
 
-			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle);
-			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle);
+			target.loc.x = robPos.loc.x + wholeDistance*sin(wholeAngle);
+			target.loc.y = robPos.loc.y + wholeDistance*cos(wholeAngle);
 
-			target.angle = i.tapeAngle;
+			target.angle = i.tapeAngle + i.robotAngle + robPos.angle;
 
 			targetLocs.push_back(target);
-		}
+		} 
 		newData = true;
 	}
 	else {

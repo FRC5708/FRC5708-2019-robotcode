@@ -84,7 +84,6 @@ void Drivetrain::ResetDistance(){
 	leftEncoder->SetDistancePerPulse(1.0/360.0);
 	rightEncoder->SetDistancePerPulse(1.0/360.0);
 }
-constexpr double ROBOT_WIDTH = 27; // inches
 
 double Drivetrain::GetDistance() {
 	double leftDistance = leftEncoder->GetDistance(), rightDistance = rightEncoder->GetDistance();
