@@ -61,4 +61,6 @@ private:
 	static constexpr int posCount = 500;
 	RobotPosition positions[posCount]; // 10 seconds
 	int currentPosIndex = 0;
+
+	Degree beforePassAngle;
 };

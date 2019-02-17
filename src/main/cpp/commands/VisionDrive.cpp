@@ -15,7 +15,7 @@ void VisionDrive::Initialize() {
 
 	startingPoint = Robot::autoDrive.getCurrentPos().loc;
 
-	if (Robot::visionReceiver.targetLocs.size() > 0) processVisionData();
+	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.dataAge < 25) processVisionData();
 	else if (!retry) done = true;
 }
 
@@ -24,18 +24,18 @@ void VisionDrive::Execute() {
 	if (done) Initialize();
 	
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.newData) {
-		//std::cout << "Proccessing vision data..." << std::endl;
-		if (!gotFirstData) processVisionData();
+		processVisionData();
 	}
 
 	if (gotFirstData) {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
-		constexpr double approachDist = 12;
-
-		Robot::autoDrive.target.loc = { 
+		constexpr double approachDist = 30;
+		AutoDrive::Point approachPoint = { 
 			currentTarget.loc.x - (approachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
 			currentTarget.loc.y - (approachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
 		};
+
+		Robot::autoDrive.target.loc = approachPoint;
 		
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
@@ -58,7 +58,7 @@ void VisionDrive::Execute() {
 			Robot::autoDrive.target.isAngled = false;
 			Robot::autoDrive.output << "driving final foot; ";
 
-			if (Robot::autoDrive.passedTarget(startingPoint)) {
+			if (Robot::autoDrive.passedTarget(approachPoint)) {
 				std::cout << "passed target!" << std::endl;
 				done = true;
 			}
@@ -87,9 +87,10 @@ void VisionDrive::processVisionData() {
 			bestTarget = i;
 		}
 	}
-
 	if (bestDistance < locationTolerance) {
 		currentTarget = bestTarget;
+		Robot::autoDrive.output << "new target!: <" << 
+		bestTarget.loc.x << ", " << bestTarget.loc.y <<"> theta=" << bestTarget.angle << std::endl;
 	}	
 
 	gotFirstData = true;

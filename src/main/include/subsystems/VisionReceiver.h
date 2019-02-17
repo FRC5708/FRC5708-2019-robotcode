@@ -40,5 +40,6 @@ class VisionReceiver : public frc::Subsystem {
 	}
 
 	int processingTime; // milliseconds
+	int dataAge = 0; // ticks
 	bool newData = false;
 };

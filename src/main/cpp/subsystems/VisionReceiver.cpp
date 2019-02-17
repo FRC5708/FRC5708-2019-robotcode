@@ -50,6 +50,7 @@ void VisionReceiver::setupSocket() {
 }
 
 void VisionReceiver::Periodic() {
+	++dataAge;
 	//std::cout << "VisionReciever::Periodic : " << std::endl;
 	
 	std::vector<TargetData> readTapes;
@@ -90,6 +91,8 @@ void VisionReceiver::Periodic() {
 	// else do nothing
 	
 	if (readTapes.size() != 0) {
+		targetLocs.clear();
+		dataAge = 0;
 		
 		// Milliseconds. Network, camera, etc.
 		constexpr double extraLatency = 20;
@@ -102,15 +105,15 @@ void VisionReceiver::Periodic() {
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
 			TargetLoc target;
-			Radian wholeAngle = robPos.angle + i.robotAngle;
-			double wholeDistance = i.distance + ROBOT_LENGTH / 2;
+			Radian wholeAngle = i.robotAngle + robPos.angle;
 
-			target.loc.x = robPos.loc.x + wholeDistance*sin(wholeAngle);
-			target.loc.y = robPos.loc.y + wholeDistance*cos(wholeAngle);
+			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle) + (ROBOT_LENGTH / 2)*sin(Radian(robPos.angle));
+			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle) + (ROBOT_LENGTH / 2)*cos(Radian(robPos.angle));
 
 			target.angle = i.tapeAngle + i.robotAngle + robPos.angle;
 
 			targetLocs.push_back(target);
+			std::cout << "got target at: <" << target.loc.x << ", " << target.loc.y << ">" << std::endl;
 		} 
 		newData = true;
 	}

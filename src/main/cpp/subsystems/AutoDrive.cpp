@@ -91,12 +91,12 @@ AutoDrive::Point AutoDrive::getCurveAimOffset(double radius) {
 void AutoDrive::updatePower() {
 
 	constexpr double kTurning = 0.1,
-	 kTurnReduction = 0.2,
+	 kTurnReduction = 0.05,
 	 kForwardPower = 0.05;
 
 	// Where to point in order to give enough space for the robot to turn
 	Point curveAimOffset;
-	if (target.isAngled) {
+	if (false/*target.isAngled*/) {
 
 		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
 		pow(target.loc.y - getCurrentPos().loc.y, 2));
@@ -132,30 +132,39 @@ void AutoDrive::updatePower() {
 	Radian pointAngle;
 	double maxTurnPower;
 	// if we haven't passed the aim point
-	if (pow(target.loc.x - getCurrentPos().loc.x, 2) + pow(target.loc.y - getCurrentPos().loc.y, 2)
-	>= pow(curveAimOffset.x, 2) + pow(curveAimOffset.y, 2)) {
+	//if (pow(target.loc.x - getCurrentPos().loc.x, 2) + pow(target.loc.y - getCurrentPos().loc.y, 2)
+	//>= pow(curveAimOffset.x, 2) + pow(curveAimOffset.y, 2)) {
 		// Point towards the curve aim point
 		pointAngle = atan2(target.loc.x - getCurrentPos().loc.x + curveAimOffset.x,
 		 target.loc.y - getCurrentPos().loc.y + curveAimOffset.y);
 		maxTurnPower = 0.5;//1;
-		output << "aiming at aim point: offset: <" << curveAimOffset.x << ", " << curveAimOffset.y << ">" << std::endl;
-	}
-	else {
+		//output << "aiming at aim point: offset: <" << curveAimOffset.x << ", " << curveAimOffset.y << ">" << std::endl;
+	//}
+	/*else {
 		output << "aiming at target; ";
 		pointAngle = atan2(target.loc.x - getCurrentPos().loc.x, target.loc.y - getCurrentPos().loc.y);
 
 		// it will try to turn at this power, unless it is close to the target or already turning too fast
 		maxTurnPower = 0.5;//std::max(0.5, 1 - Robot::drivetrain.GetRate() / topSpeed);
-	}
+	}*/
 
 	double turnPower = 0;
 	Degree angleDifference = 0;
+
 	if (!atTarget(target.loc, 4)) {
 		// between -180 and 180
 		angleDifference = remainder(Degree(pointAngle) - Robot::drivetrain.GetGyroAngle(), 360);
-		output << "angleDifference: " << angleDifference << "; ";
-		turnPower = kTurning * angleDifference;
+
+		beforePassAngle = Robot::drivetrain.GetGyroAngle();
 	}
+	else {
+		// drive straight
+		angleDifference = beforePassAngle - Robot::drivetrain.GetGyroAngle();
+		output << "driving straight; ";
+	}
+
+	output << "angleDifference: " << angleDifference << "; ";
+	turnPower = kTurning * angleDifference;
 
 	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
@@ -215,7 +224,7 @@ void AutoDrive::updatePosition() {
 
 AutoDrive::RobotPosition AutoDrive::getPastPos(double milliseconds) {
 	int idxPast = round(milliseconds / (Robot::instance->GetPeriod() * 1000));
-	std::cout << "idxPast: " << idxPast << std::endl;
+	//std::cout << "idxPast: " << idxPast << std::endl;
 	if (idxPast >= posCount) {
 		std::cerr << "requested time " << milliseconds << " too far in the past";
 		return { 0, 0, 0, 0 };
