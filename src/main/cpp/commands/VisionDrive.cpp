@@ -48,7 +48,7 @@ void VisionDrive::Execute() {
 			}
 		}*/
 	}
-	Robot::autoDrive.pathfinderGeneratePath();
+	Robot::autoDrive.updatePower();
 }
 
 void VisionDrive::processVisionData() {
@@ -75,6 +75,7 @@ void VisionDrive::processVisionData() {
 	}	
 
 	gotFirstData = true;
+	Robot::autoDrive.pathfinderGeneratePath();
 }
 
 // Make this return true when this Command no longer needs to run execute()
