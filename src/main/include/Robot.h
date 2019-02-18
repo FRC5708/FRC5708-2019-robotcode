@@ -14,14 +14,14 @@
 
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
-#include "subsystems/Lift.h"
+#include "subsystems/ShiftieLiftie.h"
 
 class Robot : public frc::TimedRobot {
  public:
  
 	static OI m_oi;
 	static Drivetrain drivetrain;
-	static Lift lift;
+	static ShiftieLiftie lift;
 	static frc::Joystick* joystick;
 
 	void RobotInit() override;

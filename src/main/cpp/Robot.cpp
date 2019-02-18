@@ -14,7 +14,7 @@
 OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
 Drivetrain Robot::drivetrain;
-Lift Robot::lift;
+ShiftieLiftie Robot::lift;
 
 void Robot::RobotInit() {
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
