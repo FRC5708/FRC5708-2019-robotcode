@@ -15,6 +15,7 @@
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/ShiftieLiftie.h"
+#include "subsystems/McShootieTube.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -23,6 +24,7 @@ class Robot : public frc::TimedRobot {
 	static Drivetrain drivetrain;
 	static ShiftieLiftie lift;
 	static frc::Joystick* joystick;
+	static McShootieTube manipulator;
 
 	void RobotInit() override;
 	void RobotPeriodic() override;
