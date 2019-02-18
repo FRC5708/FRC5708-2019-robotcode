@@ -16,9 +16,9 @@ Do SPARKS stay in brake mode when limit switches are activated??
 
 */
 
-class Lift : public frc::Subsystem {
+class ShiftieLiftie : public frc::Subsystem {
  public:
-	Lift();
+	ShiftieLiftie();
 	void Periodic() override;
 	void Elevate(int placeId);
 	
