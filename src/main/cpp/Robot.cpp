@@ -15,6 +15,7 @@ OI Robot::m_oi;
 frc::Joystick* Robot::joystick;
 Drivetrain Robot::drivetrain;
 ShiftieLiftie Robot::lift;
+McShootieTube Robot::manipulator;
 
 void Robot::RobotInit() {
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
