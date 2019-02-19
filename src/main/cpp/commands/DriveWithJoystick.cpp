@@ -44,8 +44,15 @@ void powerRampup(double input, double* outputVar) {
 }
 
 void doLiftManipulator() {
-	int lift = Robot::joystick->GetPOV()-Robot::joystick->GetPOV(4);
-	if (lift != 0) Robot::lift.Elevate(lift);
+	if(!LIFT_CONTINUOUS_CONTROL) {
+		int lift = Robot::joystick->GetPOV()-Robot::joystick->GetPOV(4);
+		if (lift != 0) Robot::lift.Elevate(lift);
+	}
+	else {
+		// I think this is the left stick vertical
+		double power = inputTransform(Robot::joystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		Robot::lift.liftMotor->Set(power);
+	}
 
 	if (Robot::joystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
 	else if (Robot::joystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();

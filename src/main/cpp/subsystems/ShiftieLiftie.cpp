@@ -42,32 +42,33 @@ constexpr int maxHoldTicks = 100; // 2 seconds
 constexpr int calibrationWaitTicks = 50; 
 
 void ShiftieLiftie::Periodic() {
+	if (!LIFT_CONTINUOUS_CONTROL) {
+		if (fabs(getPosition() - movePlace) < moveTolerance) holdTicks++;
+		else holdTicks = 0;
 
-	if (fabs(getPosition() - movePlace) < moveTolerance) holdTicks++;
-	else holdTicks = 0;
+		if (holdTicks < maxHoldTicks) {
+			double movePower = (movePlace - getPosition()) * kMove;
 
-	if (holdTicks < maxHoldTicks) {
-		double movePower = (movePlace - getPosition()) * kMove;
+			// clamp movePower to [-1, 1]
+			movePower = copysign(std::min(fabs(movePower), 1.0), movePower);
 
-		// clamp movePower to [-1, 1]
-		movePower = copysign(std::min(fabs(movePower), 1.0), movePower);
+			double overSpeed = fabs(getRate()) - maxMoveSpeed;
 
-		double overSpeed = fabs(getRate()) - maxMoveSpeed;
+			if (overSpeed > maxOverSpeed) movePower = 0; // activate brake mode
+			else if (overSpeed > 0) movePower -= overSpeed / maxOverSpeed * movePower;
 
-		if (overSpeed > maxOverSpeed) movePower = 0; // activate brake mode
-		else if (overSpeed > 0) movePower -= overSpeed / maxOverSpeed * movePower;
+			liftMotor->Set(movePower);
+		}
+		else liftMotor->Set(0);
 
-		liftMotor->Set(movePower);
-	}
-	else liftMotor->Set(0);
+		if (getRate() == 0) ++stillTicks;
+		else stillTicks = 0;
 
-	if (getRate() == 0) ++stillTicks;
-	else stillTicks = 0;
-
-	if (movePlace == -INFINITY && stillTicks >= calibrationWaitTicks) {
-		liftEncoder.Reset();
-		if (stillTicks == calibrationWaitTicks)
-			std::cout << "Calibrated lift" << std::endl;
+		if (movePlace == -INFINITY && stillTicks >= calibrationWaitTicks) {
+			liftEncoder.Reset();
+			if (stillTicks == calibrationWaitTicks)
+				std::cout << "Calibrated lift" << std::endl;
+		}
 	}
 }
 
