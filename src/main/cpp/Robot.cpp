@@ -19,6 +19,8 @@ OI* Robot::m_oi;
 Drivetrain Robot::drivetrain;
 AutoDrive Robot::autoDrive;
 VisionReceiver Robot::visionReceiver;
+ShiftieLiftie Robot::lift;
+McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
 
 Robot* Robot::instance;

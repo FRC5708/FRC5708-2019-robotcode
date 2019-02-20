@@ -11,13 +11,15 @@
 #include <frc/commands/Command.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/Joystick.h>
+#include <frc/interfaces/Gyro.h>
 
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/AutoDrive.h"
 #include "subsystems/VisionReceiver.h"
-#include <frc/interfaces/Gyro.h>
 
+#include "subsystems/ShiftieLiftie.h"
+#include "subsystems/McShootieTube.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -27,6 +29,8 @@ class Robot : public frc::TimedRobot {
 	static Drivetrain drivetrain;
     static AutoDrive autoDrive;
     static VisionReceiver visionReceiver;
+	static McShootieTube manipulator;
+	static ShiftieLiftie lift;
 	static frc::Gyro* gyro;
 
 	static Robot* instance;

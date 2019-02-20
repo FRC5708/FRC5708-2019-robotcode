@@ -1,6 +1,13 @@
 #include "commands/DriveWithJoystick.h"
 #include <iostream>
 
+// buttons on xbox:
+// 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
+
+
+constexpr int INTAKE_BUTTON = 5, SHOOT_BUTTON = 6;
+
+
 double currentLeftPower=0.0;
 double currentRightPower=0.0;
 DriveWithJoystick::DriveWithJoystick()
@@ -36,6 +43,30 @@ void powerRampup(double input, double* outputVar) {
 	}
 	if (fabs(input) < fabs(*outputVar)) *outputVar = input;
 }
+
+void doLiftManipulator() {
+	if(!LIFT_CONTINUOUS_CONTROL) {
+		int pov = Robot::joystick->GetPOV();
+		if (pov != -1) {
+			ShiftieLiftie::Setpoint setpoint;
+			switch (pov) {
+				case 0: setpoint = ShiftieLiftie::Setpoint::Top; break;
+				case 180: setpoint = ShiftieLiftie::Setpoint::Bottom; break;
+			}
+			Robot::lift.Elevate(setpoint);
+		}
+	}
+	else {
+		// I think this is the left stick vertical
+		double power = inputTransform(Robot::joystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		Robot::lift.liftMotor->Set(power);
+	}
+
+	if (Robot::joystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
+	else if (Robot::joystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
+	else Robot::manipulator.Stop();
+}
+
 // Called repeatedly when this Command is scheduled to run
 void DriveWithJoystick::Execute() {
 	double turn = 0;
@@ -52,6 +83,8 @@ void DriveWithJoystick::Execute() {
 			turn = Robot::joystick->GetX();
 			power = Robot::joystick->GetRawAxis(3)-Robot::joystick->GetRawAxis(2);
 			turn = inputTransform(turn, 0, 0.1);
+
+			doLiftManipulator();
 			break;
 		}
 	}
