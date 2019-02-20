@@ -11,7 +11,7 @@ double currentLeftPower=0.0;
 double currentRightPower=0.0;
 DriveWithJoystick::DriveWithJoystick()
     : frc::Command("DriveWithJoystick"){
-	Requires(&Robot::drivetrain);
+	Requires(&Robot::scootyPooty);
 }
 double inputTransform(double input, double minPowerOutput, double inputDeadZone, 
 		 double inputChangePosition = 0.75, double outputChangePosition = 0.5) {
@@ -89,7 +89,7 @@ void DriveWithJoystick::Execute() {
 	}
 	power = inputTransform(power, 0.2, 0.05);
 
-	//Robot::drivetrain.DrivePolar(power, turn);
+	//Robot::ScootyPooty.DrivePolar(power, turn);
 	double v = (1-fabs(turn)) * (power) + power;
 	double w = (1-fabs(power)) * (turn) + turn;
 	double right = (v+w)/2;
@@ -98,7 +98,7 @@ void DriveWithJoystick::Execute() {
 	//powerRampup(left, &currentLeftPower);
 	//powerRampup(right, &currentRightPower);
 	
-	Robot::drivetrain.Drive(left, right);
+	Robot::scootyPooty.Drive(left, right);
 }
 
 // Make this return true when this Command no longer needs to run execute()
@@ -108,5 +108,5 @@ bool DriveWithJoystick::IsFinished() {
 
 // Called once after isFinished returns true
 void DriveWithJoystick::End() {
-	Robot::drivetrain.Drive(0, 0);
+	Robot::scootyPooty.Drive(0, 0);
 }

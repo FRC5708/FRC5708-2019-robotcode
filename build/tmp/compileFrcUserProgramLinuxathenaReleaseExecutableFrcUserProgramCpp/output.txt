@@ -1,0 +1,16 @@
+See file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/compileFrcUserProgramLinuxathenaReleaseExecutableFrcUserProgramCpp/output.txt for all output for compileFrcUserProgramLinuxathenaReleaseExecutableFrcUserProgramCpp.
+compiling Robot.cpp successful.
+
+compiling McShootieTube.cpp successful.
+
+compiling Drivetrain.cpp successful.
+
+compiling DriveWithJoystick.cpp successful.
+
+compiling ExampleSubsystem.cpp successful.
+
+compiling ShiftieLiftie.cpp successful.
+
+compiling ExampleCommand.cpp successful.
+
+Finished compileFrcUserProgramLinuxathenaReleaseExecutableFrcUserProgramCpp, see full log file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/compileFrcUserProgramLinuxathenaReleaseExecutableFrcUserProgramCpp/output.txt.

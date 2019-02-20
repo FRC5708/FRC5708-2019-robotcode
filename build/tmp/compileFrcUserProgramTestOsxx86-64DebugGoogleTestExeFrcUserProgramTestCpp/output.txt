@@ -1,0 +1,4 @@
+See file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/compileFrcUserProgramTestOsxx86-64DebugGoogleTestExeFrcUserProgramTestCpp/output.txt for all output for compileFrcUserProgramTestOsxx86-64DebugGoogleTestExeFrcUserProgramTestCpp.
+compiling main.cpp successful.
+
+Finished compileFrcUserProgramTestOsxx86-64DebugGoogleTestExeFrcUserProgramTestCpp, see full log file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/compileFrcUserProgramTestOsxx86-64DebugGoogleTestExeFrcUserProgramTestCpp/output.txt.

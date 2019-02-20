@@ -13,7 +13,7 @@
 #include <frc/Joystick.h>
 
 #include "OI.h"
-#include "subsystems/Drivetrain.h"
+#include "subsystems/ScootyPooty.h"
 #include "subsystems/ShiftieLiftie.h"
 #include "subsystems/McShootieTube.h"
 
@@ -21,10 +21,10 @@ class Robot : public frc::TimedRobot {
  public:
  
 	static OI m_oi;
-	static Drivetrain drivetrain;
-	static ShiftieLiftie lift;
+	static ScootyPooty scootyPooty;
+	static ShiftieLiftie shiftieLiftie;
 	static frc::Joystick* joystick;
-	static McShootieTube manipulator;
+	static McShootieTube mcShootieTube;
 
 	void RobotInit() override;
 	void RobotPeriodic() override;

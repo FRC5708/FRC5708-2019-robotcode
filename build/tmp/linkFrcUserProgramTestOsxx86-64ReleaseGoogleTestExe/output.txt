@@ -1,0 +1,4 @@
+See file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/linkFrcUserProgramTestOsxx86-64ReleaseGoogleTestExe/output.txt for all output for linkFrcUserProgramTestOsxx86-64ReleaseGoogleTestExe.
+linking frcUserProgramTest successful.
+
+Finished linkFrcUserProgramTestOsxx86-64ReleaseGoogleTestExe, see full log file:///Users/benwyngaard/Documents/Projects/FRC5708-2019-robotcode/build/tmp/linkFrcUserProgramTestOsxx86-64ReleaseGoogleTestExe/output.txt.
