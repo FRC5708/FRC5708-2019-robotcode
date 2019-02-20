@@ -21,9 +21,14 @@ constexpr bool LIFT_CONTINUOUS_CONTROL = true;
 
 class ShiftieLiftie : public frc::Subsystem {
  public:
+	enum Setpoint {
+		Top,
+		Bottom
+	};
+
 	ShiftieLiftie();
 	void Periodic() override;
-	void Elevate(int placeId);
+	void Elevate(Setpoint setpoint);
 	
 	double movePlace;
 

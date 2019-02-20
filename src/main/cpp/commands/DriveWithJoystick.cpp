@@ -45,8 +45,15 @@ void powerRampup(double input, double* outputVar) {
 
 void doLiftManipulator() {
 	if(!LIFT_CONTINUOUS_CONTROL) {
-		int lift = Robot::joystick->GetPOV()-Robot::joystick->GetPOV(4);
-		if (lift != 0) Robot::lift.Elevate(lift);
+		int pov = Robot::joystick->GetPOV();
+		if (pov != -1) {
+			ShiftieLiftie::Setpoint setpoint;
+			switch (pov) {
+				case 0: setpoint = ShiftieLiftie::Setpoint::Top; break;
+				case 180: setpoint = ShiftieLiftie::Setpoint::Bottom; break;
+			}
+			Robot::lift.Elevate(setpoint);
+		}
 	}
 	else {
 		// I think this is the left stick vertical
