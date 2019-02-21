@@ -37,7 +37,7 @@ double inputTransform(double input, double minPowerOutput, double inputDeadZone,
 }
 
 void powerRampup(double input, double* outputVar) {
-	if ((fabs(input) < fabs(*outputVar)) && ((input < 0 && *outputVar < 0 ) | (input > 0 && *outputVar > 0))){
+	if ((fabs(input) < fabs(*outputVar)) && ((input < 0 && *outputVar < 0 ) || (input > 0 && *outputVar > 0))){
 		*outputVar = input;
 		return;
 	} 
