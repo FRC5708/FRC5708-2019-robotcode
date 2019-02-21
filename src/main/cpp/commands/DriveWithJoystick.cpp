@@ -37,11 +37,13 @@ double inputTransform(double input, double minPowerOutput, double inputDeadZone,
 }
 
 void powerRampup(double input, double* outputVar) {
-	if (fabs(input) > fabs(*outputVar)) {
-		int sign = (input > 0) ? 1 : -1;
-		*outputVar += 0.1*sign;
-	}
-	if (fabs(input) < fabs(*outputVar)) *outputVar = input;
+	if ((fabs(input) < fabs(*outputVar)) && ((input < 0 && *outputVar < 0 ) | (input > 0 && *outputVar > 0))){
+		*outputVar = input;
+		return;
+	} 
+	int sign = (input > 0) ? 1 : -1;
+	*outputVar += 0.1*sign;
+	
 }
 
 void doLiftManipulator() {
