@@ -12,6 +12,10 @@
 #include <frc/Spark.h>
 #include <frc/Joystick.h>
 
+#include <unistd.h>
+#include <chrono>
+#include <thread>
+
 ExampleSubsystem Robot::m_subsystem;
 OI Robot::m_oi;
 
@@ -40,6 +44,41 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
+struct Note { double time, freq; };
+static const Note notes[] = {
+	{ 1.5, 40 },
+	{ 1.5, 60 },
+	{ 3, 80 }
+};
+
+class MotorMusic {
+	public:
+	volatile double frequency = 40;
+	frc::Spark motor;
+	std::chrono::steady_clock clock;
+
+	MotorMusic(): motor(1) {}
+
+	void play() {
+		int currentNote;
+		std::chrono::time_point<std::chrono::steady_clock> noteStart;
+
+		while (true) {
+			motor.Set(-0.2);
+			usleep(1.0 / frequency * 1000000 / 2);
+			motor.Set(0.2);
+			usleep(1.0 / frequency * 1000000 / 2);
+			/*if (std::chrono::duration<double>(noteStart - clock.now()).count() >= notes[currentNote].time) {
+				noteStart = clock.now();
+				++currentNote;
+				currentNote = currentNote % (sizeof(notes) / (sizeof(double) * 2));
+				frequency = notes[currentNote].freq;
+			}*/
+		}
+	}
+};
+
+
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -60,11 +99,12 @@ void Robot::AutonomousInit() {
 	//   m_autonomousCommand = &m_defaultAuto;
 	// }
 
-	m_autonomousCommand = m_chooser.GetSelected();
+	static MotorMusic* music = new MotorMusic();
 
-	if (m_autonomousCommand != nullptr) {
-		m_autonomousCommand->Start();
-	}
+	std::thread([]() {
+		music->play();
+	}).detach();
+	//music->play();
 }
 
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
@@ -81,15 +121,15 @@ void Robot::TeleopInit() {
 }
 
 frc::Joystick joystick(0);
-frc::Spark motor1(0);
-frc::Spark motor2(1);
+//frc::Spark motor1(0);
+//frc::Spark motor2(1);
 
 void Robot::TeleopPeriodic() { 
 	frc::Scheduler::GetInstance()->Run();
 
 	if (joystick.GetRawButton(1)) {
-		motor1.Set(1);
-		motor2.Set(1);
+		//motor1.Set(1);
+		//motor2.Set(1);
 	}
 }
 
