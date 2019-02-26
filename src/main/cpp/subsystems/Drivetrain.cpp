@@ -35,10 +35,18 @@ void Drivetrain::Periodic() {
 }
 
 void Drivetrain::Drive(double left, double right) {
-	FLMotor->Set(left);
-	BLMotor->Set(left);
-	FRMotor->Set(right);
-	BRMotor->Set(right);
+	if (left == 0 && right == 0) {
+		FLMotor->StopMotor();
+		BLMotor->StopMotor();
+		FRMotor->StopMotor();
+		BRMotor->StopMotor();
+	}
+	else {
+		FLMotor->Set(left);
+		BLMotor->Set(left);
+		FRMotor->Set(right);
+		BRMotor->Set(right);
+	}
 
 	ticksSinceLastDrive = 0;
 }
