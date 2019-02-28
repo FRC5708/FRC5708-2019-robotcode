@@ -42,8 +42,7 @@ void VisionDrive::Execute() {
 		Robot::autoDrive.target.slowDown = false;
 
 		if (// if we are closer than 2 inches to the target
-			sqrt(pow(Robot::autoDrive.getCurrentPos().loc.x - currentTarget.loc.x, 2) + 
-			pow(Robot::autoDrive.getCurrentPos().loc.y - currentTarget.loc.y, 2)) < 2) {
+		Robot::autoDrive.atTarget(currentTarget.loc, 2)) {
 				
 			std::cout << "at target!" << std::endl;
 			done = true;
@@ -79,8 +78,7 @@ void VisionDrive::processVisionData() {
 
 	for (auto i : Robot::visionReceiver.grabData()) {
 
-		double distance = sqrt(pow(i.loc.x - currentTarget.loc.x, 2) + 
-		pow(i.loc.y - currentTarget.loc.y, 2));
+		double distance = AutoDrive::pointDist(i.loc, currentTarget.loc);
 		
 		if (distance < bestDistance) {
 			bestDistance = distance;

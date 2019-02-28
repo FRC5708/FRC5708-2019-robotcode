@@ -15,6 +15,8 @@ public:
 
 	struct Point { double x, y; };
 
+	static double pointDist(Point p1, Point p2);
+
 	// position of the CENTER of the robot.
 	// inches and degrees. Measured from center of hab, against wall, facing forward.
 	// left is negative, right positive. Forward is positive, behind the wall would be negative.
