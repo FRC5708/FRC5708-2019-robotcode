@@ -5,7 +5,9 @@ ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
 liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 
 	liftEncoder.SetDistancePerPulse(1.0/360.0);
-	liftMotor->SetInverted(true);
+
+	//Uncomment if someone winds the winch the wrong way.
+	//liftMotor->SetInverted(true);
 }
 
 void ShiftieLiftie::Elevate(Setpoint point) {

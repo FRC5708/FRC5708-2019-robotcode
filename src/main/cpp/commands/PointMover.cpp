@@ -21,6 +21,7 @@ void PointMover::Execute() {
 		}
 		else done = true;
 	}
+	Robot::autoDrive.updatePower();
 }
 
 void PointMover::updateTarget() {
