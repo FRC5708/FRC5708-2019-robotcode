@@ -4,11 +4,9 @@
 #include <frc/PWMTalonSRX.h>
 #include "RobotMap.h"
 
-#define CONTROLLER frc::PWMTalonSRX
-//#define CONTROLLER frc::Spark
 
 McShootieTube::McShootieTube() : Subsystem("Manipulator"),
-leftMotor(new CONTROLLER(ballManipulatorMotorLeft)), rightMotor(new CONTROLLER(ballManipulatorMotorRight)) {
+leftMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorLeft) : (frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorLeft)), rightMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorRight) : (frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorRight)) {
 
 	// Change this if manipulator controls are inverted
 	rightMotor->SetInverted(true);
