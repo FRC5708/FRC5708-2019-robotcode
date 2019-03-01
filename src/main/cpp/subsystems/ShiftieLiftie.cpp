@@ -5,6 +5,7 @@ ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
 liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 
 	liftEncoder.SetDistancePerPulse(1.0/360.0);
+	liftMotor->SetInverted(true);
 }
 
 void ShiftieLiftie::Elevate(Setpoint point) {

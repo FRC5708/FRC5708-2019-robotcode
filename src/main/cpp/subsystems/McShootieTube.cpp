@@ -6,7 +6,10 @@
 
 
 McShootieTube::McShootieTube() : Subsystem("Manipulator"),
-leftMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorLeft) : (frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorLeft)), rightMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorRight) : (frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorRight)) {
+leftMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorLeft) : 
+(frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorLeft)), 
+rightMotor(IS_PROD ? (frc::SpeedController*) new frc::Spark(ballManipulatorMotorRight) : 
+(frc::SpeedController*) new frc::PWMTalonSRX(ballManipulatorMotorRight)) {
 
 	// Change this if manipulator controls are inverted
 	rightMotor->SetInverted(true);
