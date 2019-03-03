@@ -1,5 +1,6 @@
 #include "commands/DriveWithJoystick.h"
 #include <iostream>
+#include <frc/commands/CommandGroup.h>
 
 // buttons on xbox:
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
@@ -44,6 +45,15 @@ void powerRampup(double input, double* outputVar) {
 	int sign = (input > 0) ? 1 : -1;
 	*outputVar += 0.1*sign;
 	
+}
+
+void cancelCommand(frc::Command* toCancel) {
+	if (toCancel->GetGroup() == nullptr) {
+		
+		// cancels command, or its parent commandGroup
+		toCancel->Cancel();
+	}
+	else cancelCommand(toCancel->GetGroup());
 }
 
 void doLiftManipulator() {
@@ -96,7 +106,7 @@ void DriveWithJoystick::Execute() {
 		if (fabs(power) < 0.3 && fabs(turn) < 0.3) return;
 		else {
 			std::cout << "cancelling auto drive" << std::endl;
-			Robot::autoDrive.commandUsing->Cancel();
+			cancelCommand(Robot::autoDrive.commandUsing);
 		} 
 	}
 

@@ -67,7 +67,6 @@ Autonomous::Autonomous() {
 		// add points here
 	})));
 
-	// TODO: something something Cancel() won't work
 	AddSequential(new VisionDrive(true));
 	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::LowGoal));
 	AddSequential(new BallShoot());
