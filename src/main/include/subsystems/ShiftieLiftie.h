@@ -23,7 +23,8 @@ class ShiftieLiftie : public frc::Subsystem {
  public:
 	enum Setpoint {
 		Top,
-		Bottom
+		Bottom,
+		LowGoal
 	};
 
 	ShiftieLiftie();
@@ -34,6 +35,8 @@ class ShiftieLiftie : public frc::Subsystem {
 
 	double getPosition();
 	double getRate();
+
+	bool isDone();
 
 
 	frc::SpeedController* liftMotor = new frc::Spark(liftMotorChannel);

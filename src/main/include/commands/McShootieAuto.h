@@ -32,5 +32,20 @@ public:
 	}
 		private:
 	std::chrono::steady_clock::time_point startTime;
-};     
+};  
+
+
+class LiftMove : public frc::Command {
+public:
+	ShiftieLiftie::Setpoint setpoint;
+	LiftMove(ShiftieLiftie::Setpoint setpoint) : setpoint(setpoint) {};
+
+	void Initialize() override {
+		Robot::lift.Elevate(setpoint);
+	}
+	bool IsFinished() override {
+		return Robot::lift.isDone();
+	}
+};
+
 #endif 
