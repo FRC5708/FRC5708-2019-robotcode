@@ -69,6 +69,8 @@ double ShiftieLiftie::getRate() {
 	}
 }
 
+
+
 constexpr double moveTolerance = 0.5; // inches away from the target point to be considered holding
 
 constexpr double kMove = 0.1; // motor-powers per inch
@@ -80,12 +82,16 @@ constexpr int maxHoldTicks = 100; // 2 seconds
 // must be still, at bottom, for 1 second to reset encoder distance
 constexpr int calibrationWaitTicks = 50; 
 
+bool ShiftieLiftie::isDone() {
+	return fabs(getPosition() - movePlace) < moveTolerance || holdTicks > 10;
+}
+
 void ShiftieLiftie::Periodic() {
 	if (!LIFT_CONTINUOUS_CONTROL) {
 		double position = getPosition();
 		double rate = getRate();
 
-		if (fabs(position - movePlace) < moveTolerance) holdTicks++;
+		if (fabs(position - movePlace) < moveTolerance || rate == 0) holdTicks++;
 		else holdTicks = 0;
 
 		if (holdTicks < maxHoldTicks) {
