@@ -13,6 +13,7 @@
 #include <frc/AnalogGyro.h>
 #include <frc/ADXRS450_Gyro.h>
 #include "commands/DriveWithJoystick.h"
+#include <sys/stat.h>
 
 frc::Joystick* Robot::joystick;
 OI* Robot::m_oi;
@@ -24,7 +25,7 @@ McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
 
 Robot* Robot::instance;
-
+bool IS_PROD;
 void Robot::RobotInit() {
 	instance = this;
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
@@ -36,6 +37,9 @@ void Robot::RobotInit() {
 	Robot::m_oi = new OI();
 
 	driveCommand = new DriveWithJoystick();
+	struct stat buffer;  
+	IS_PROD = !(stat ("/home/lvuser/platform_test", &buffer) == 0);
+	std::cout << "Platform detected as " << (IS_PROD ? "PROD" : "TEST" )<< "..." << std::endl;
 }
 
 /**
