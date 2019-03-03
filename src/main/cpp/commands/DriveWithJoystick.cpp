@@ -49,7 +49,7 @@ void powerRampup(double input, double* outputVar) {
 
 void cancelCommand(frc::Command* toCancel) {
 	if (toCancel->GetGroup() == nullptr) {
-		
+
 		// cancels command, or its parent commandGroup
 		toCancel->Cancel();
 	}
@@ -61,12 +61,27 @@ void doLiftManipulator() {
 		int pov = Robot::joystick->GetPOV();
 		if (pov != -1) {
 			ShiftieLiftie::Setpoint setpoint;
-			switch (pov) {
-				case 0: setpoint = ShiftieLiftie::Setpoint::Top; break;
-				case 180: setpoint = ShiftieLiftie::Setpoint::Bottom; break;
+			if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
+
+			if (Robot::joystick->GetRawButton(1)) {
+				// ball manipulator position
+				switch (pov) {
+					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
+					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
+					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
+				}
 			}
+			if (Robot::joystick->GetRawButton(4)) {
+				// hatch manipulator position
+				switch (pov) {
+					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
+					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalHatch; break;
+					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
+				}
+			}
+
 			Robot::lift.Elevate(setpoint);
-		}
+		}	
 	}
 	else {
 		// I think this is the left stick vertical

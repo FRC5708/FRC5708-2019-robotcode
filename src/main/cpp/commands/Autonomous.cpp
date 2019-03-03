@@ -68,6 +68,6 @@ Autonomous::Autonomous() {
 	})));
 
 	AddSequential(new VisionDrive(true));
-	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::LowGoal));
+	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::LowGoalCargo));
 	AddSequential(new BallShoot());
 }

@@ -24,7 +24,12 @@ class ShiftieLiftie : public frc::Subsystem {
 	enum Setpoint {
 		Top,
 		Bottom,
-		LowGoal
+		LowGoalCargo,
+		LowGoalHatch,
+		MidGoalCargo,
+		MidGoalHatch,
+		HighGoalCargo,
+		HighGoalHatch
 	};
 
 	ShiftieLiftie();
