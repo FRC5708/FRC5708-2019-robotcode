@@ -40,4 +40,4 @@ constexpr double WheelCircumference = 6 * M_PI;
 
 constexpr double ROBOT_WIDTH = 27; // inches
 constexpr double ROBOT_LENGTH = 32;
-constexpr bool IS_PROD = true;
+extern bool IS_PROD;
