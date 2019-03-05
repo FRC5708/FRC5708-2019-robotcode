@@ -12,7 +12,14 @@ liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 
 void ShiftieLiftie::Elevate(Setpoint point) {
 
+// TODO: MEASURE THESE VALUES
+// Height of the manipulator above the ground when the lift is at its lowest point
+constexpr double shootieZero = 6.5;
+constexpr double hatchZero = 1*12+7;
+
 	switch (point) {
+	case LowGoalHatch:
+	case MidGoalHatch:
 	case Bottom:
 		// special case for when bottom button is held down
 		// we want to go lower
@@ -22,28 +29,33 @@ void ShiftieLiftie::Elevate(Setpoint point) {
 		else movePlace = 0; 
 		break;
 	case Top: movePlace = INFINITY; break;
+	// ROCKET low goal
+	case LowGoalCargo: movePlace = 2*12+3.5 - shootieZero; break;
+	// CARGO SHIP goal
+	case MidGoalCargo: movePlace = 2*12+7.5 + 9 - shootieZero; break;
+	// ROCKET middle goal
+	case HighGoalCargo: movePlace = 2*12+3.5 + 2*12+4 - shootieZero; break;
+	case HighGoalHatch: movePlace = 2*12+4; break;
 	}
 
 	holdTicks = 0;
 }
 
 // measured positions of lift
+// The data is linear enough that we don't need this
+// the noise from the low-resolution encoder is larger than the spooling effect
 struct { double encRev, liftHeight; } liftMap[] = {
 	{ 0, 0 }
 };
 constexpr double posCount = sizeof(liftMap) / sizeof(double) / 2;
 
-
-constexpr double spoolCircumfrence = 1.44 * M_PI;
-constexpr double liftMult = 2;
-
-constexpr double moveCoeff = spoolCircumfrence * liftMult;
+// determined experimentally
+constexpr double moveCoeff = 9.209543;
 
 // should return a value in inches
-// could potentially make this more complicated, account for windings, etc.
 double ShiftieLiftie::getPosition() {
 	return liftEncoder.GetDistance() * moveCoeff;
-
+/*
 	double encoderRevs = liftEncoder.GetDistance();
 	for (int i = 0; i < posCount; ++i) {
 		if (i + 1 == posCount || liftMap[i+1].encRev > encoderRevs) {
@@ -54,11 +66,11 @@ double ShiftieLiftie::getPosition() {
 			(liftMap[i+1].liftHeight - liftMap[i].liftHeight) /
 			(liftMap[i+1].encRev - liftMap[i].encRev);
 		}
-	}
+	}*/
 }
 double ShiftieLiftie::getRate() {
 	return liftEncoder.GetRate() * moveCoeff;
-
+/*
 	double encoderRevs = liftEncoder.GetDistance();
 	for (int i = 0; i < posCount; ++i) {
 		if (i + 1 == posCount || liftMap[i+1].encRev > encoderRevs) {
@@ -66,7 +78,7 @@ double ShiftieLiftie::getRate() {
 			(liftMap[i+1].liftHeight - liftMap[i].liftHeight) /
 			(liftMap[i+1].encRev - liftMap[i].encRev);
 		}
-	}
+	}*/
 }
 
 
