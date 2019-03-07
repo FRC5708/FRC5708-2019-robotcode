@@ -18,6 +18,9 @@ constexpr double maxCentripetal = 6*12, // in/sec^2
  maxPower = 0.4, // maximum power the auton will run the motors at
  minForwardPower = 0.25; // below this the robot won't move
 
+double AutoDrive::pointDist(Point p1, Point p2) {
+	return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
 
 AutoDrive::Point AutoDrive::matchingPair(double x, double y1, double y2, AutoDrive::Point center, double comp) {
 
@@ -98,8 +101,7 @@ void AutoDrive::updatePower() {
 	Point curveAimOffset;
 	if (false/*target.isAngled*/) {
 
-		double targetDistance = sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2) + 
-		pow(target.loc.y - getCurrentPos().loc.y, 2));
+		double targetDistance = pointDist(target.loc, getCurrentPos().loc);
 
 		double expectedSpeed = targetDistance / reachTopSpeed;
 		if (target.slowDown) expectedSpeed /= 2;
@@ -178,8 +180,7 @@ void AutoDrive::updatePower() {
 		if (target.slowDown) {
 			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
 				// distance to target:
-				sqrt(pow(target.loc.x - getCurrentPos().loc.x, 2)
-			+ pow(target.loc.y - getCurrentPos().loc.y, 2)));
+				pointDist(target.loc, getCurrentPos().loc));
 		}
 		else forwardPower = maxPower;
 	}
@@ -196,7 +197,7 @@ bool AutoDrive::passedTarget(Point beginning) {
 }
 
 bool AutoDrive::atTarget(Point compare, double dist) {
-	return sqrt(pow(compare.x - getCurrentPos().loc.x, 2) + pow(compare.y - getCurrentPos().loc.y, 2)) < dist;
+	return pointDist(compare, getCurrentPos().loc) < dist;
 }
 
 void AutoDrive::Periodic() {

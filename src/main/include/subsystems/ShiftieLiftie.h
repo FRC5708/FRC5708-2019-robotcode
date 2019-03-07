@@ -17,13 +17,19 @@ Do SPARKS stay in brake mode when limit switches are activated??
 */
 
 // if true, the lift will be controlled by a joystick instead of at discrete intervals
-constexpr bool LIFT_CONTINUOUS_CONTROL = true;
+constexpr bool LIFT_CONTINUOUS_CONTROL = false;
 
 class ShiftieLiftie : public frc::Subsystem {
  public:
 	enum Setpoint {
 		Top,
-		Bottom
+		Bottom,
+		LowGoalCargo,
+		LowGoalHatch,
+		MidGoalCargo,
+		MidGoalHatch,
+		HighGoalCargo,
+		HighGoalHatch
 	};
 
 	ShiftieLiftie();
@@ -34,6 +40,8 @@ class ShiftieLiftie : public frc::Subsystem {
 
 	double getPosition();
 	double getRate();
+
+	bool isDone();
 
 
 	frc::SpeedController* liftMotor = new frc::Spark(liftMotorChannel);

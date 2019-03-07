@@ -1,5 +1,6 @@
 #include "commands/DriveWithJoystick.h"
 #include <iostream>
+#include <frc/commands/CommandGroup.h>
 
 // buttons on xbox:
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
@@ -46,17 +47,41 @@ void powerRampup(double input, double* outputVar) {
 	
 }
 
+void cancelCommand(frc::Command* toCancel) {
+	if (toCancel->GetGroup() == nullptr) {
+
+		// cancels command, or its parent commandGroup
+		toCancel->Cancel();
+	}
+	else cancelCommand(toCancel->GetGroup());
+}
+
 void doLiftManipulator() {
 	if(!LIFT_CONTINUOUS_CONTROL) {
 		int pov = Robot::joystick->GetPOV();
 		if (pov != -1) {
 			ShiftieLiftie::Setpoint setpoint;
-			switch (pov) {
-				case 0: setpoint = ShiftieLiftie::Setpoint::Top; break;
-				case 180: setpoint = ShiftieLiftie::Setpoint::Bottom; break;
+			if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
+
+			if (Robot::joystick->GetRawButton(1)) {
+				// ball manipulator position
+				switch (pov) {
+					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
+					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
+					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
+				}
 			}
+			if (Robot::joystick->GetRawButton(4)) {
+				// hatch manipulator position
+				switch (pov) {
+					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
+					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalHatch; break;
+					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
+				}
+			}
+
 			Robot::lift.Elevate(setpoint);
-		}
+		}	
 	}
 	else {
 		// I think this is the left stick vertical
@@ -96,7 +121,7 @@ void DriveWithJoystick::Execute() {
 		if (fabs(power) < 0.3 && fabs(turn) < 0.3) return;
 		else {
 			std::cout << "cancelling auto drive" << std::endl;
-			Robot::autoDrive.commandUsing->Cancel();
+			cancelCommand(Robot::autoDrive.commandUsing);
 		} 
 	}
 

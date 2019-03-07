@@ -11,7 +11,7 @@
 #include <frc/WPILib.h>
 #include "commands/VisionDrive.h"
 
-constexpr int VISION_BUTTON = 1;
+constexpr int VISION_BUTTON = 3;
 
 OI::OI() {
 	frc::JoystickButton* visionButton = new frc::JoystickButton(Robot::joystick, VISION_BUTTON);
