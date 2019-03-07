@@ -60,7 +60,7 @@ void doLiftManipulator() {
 	if(!LIFT_CONTINUOUS_CONTROL) {
 		int pov = Robot::joystick->GetPOV();
 		if (pov != -1) {
-			ShiftieLiftie::Setpoint setpoint;
+			ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
 			if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
 
 			if (Robot::joystick->GetRawButton(1)) {

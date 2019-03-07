@@ -22,6 +22,7 @@ constexpr bool LIFT_CONTINUOUS_CONTROL = false;
 class ShiftieLiftie : public frc::Subsystem {
  public:
 	enum Setpoint {
+		Stay,
 		Top,
 		Bottom,
 		LowGoalCargo,
