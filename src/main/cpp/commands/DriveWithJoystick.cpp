@@ -90,7 +90,7 @@ void DriveWithJoystick::Execute() {
 			break;
 		}
 	}
-	power = inputTransform(power, 0.2, 0.05);
+	power = inputTransform(power, 0.15, 0.03);
 
 	if (Robot::autoDrive.commandUsing != nullptr) {
 		if (fabs(power) < 0.3 && fabs(turn) < 0.3) return;
