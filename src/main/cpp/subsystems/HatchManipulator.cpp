@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "subsystems/HatchManipulator.h"
+#include <iostream>
 
 HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {
   hatch_counter->SetUpSource(HatchCounterChannel); // Probably wrong input/output.
@@ -51,8 +52,10 @@ int HatchManipulator::getCountChange(){
   return difference;
 }
 void HatchManipulator::updateTrueCount(){
+  
   //0 equals all the way raised, increases as goes down.
   trueCount=trueCount + getCountChange() * current_position;
+  std::cout << "True Count: " << trueCount << std::endl;
 }
 void HatchManipulator::Lower(){
   current_position=LOWERED;
