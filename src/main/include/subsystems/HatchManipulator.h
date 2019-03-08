@@ -18,10 +18,6 @@ constexpr int RAISED=-1;
 constexpr int LOWERED=1;
 constexpr int STOP=0;
 class HatchManipulator : public frc::Subsystem {
- private:
-  // It's desirable that everything possible under private except
-  // for methods that implement subsystem capabilities
-
  public:
   HatchManipulator();
   void InitDefaultCommand() override;
@@ -31,7 +27,7 @@ class HatchManipulator : public frc::Subsystem {
   void Stop();
   int current_position=STOP;
   frc::SpeedController* hatchMotor = new frc::Spark(hatchManipulatorChannel);
-  frc::Counter* hatch_counter=new Counter();
+  frc::Counter* hatch_counter=new frc::Counter();
   int getCountChange();
   void updateTrueCount();
   double getDistance();

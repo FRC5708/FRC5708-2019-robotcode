@@ -120,7 +120,7 @@ void DriveWithJoystick::Execute() {
 			turn = inputTransform(turn, 0, 0.1);
 
 			doLiftManipulator();
-			doHatchManipulator()
+			doHatchManipulator();
 			break;
 		}
 	}
