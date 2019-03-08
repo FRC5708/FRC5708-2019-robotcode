@@ -14,6 +14,7 @@
 #include <frc/ADXRS450_Gyro.h>
 #include "commands/DriveWithJoystick.h"
 #include <sys/stat.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 bool environment_check();
 bool IS_PROD = environment_check();
@@ -54,7 +55,12 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+	frc::SmartDashboard::PutNumberArray("encoders", { 
+		drivetrain.leftEncoder->GetDistance(),
+		drivetrain.rightEncoder->GetDistance()
+	});
+}
 
 /**
  * This function is called once each time the robot enters Disabled mode. You
@@ -87,11 +93,12 @@ void Robot::AutonomousInit() {
 	//   m_autonomousCommand = &m_defaultAuto;
 	// }
 
-	m_autonomousCommand = m_chooser.GetSelected();
+	/*m_autonomousCommand = m_chooser.GetSelected();
 
 	if (m_autonomousCommand != nullptr) {
 		m_autonomousCommand->Start();
-	}
+	}*/
+	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
@@ -105,7 +112,7 @@ void Robot::TeleopInit() {
 		m_autonomousCommand->Cancel();
 		m_autonomousCommand = nullptr;
 	}
-	driveCommand->Start();
+	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 
 void Robot::TeleopPeriodic() { frc::Scheduler::GetInstance()->Run(); }
