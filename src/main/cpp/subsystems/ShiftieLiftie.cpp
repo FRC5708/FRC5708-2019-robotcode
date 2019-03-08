@@ -45,6 +45,18 @@ constexpr double hatchZero = 1*12+7;
 
 	holdTicks = 0;
 	stillTicks = 0;
+
+	doAutoLift = true;
+}
+
+void ShiftieLiftie::MoveMotor(double power) {
+	if (power != 0) {
+	doAutoLift = false;
+	liftMotor->Set(power);
+	}
+	else {
+		if (!doAutoLift) liftMotor->Set(0);
+	}
 }
 
 // measured positions of lift
@@ -103,7 +115,7 @@ bool ShiftieLiftie::isDone() {
 }
 
 void ShiftieLiftie::Periodic() {
-	if (!LIFT_CONTINUOUS_CONTROL) {
+	if (doAutoLift) {
 		double position = getPosition();
 		double rate = getRate();
 
