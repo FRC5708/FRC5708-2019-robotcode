@@ -28,6 +28,7 @@
 constexpr int LeftEncoderChannel[2] = {0,1};
 constexpr int RightEncoderChannel[2] = {2,3};
 constexpr int LiftEncoderChannel[2] = {4,5};
+constexpr int HatchCounterChannel = 6;
 
 constexpr int FLMotorChannel = 0;
 constexpr int BLMotorChannel = 1;

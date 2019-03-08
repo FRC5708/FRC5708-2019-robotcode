@@ -7,7 +7,12 @@
 
 #include "subsystems/HatchManipulator.h"
 
-HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {}
+HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {
+  hatch_counter->SetUpSource(HatchCounterChannel); // Probably wrong input/output.
+  hatch_counter->SetUpDownCounterMode();
+  lastCount=hatch_counter->Get();
+  trueCount=0;
+}
 
 void HatchManipulator::InitDefaultCommand() {
   // Set the default command for a subsystem here.
@@ -15,12 +20,46 @@ void HatchManipulator::InitDefaultCommand() {
 }/*
 void HatchManipulator::Periodic(){
   
-}*/
+}
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
 void HatchManipulator::Raise(){
   current_position=manipulator_position::RAISED;
+}*/
+void HatchManipulator::Periodic(){
+  updateTrueCount();
+  if(current_position=STOP) return;
+  if(current_position=RAISED){
+    if(abs(trueCount - 0) > 10 ){
+    hatchMotor->Set(-1.0);
+    }
+    else{
+      current_position=STOP;
+    }
+  }
+  if(current_position=LOWERED){
+    if(abs(trueCount - LOWERED_COUNT) > 10){
+      hatchMotor->Set(1.0);
+    }else{
+      current_position=STOP;
+    }
+  }
+}
+int HatchManipulator::getCountChange(){
+  int difference = hatch_counter->Get() - lastCount;
+  lastCount=hatch_counter->Get();
+  return difference;
+}
+void HatchManipulator::updateTrueCount(){
+  //0 equals all the way raised, increases as goes down.
+  trueCount=trueCount + getCountChange() * current_position;
 }
 void HatchManipulator::Lower(){
-  current_position=manipulator_position::LOWERED;
+  current_position=LOWERED;
+}
+void HatchManipulator::Raise(){
+  current_position=RAISED;
+}
+void HatchManipulator::Stop(){
+  current_position=STOP;
 }

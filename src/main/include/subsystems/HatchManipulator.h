@@ -11,7 +11,12 @@
 #include <frc/Spark.h>
 #include <frc/Encoder.h>
 #include "RobotMap.h"
+#include "frc/Counter.h"
 constexpr bool HATCH_CONTINUOUS_CONTROL=true;
+constexpr int LOWERED_COUNT=500; //Test to find actual value!
+constexpr int RAISED=-1;
+constexpr int LOWERED=1;
+constexpr int STOP=0;
 class HatchManipulator : public frc::Subsystem {
  private:
   // It's desirable that everything possible under private except
@@ -20,10 +25,16 @@ class HatchManipulator : public frc::Subsystem {
  public:
   HatchManipulator();
   void InitDefaultCommand() override;
+  void Periodic() override;
   void Raise();
   void Lower();
-  enum manipulator_position{RAISED,LOWERED};
-  manipulator_position current_position=manipulator_position::RAISED;
+  void Stop();
+  int current_position=STOP;
   frc::SpeedController* hatchMotor = new frc::Spark(hatchManipulatorChannel);
-  
+  frc::Counter* hatch_counter=new Counter();
+  int getCountChange();
+  void updateTrueCount();
+  double getDistance();
+  int lastCount=0;
+  int trueCount=0;
 };
