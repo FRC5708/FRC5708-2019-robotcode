@@ -1,10 +1,10 @@
-#include "subsystems/Drivetrain.h"
+#include "subsystems/ScootyPooty.h"
 #include "Robot.h"
 #include <iostream>
 #include <math.h>
 
 
-Drivetrain::Drivetrain() : frc::Subsystem("Drivetrain") {
+ScootyPooty::ScootyPooty() : frc::Subsystem("ScootyPooty") {
 	
 	leftEncoder->SetDistancePerPulse(1.0/360.0);
 	rightEncoder->SetDistancePerPulse(1.0/360.0);
@@ -13,7 +13,7 @@ Drivetrain::Drivetrain() : frc::Subsystem("Drivetrain") {
 	FLMotor->SetInverted(true);
 }
 
-double Drivetrain::Limit(double number) {
+double ScootyPooty::Limit(double number) {
   if (number > 1.0) {
     return 1.0;
   }
@@ -23,14 +23,14 @@ double Drivetrain::Limit(double number) {
   return number;
 }
 
-void Drivetrain::Drive(double left, double right) {
+void ScootyPooty::Drive(double left, double right) {
 	FLMotor->Set(left);
 	BLMotor->Set(left);
 	FRMotor->Set(right);
 	BRMotor->Set(right);
 }
 
-void Drivetrain::DrivePolar(double moveValue, double rotateValue) {
+void ScootyPooty::DrivePolar(double moveValue, double rotateValue) {
 
   double leftMotorOutput;
   double rightMotorOutput;
@@ -59,7 +59,7 @@ void Drivetrain::DrivePolar(double moveValue, double rotateValue) {
   Drive(leftMotorOutput,rightMotorOutput);
 }
 
-void Drivetrain::ResetDistance(){
+void ScootyPooty::ResetDistance(){
 	leftEncoder->Reset();
 	rightEncoder->Reset();
 

@@ -1,7 +1,7 @@
 #include "subsystems/ShiftieLiftie.h"
 #include <iostream>
 
-ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
+ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Shiftie Liftie"),
 liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 
 	liftEncoder.SetDistancePerPulse(1.0/360.0);

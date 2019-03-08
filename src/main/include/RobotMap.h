@@ -35,5 +35,6 @@ constexpr int FRMotorChannel = 2;
 constexpr int BRMotorChannel = 3;
 constexpr int liftMotorChannel = 4;
 constexpr int ballManipulatorMotorLeft = 5, ballManipulatorMotorRight = 6;
+constexpr int pokerSolenoidChannelForward = 7, pokerSolenoidChannelBackward = 8;
 
 constexpr double WheelCircumference = 6 * M_PI;

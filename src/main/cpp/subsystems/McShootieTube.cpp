@@ -3,7 +3,7 @@
 #include <frc/Spark.h>
 #include "RobotMap.h"
 
-McShootieTube::McShootieTube() : Subsystem("Manipulator"),
+McShootieTube::McShootieTube() : Subsystem("McShootie Tube"),
 leftMotor(new frc::Spark(ballManipulatorMotorLeft)), rightMotor(new frc::Spark(ballManipulatorMotorRight)) {
 
 	// Change this if manipulator controls are inverted
