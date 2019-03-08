@@ -1,6 +1,7 @@
 #include "commands/DriveWithJoystick.h"
 #include <iostream>
 #include <frc/commands/CommandGroup.h>
+#include "subsystems/HatchManipulator.h"
 
 // buttons on xbox:
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
@@ -55,7 +56,14 @@ void cancelCommand(frc::Command* toCancel) {
 	}
 	else cancelCommand(toCancel->GetGroup());
 }
-
+void doHatchManipulator(){
+	if(!HATCH_CONTINUOUS_CONTROL){
+		
+	}else{
+		double power = inputTransform(Robot::driveJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		Robot::hatch.hatchMotor->Set(power);
+	}
+}
 void doLiftManipulator() {
 	if(!LIFT_CONTINUOUS_CONTROL) {
 		int pov = Robot::liftJoystick->GetPOV();

@@ -26,6 +26,7 @@ VisionReceiver Robot::visionReceiver;
 ShiftieLiftie Robot::lift;
 McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
+HatchManipulator Robot::hatch;
 
 Robot* Robot::instance;
 bool environment_check(){
