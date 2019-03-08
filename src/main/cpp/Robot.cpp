@@ -45,7 +45,18 @@ void Robot::RobotInit() {
 	Robot::m_oi = new OI();
 
 	driveCommand = new DriveWithJoystick();
-	
+
+	locationSelect.SetDefaultOption("Starting pos: C", 'C');
+	locationSelect.AddOption("L", 'L');
+	locationSelect.AddOption("R", 'R');
+
+	targetSideSelect.AddOption("Target Side: L", 'L');
+	targetSideSelect.AddOption("R", 'R');
+
+	targetSelect.SetDefaultOption("Ship Front", 0);
+	targetSelect.AddOption("Ship Side 1", 1);
+	targetSelect.AddOption("Ship Side 2", 2);
+	targetSelect.AddOption("Ship Side 3", 3);
 }
 
 /**
@@ -72,7 +83,14 @@ void Robot::DisabledInit() {
 	frc::Scheduler::GetInstance()->RemoveAll();
 }
 
-void Robot::DisabledPeriodic() { frc::Scheduler::GetInstance()->Run(); }
+void Robot::DisabledPeriodic() { 
+	frc::Scheduler::GetInstance()->Run();
+
+	frc::SmartDashboard::PutString("Auto", "pos: "+
+	std::to_string(locationSelect.GetSelected())
+	+ ". Target: "+std::to_string(targetSelect.GetSelected())
+	+ ", side: "+std::to_string(targetSideSelect.GetSelected()));
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select

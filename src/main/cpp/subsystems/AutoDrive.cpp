@@ -8,7 +8,7 @@
 #include <array>
 
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
-	resetPosition();
+	resetPosition({ 0, 0, 0, 0 });
 	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
