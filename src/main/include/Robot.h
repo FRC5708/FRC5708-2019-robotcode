@@ -20,6 +20,7 @@
 
 #include "subsystems/ShiftieLiftie.h"
 #include "subsystems/McShootieTube.h"
+#include "subsystems/HatchManipulator.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -32,6 +33,7 @@ class Robot : public frc::TimedRobot {
 	static McShootieTube manipulator;
 	static ShiftieLiftie lift;
 	static frc::Gyro* gyro;
+	static HatchManipulator hatch;
 
 	static Robot* instance;
 
