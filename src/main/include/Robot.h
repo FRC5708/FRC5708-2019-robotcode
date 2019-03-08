@@ -24,7 +24,7 @@
 class Robot : public frc::TimedRobot {
  public:
  
-	static frc::Joystick* joystick;
+	static frc::Joystick *driveJoystick, *liftJoystick;
 	static OI* m_oi;
 	static Drivetrain drivetrain;
     static AutoDrive autoDrive;

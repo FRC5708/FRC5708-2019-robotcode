@@ -17,7 +17,7 @@
 
 bool environment_check();
 bool IS_PROD = environment_check();
-frc::Joystick* Robot::joystick;
+frc::Joystick *Robot::driveJoystick, *Robot::liftJoystick;
 OI* Robot::m_oi;
 Drivetrain Robot::drivetrain;
 AutoDrive Robot::autoDrive;
@@ -38,7 +38,8 @@ void Robot::RobotInit() {
 	//m_chooser.AddOption("My Auto", &m_myAuto);
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
-	Robot::joystick = new frc::Joystick(0);
+	Robot::driveJoystick = new frc::Joystick(0);
+	Robot::liftJoystick = new frc::Joystick(1);
 	Robot::gyro = new frc::ADXRS450_Gyro();
 	Robot::m_oi = new OI();
 

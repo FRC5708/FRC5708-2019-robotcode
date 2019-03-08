@@ -58,12 +58,12 @@ void cancelCommand(frc::Command* toCancel) {
 
 void doLiftManipulator() {
 	if(!LIFT_CONTINUOUS_CONTROL) {
-		int pov = Robot::joystick->GetPOV();
+		int pov = Robot::liftJoystick->GetPOV();
 		if (pov != -1) {
 			ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
 			if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
 
-			if (Robot::joystick->GetRawButton(1)) {
+			if (Robot::liftJoystick->GetRawButton(1)) {
 				// ball manipulator position
 				switch (pov) {
 					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
@@ -71,7 +71,7 @@ void doLiftManipulator() {
 					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
 				}
 			}
-			if (Robot::joystick->GetRawButton(4)) {
+			if (Robot::liftJoystick->GetRawButton(4)) {
 				// hatch manipulator position
 				switch (pov) {
 					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
@@ -85,12 +85,12 @@ void doLiftManipulator() {
 	}
 	else {
 		// I think this is the left stick vertical
-		double power = inputTransform(Robot::joystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
 		Robot::lift.liftMotor->Set(power);
 	}
 
-	if (Robot::joystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
-	else if (Robot::joystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
+	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
+	else if (Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
 	else Robot::manipulator.Stop();
 }
 
@@ -101,14 +101,14 @@ void DriveWithJoystick::Execute() {
 
 	switch (joyMode){
 		case SINGLE_JOY: {
-			turn = -Robot::joystick->GetX();
-			power = Robot::joystick->GetY();
+			turn = -Robot::driveJoystick->GetX();
+			power = Robot::driveJoystick->GetY();
 			turn = inputTransform(turn, 0, 0);
 			break;
 		}
 		case XBOX: {
-			turn = Robot::joystick->GetX();
-			power = Robot::joystick->GetRawAxis(3)-Robot::joystick->GetRawAxis(2);
+			turn = Robot::driveJoystick->GetX();
+			power = Robot::driveJoystick->GetRawAxis(3)-Robot::driveJoystick->GetRawAxis(2);
 			turn = inputTransform(turn, 0, 0.1);
 
 			doLiftManipulator();
