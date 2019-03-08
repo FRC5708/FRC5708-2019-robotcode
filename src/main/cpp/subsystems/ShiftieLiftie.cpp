@@ -50,8 +50,13 @@ constexpr double hatchZero = 1*12+7;
 }
 
 void ShiftieLiftie::MoveMotor(double power) {
+	if (power != 0) {
 	doAutoLift = false;
 	liftMotor->Set(power);
+	}
+	else {
+		if (!doAutoLift) liftMotor->Set(0);
+	}
 }
 
 // measured positions of lift

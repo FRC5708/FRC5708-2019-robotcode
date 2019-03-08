@@ -48,17 +48,21 @@ void Robot::RobotInit() {
 
 	driveCommand = new DriveWithJoystick();
 
-	locationSelect.SetDefaultOption("Starting pos: C", 'C');
+	locationSelect.SetDefaultOption("Center", 'C');
 	locationSelect.AddOption("Left", 'L');
 	locationSelect.AddOption("Right", 'R');
+	frc::SmartDashboard::PutData("Starting Pos", &locationSelect);
 
-	targetSideSelect.AddOption("Target Side: Left", 'L');
+	targetSideSelect.SetDefaultOption("Left", 'L');
 	targetSideSelect.AddOption("Right", 'R');
+	frc::SmartDashboard::PutData("Target Side", &targetSideSelect);
 
 	targetSelect.SetDefaultOption("Ship Front", 0);
 	targetSelect.AddOption("Ship Side 1", 1);
 	targetSelect.AddOption("Ship Side 2", 2);
 	targetSelect.AddOption("Ship Side 3", 3);
+
+	frc::SmartDashboard::PutData("Target", &targetSelect);
 }
 
 /**

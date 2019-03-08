@@ -101,7 +101,7 @@ void doLiftManipulator() {
 
 	else {
 		// right stick vertical
-		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.22, 0, 0);
 		Robot::lift.MoveMotor(power);
 	}
 
