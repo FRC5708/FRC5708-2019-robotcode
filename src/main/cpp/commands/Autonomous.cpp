@@ -66,6 +66,6 @@ Autonomous::Autonomous(std::vector<AutoDrive::Point> points) {
 	AddSequential(new PointMover(points));
 
 	AddSequential(new VisionDrive(true));
-	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::LowGoalCargo));
+	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));
 	AddSequential(new BallShoot());
 }
