@@ -13,6 +13,7 @@ HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {
   hatch_counter->SetUpDownCounterMode();
   lastCount=hatch_counter->Get();
   trueCount=0;
+  hatchMotor->SetInverted(true);
 }
 
 void HatchManipulator::InitDefaultCommand() {
@@ -28,7 +29,7 @@ void HatchManipulator::Raise(){
   current_position=manipulator_position::RAISED;
 }*/
 void HatchManipulator::Periodic(){
-  updateTrueCount();
+/*  updateTrueCount();
   if(current_position=STOP) return;
   if(current_position=RAISED){
     if(abs(trueCount - 0) > 10 ){
@@ -44,7 +45,7 @@ void HatchManipulator::Periodic(){
     }else{
       current_position=STOP;
     }
-  }
+  }*/
 }
 int HatchManipulator::getCountChange(){
   int difference = hatch_counter->Get() - lastCount;

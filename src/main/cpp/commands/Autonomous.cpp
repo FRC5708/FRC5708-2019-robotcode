@@ -60,12 +60,48 @@ void PointMover::End() {
 	Robot::autoDrive.commandUsing = nullptr;
 }
 
+class TimedHatch : public frc::Command {
+public:
+	TimedHatch(){};
+	
+	void Initialize() override {
+		startTime = std::chrono::steady_clock::now();
+	}
+	void Execute() override {
+		Robot::hatch.hatchMotor->Set(1);
+	}
+	bool IsFinished() override {
+		if (std::chrono::steady_clock::now() > startTime + std::chrono::milliseconds(10000)) {
+			Robot::hatch.hatchMotor->Set(0);
+			return true;
+		}
+		return false;
+	}
+private:
+	std::chrono::steady_clock::time_point startTime;
+}; 
+class WaitFor : public frc::Command {
+	frc::Command* target;
+public:
+	WaitFor(frc::Command* target) : target(target) {};
+	bool IsFinished() override {
+		return !target->IsRunning();
+	}
+};
 
-Autonomous::Autonomous(std::vector<AutoDrive::Point> points) {
+
+Autonomous::Autonomous(std::vector<AutoDrive::Point> points, bool doCargo) {
+	TimedHatch* timedHatch = new TimedHatch();
+	if (!doCargo) AddParallel(timedHatch);
+
 
 	AddSequential(new PointMover(points));
+	
+	if (!doCargo) AddSequential(new WaitFor(timedHatch));
+	AddSequential(new VisionDrive(true, !doCargo));
 
-	AddSequential(new VisionDrive(true));
-	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));
-	AddSequential(new BallShoot());
+	if (doCargo) {
+		AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));
+		AddSequential(new BallShoot());
+	}
 }

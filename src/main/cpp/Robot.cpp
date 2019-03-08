@@ -63,6 +63,10 @@ void Robot::RobotInit() {
 	targetSelect.AddOption("Ship Side 3", 3);
 
 	frc::SmartDashboard::PutData("Target", &targetSelect);
+
+	itemSelect.SetDefaultOption("Cargo", true);
+	itemSelect.AddOption("Hatch", false);
+	frc::SmartDashboard::PutData("Game Piece", &itemSelect);
 }
 
 /**
@@ -156,7 +160,7 @@ void Robot::AutonomousInit() {
 	}
 
 	if (autoCommand != nullptr) delete autoCommand;
-	autoCommand = new Autonomous(points);
+	autoCommand = new Autonomous(points, itemSelect.GetSelected());
 	autoCommand->Start();
 }
 

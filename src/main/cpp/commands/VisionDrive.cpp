@@ -2,7 +2,7 @@
 #include "Robot.h"
 #include <iostream>
 
-VisionDrive::VisionDrive(bool retry) : retry(retry) {
+VisionDrive::VisionDrive(bool retry, bool stayBack) : retry(retry), stayBack(stayBack) {
 	Requires(&Robot::autoDrive);
 }
 
@@ -30,7 +30,6 @@ void VisionDrive::Execute() {
 	if (gotFirstData) {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 30;
-		constexpr double finalApproachDist = 2;
 
 		AutoDrive::Point approachPoint = { 
 			currentTarget.loc.x - (approachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
@@ -51,6 +50,7 @@ void VisionDrive::Execute() {
 		}
 
 		if (Robot::autoDrive.passedTarget(startingPoint)) {
+			double finalApproachDist = stayBack ? 2 : 0;
 			Robot::autoDrive.target.loc = {
 
 				currentTarget.loc.x - (finalApproachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),

@@ -57,6 +57,7 @@ class Robot : public frc::TimedRobot {
 	frc::SendableChooser<char> locationSelect;
 	frc::SendableChooser<char> targetSideSelect;
 	frc::SendableChooser<int> targetSelect;
+	frc::SendableChooser<bool> itemSelect;
 
 	frc::Command* driveCommand;
 };
