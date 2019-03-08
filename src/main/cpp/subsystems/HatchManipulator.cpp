@@ -9,8 +9,6 @@
 #include <iostream>
 
 HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {
-  hatch_counter->SetUpSource(HatchCounterChannel); // Probably wrong input/output.
-  hatch_counter->SetUpDownCounterMode();
   lastCount=hatch_counter->Get();
   trueCount=0;
 }
@@ -31,7 +29,7 @@ void HatchManipulator::Periodic(){
   updateTrueCount();
   if(current_position=STOP) return;
   if(current_position=RAISED){
-    if(abs(trueCount - 0) > 10 ){
+    if(abs(trueCount - 0) > 1000 ){
     hatchMotor->Set(-1.0);
     }
     else{
@@ -39,7 +37,7 @@ void HatchManipulator::Periodic(){
     }
   }
   if(current_position=LOWERED){
-    if(abs(trueCount - LOWERED_COUNT) > 10){
+    if(abs(trueCount - LOWERED_COUNT) > 1000){
       hatchMotor->Set(1.0);
     }else{
       current_position=STOP;
