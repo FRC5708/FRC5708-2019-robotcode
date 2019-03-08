@@ -17,7 +17,7 @@ Do SPARKS stay in brake mode when limit switches are activated??
 */
 
 // if true, the lift will be controlled by a joystick instead of at discrete intervals
-constexpr bool LIFT_CONTINUOUS_CONTROL = false;
+constexpr bool LIFT_CONTINUOUS_CONTROL = true;
 
 class ShiftieLiftie : public frc::Subsystem {
  public:
