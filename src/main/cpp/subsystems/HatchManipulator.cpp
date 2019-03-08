@@ -5,16 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "subsystems/ExampleSubsystem.h"
+#include "subsystems/HatchManipulator.h"
 
-#include "RobotMap.h"
+HatchManipulator::HatchManipulator() : Subsystem("ExampleSubsystem") {}
 
-ExampleSubsystem::ExampleSubsystem() : frc::Subsystem("ExampleSubsystem") {}
-
-void ExampleSubsystem::InitDefaultCommand() {
+void HatchManipulator::InitDefaultCommand() {
   // Set the default command for a subsystem here.
   // SetDefaultCommand(new MySpecialCommand());
-}
-
+}/*
+void HatchManipulator::Periodic(){
+  
+}*/
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
+void HatchManipulator::Raise(){
+  current_position=manipulator_position::RAISED;
+}
+void HatchManipulator::Lower(){
+  current_position=manipulator_position::LOWERED;
+}

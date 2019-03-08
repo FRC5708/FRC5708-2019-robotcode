@@ -10,32 +10,53 @@
 #include <frc/TimedRobot.h>
 #include <frc/commands/Command.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/Joystick.h>
+#include <frc/interfaces/Gyro.h>
 
 #include "OI.h"
-#include "commands/ExampleCommand.h"
-#include "commands/MyAutoCommand.h"
-#include "subsystems/ExampleSubsystem.h"
+#include "subsystems/Drivetrain.h"
+#include "subsystems/AutoDrive.h"
+#include "subsystems/VisionReceiver.h"
+
+#include "subsystems/ShiftieLiftie.h"
+#include "subsystems/McShootieTube.h"
+#include "subsystems/HatchManipulator.h"
 
 class Robot : public frc::TimedRobot {
  public:
-  static ExampleSubsystem m_subsystem;
-  static OI m_oi;
+ 
+	static frc::Joystick *driveJoystick, *liftJoystick;
+	static OI* m_oi;
+	static Drivetrain drivetrain;
+    static AutoDrive autoDrive;
+    static VisionReceiver visionReceiver;
+	static McShootieTube manipulator;
+	static ShiftieLiftie lift;
+	static frc::Gyro* gyro;
+	static HatchManipulator hatch;
 
-  void RobotInit() override;
-  void RobotPeriodic() override;
-  void DisabledInit() override;
-  void DisabledPeriodic() override;
-  void AutonomousInit() override;
-  void AutonomousPeriodic() override;
-  void TeleopInit() override;
-  void TeleopPeriodic() override;
-  void TestPeriodic() override;
+	static Robot* instance;
+
+	void RobotInit() override;
+	void RobotPeriodic() override;
+	void DisabledInit() override;
+	void DisabledPeriodic() override;
+	void AutonomousInit() override;
+	void AutonomousPeriodic() override;
+	void TeleopInit() override;
+	void TeleopPeriodic() override;
+	void TestPeriodic() override;
 
  private:
-  // Have it null by default so that if testing teleop it
-  // doesn't have undefined behavior and potentially crash.
-  frc::Command* m_autonomousCommand = nullptr;
-  ExampleCommand m_defaultAuto;
-  MyAutoCommand m_myAuto;
-  frc::SendableChooser<frc::Command*> m_chooser;
+	// Have it null by default so that if testing teleop it
+	// doesn't have undefined behavior and potentially crash.
+	frc::Command* autoCommand = nullptr;
+	//ExampleCommand m_defaultAuto;
+	//MyAutoCommand m_myAuto;
+	//frc::SendableChooser<frc::Command*> m_chooser;
+	frc::SendableChooser<char> locationSelect;
+	frc::SendableChooser<char> targetSideSelect;
+	frc::SendableChooser<int> targetSelect;
+
+	frc::Command* driveCommand;
 };

@@ -8,13 +8,22 @@
 #pragma once
 
 #include <frc/commands/Subsystem.h>
-
-class ExampleSubsystem : public frc::Subsystem {
- public:
-  ExampleSubsystem();
-  void InitDefaultCommand() override;
-
+#include <frc/Spark.h>
+#include <frc/Encoder.h>
+#include "RobotMap.h"
+constexpr bool HATCH_CONTINUOUS_CONTROL=true;
+class HatchManipulator : public frc::Subsystem {
  private:
   // It's desirable that everything possible under private except
   // for methods that implement subsystem capabilities
+
+ public:
+  HatchManipulator();
+  void InitDefaultCommand() override;
+  void Raise();
+  void Lower();
+  enum manipulator_position{RAISED,LOWERED};
+  manipulator_position current_position=manipulator_position::RAISED;
+  frc::SpeedController* hatchMotor = new frc::Spark(hatchManipulatorChannel);
+  
 };

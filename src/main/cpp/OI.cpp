@@ -6,9 +6,14 @@
 /*----------------------------------------------------------------------------*/
 
 #include "OI.h"
+#include "Robot.h"
 
 #include <frc/WPILib.h>
+#include "commands/VisionDrive.h"
+
+constexpr int VISION_BUTTON = 3;
 
 OI::OI() {
-  // Process operator interface input here.
+	frc::JoystickButton* visionButton = new frc::JoystickButton(Robot::liftJoystick, VISION_BUTTON);
+	visionButton->WhenPressed(new VisionDrive(false));
 }

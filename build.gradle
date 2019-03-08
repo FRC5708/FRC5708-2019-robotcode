@@ -1,7 +1,7 @@
 plugins {
     id "cpp"
     id "google-test-test-suite"
-    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "edu.wpi.first.GradleRIO" version "2019.2.1"
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -9,6 +9,7 @@ plugins {
 deploy {
     targets {
         roboRIO("roborio") {
+            validImageVersions = ['2019_v12', '2019_v13', '2019_v14']
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
             // or from command line. If not found an exception will be thrown.
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
