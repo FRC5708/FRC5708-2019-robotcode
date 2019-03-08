@@ -48,7 +48,7 @@ class Robot : public frc::TimedRobot {
  private:
 	// Have it null by default so that if testing teleop it
 	// doesn't have undefined behavior and potentially crash.
-	frc::Command* m_autonomousCommand = nullptr;
+	frc::Command* autoCommand = nullptr;
 	//ExampleCommand m_defaultAuto;
 	//MyAutoCommand m_myAuto;
 	//frc::SendableChooser<frc::Command*> m_chooser;

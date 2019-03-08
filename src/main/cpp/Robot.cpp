@@ -6,8 +6,9 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
-#include <iostream>
 
+#include "commands/Autonomous.h"
+#include <iostream>
 #include <frc/commands/Scheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/AnalogGyro.h>
@@ -47,11 +48,11 @@ void Robot::RobotInit() {
 	driveCommand = new DriveWithJoystick();
 
 	locationSelect.SetDefaultOption("Starting pos: C", 'C');
-	locationSelect.AddOption("L", 'L');
-	locationSelect.AddOption("R", 'R');
+	locationSelect.AddOption("Left", 'L');
+	locationSelect.AddOption("Right", 'R');
 
-	targetSideSelect.AddOption("Target Side: L", 'L');
-	targetSideSelect.AddOption("R", 'R');
+	targetSideSelect.AddOption("Target Side: Left", 'L');
+	targetSideSelect.AddOption("Right", 'R');
 
 	targetSelect.SetDefaultOption("Ship Front", 0);
 	targetSelect.AddOption("Ship Side 1", 1);
@@ -118,6 +119,40 @@ void Robot::AutonomousInit() {
 		m_autonomousCommand->Start();
 	}*/
 	if (!driveCommand->IsRunning()) driveCommand->Start();
+
+	double xMag = 2*12 + 3*12 + 4 - ROBOT_WIDTH/2;
+	double yStart = 4*12 + ROBOT_LENGTH/2;
+
+	AutoDrive::Point start;
+	switch (locationSelect.GetSelected()) {
+		case 'R': start = { xMag, 0 };
+		case 'L': start = { -xMag, 0 }; break;
+		case 'C': start = { 0, 0 }; break;
+	}
+	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
+
+	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
+
+	AutoDrive::Point basePoint;
+
+	std::vector<AutoDrive::Point> points;
+	points.push_back({ autoDrive.getCurrentPos().loc.x, 4*12+6 });
+
+	int target = targetSelect.GetSelected();
+	constexpr double SHIP_BOTTOM = 54*12/2 - (9 + 8*12);
+	if (target == 0) {
+		points.push_back({ 18*sideSign, SHIP_BOTTOM - 30 - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_BOTTOM - 20 - ROBOT_LENGTH/2 });
+	}
+	else {
+		points.push_back({ (23+36)*sideSign, SHIP_BOTTOM - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_BOTTOM + 25 + (target - 1) * 21 });
+		points.push_back({ points.back().x - 12*sideSign, points.back().y });
+	}
+
+	if (autoCommand != nullptr) delete autoCommand;
+	autoCommand = new Autonomous(points);
+	autoCommand->Start();
 }
 
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
@@ -127,10 +162,6 @@ void Robot::TeleopInit() {
 	// teleop starts running. If you want the autonomous to
 	// continue until interrupted by another command, remove
 	// this line or comment it out.
-	if (m_autonomousCommand != nullptr) {
-		m_autonomousCommand->Cancel();
-		m_autonomousCommand = nullptr;
-	}
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 

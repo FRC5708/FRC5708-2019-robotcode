@@ -38,7 +38,7 @@ void PointMover::Initialize() {
 }
 void PointMover::Execute() {
 
-	if (Robot::autoDrive.passedTarget(prevTarget)) {
+	if (Robot::autoDrive.passedTarget(prevTarget) || Robot::autoDrive.atTarget(targets[currentTargetIdx])) {
 
 		currentTargetIdx++;
 		if (currentTargetIdx < targets.size()) {
@@ -61,11 +61,9 @@ void PointMover::End() {
 }
 
 
-Autonomous::Autonomous() {
+Autonomous::Autonomous(std::vector<AutoDrive::Point> points) {
 
-	AddSequential(new PointMover(std::vector<AutoDrive::Point>({
-		// add points here
-	})));
+	AddSequential(new PointMover(points));
 
 	AddSequential(new VisionDrive(true));
 	AddSequential(new LiftMove(ShiftieLiftie::Setpoint::LowGoalCargo));
