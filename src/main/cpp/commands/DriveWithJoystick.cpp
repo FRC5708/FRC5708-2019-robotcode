@@ -56,49 +56,59 @@ void cancelCommand(frc::Command* toCancel) {
 	}
 	else cancelCommand(toCancel->GetGroup());
 }
-void doHatchManipulator(){
+void doHatch(){
 	if(!HATCH_CONTINUOUS_CONTROL){
 		
 	}else{
-		double power = inputTransform(Robot::driveJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		//double power = inputTransform(Robot::driveJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
+		double power = 0;
+
+		if (Robot::liftJoystick->GetRawButton(7) || Robot::driveJoystick->GetRawButton(7)) {
+			power = -1;
+		}
+		if (Robot::liftJoystick->GetRawButton(8) || Robot::driveJoystick->GetRawButton(8)) {
+			power = 1;
+		}
 		Robot::hatch.hatchMotor->Set(power);
 	}
 }
 void doLiftManipulator() {
-	if(!LIFT_CONTINUOUS_CONTROL) {
-		int pov = Robot::liftJoystick->GetPOV();
-		if (pov != -1) {
-			ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
-			if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
+	
+	int pov = Robot::liftJoystick->GetPOV();
+	if (pov != -1) {
+		ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
+		if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
 
-			if (Robot::liftJoystick->GetRawButton(1)) {
-				// ball manipulator position
-				switch (pov) {
-					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
-					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
-					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
-				}
+		if (Robot::liftJoystick->GetRawButton(1)) {
+			// ball manipulator position
+			switch (pov) {
+				case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
+				case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
+				case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
 			}
-			if (Robot::liftJoystick->GetRawButton(4)) {
-				// hatch manipulator position
-				switch (pov) {
-					case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
-					case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalHatch; break;
-					case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
-				}
+		}
+		if (Robot::liftJoystick->GetRawButton(4)) {
+			// hatch manipulator position
+			switch (pov) {
+				case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
+				case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalHatch; break;
+				case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
 			}
+		}
 
-			Robot::lift.Elevate(setpoint);
-		}	
-	}
+		Robot::lift.Elevate(setpoint);
+	}	
+
 	else {
-		// I think this is the left stick vertical
-		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
-		Robot::lift.liftMotor->Set(power);
+		// right stick vertical
+		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.22, 0, 0);
+		Robot::lift.MoveMotor(power);
 	}
 
-	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
-	else if (Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
+	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON) ||
+	 Robot::driveJoystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
+	else if (Robot::liftJoystick->GetRawButton(INTAKE_BUTTON) || 
+	Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
 	else Robot::manipulator.Stop();
 }
 
@@ -120,6 +130,7 @@ void DriveWithJoystick::Execute() {
 			turn = inputTransform(turn, 0, 0.1);
 
 			doLiftManipulator();
+			doHatch();
 			break;
 		}
 	}

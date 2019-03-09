@@ -30,6 +30,8 @@ void VisionDrive::Execute() {
 	if (gotFirstData) {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 30;
+		constexpr double finalApproachDist = 2;
+
 		AutoDrive::Point approachPoint = { 
 			currentTarget.loc.x - (approachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
 			currentTarget.loc.y - (approachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
@@ -50,8 +52,9 @@ void VisionDrive::Execute() {
 
 		if (Robot::autoDrive.passedTarget(startingPoint)) {
 			Robot::autoDrive.target.loc = {
-				currentTarget.loc.x - (ROBOT_LENGTH / 2)*sin(currentTarget.angle),
-				currentTarget.loc.y - (ROBOT_LENGTH / 2)*cos(currentTarget.angle)
+
+				currentTarget.loc.x - (finalApproachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
+				currentTarget.loc.y - (finalApproachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
 			};
 			Robot::autoDrive.target.slowDown = true;
 			Robot::autoDrive.target.isAngled = false;
