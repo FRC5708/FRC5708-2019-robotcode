@@ -13,7 +13,7 @@ class Logger{
         time_t rawtime; time (&rawtime); struct tm *tm_struct = localtime(&rawtime);
         if(output_filepath==""){
             stringstream output;
-            output <<  "~/Log_" << name <<  ':' << (tm_struct->tm_hour) << ':' << (tm_struct->tm_min) << ':' << (tm_struct->tm_sec) << ".txt";
+            output <<  "/home/lvuser/Logging/Log_" << name <<  ':' << (tm_struct->tm_hour) << ':' << (tm_struct->tm_min) << ':' << (tm_struct->tm_sec) << ".txt";
             output_filepath=output.str();
         }
         this->output_file.open(output_filepath,ofstream::out | ofstream::trunc);
