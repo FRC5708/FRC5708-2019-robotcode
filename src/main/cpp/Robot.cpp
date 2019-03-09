@@ -127,6 +127,9 @@ void Robot::AutonomousInit() {
 	if (m_autonomousCommand != nullptr) {
 		m_autonomousCommand->Start();
 	}*/
+	drivetrain.ResetDistance();
+	gyro->Reset();
+
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 
 	double xMag = 2*12 + 3*12 + 4 - ROBOT_WIDTH/2;

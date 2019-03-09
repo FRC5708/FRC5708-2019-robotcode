@@ -25,7 +25,7 @@ private:
 
 	void updateTarget();
 
-	bool done;
+	bool done = false;
 };
 
 void PointMover::Initialize() {
@@ -76,6 +76,9 @@ public:
 			return true;
 		}
 		return false;
+	}
+	void End() override {
+		Robot::hatch.hatchMotor->Set(0);
 	}
 private:
 	std::chrono::steady_clock::time_point startTime;

@@ -106,8 +106,8 @@ constexpr double moveTolerance = 0.5; // inches away from the target point to be
 constexpr double kMove = 0.4; // motor-powers per inch
 constexpr double maxMoveSpeed = 36; // soft cap, in inches per second
 constexpr double maxOverSpeed = 10; // in/sec over maxMoveSpeed, at which motors are set to 0
-constexpr double slowDownPos = 2; // inches above bottom when we lower the max speed
-constexpr double slowestMaxSpeed = 10; // in/sec when lowering slowly
+constexpr double slowDownPos = 5; // inches above bottom when we lower the max speed
+constexpr double slowestMaxSpeed = 8; // in/sec when lowering slowly
 constexpr int maxHoldTicks = 100; // 2 seconds
 
 bool ShiftieLiftie::isDone() {

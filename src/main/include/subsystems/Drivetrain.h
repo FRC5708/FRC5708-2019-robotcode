@@ -28,10 +28,10 @@ public:
 	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], false);
 private:
 
-	frc::SpeedController* FLMotor = new frc::Spark(FLMotorChannel);
-	frc::SpeedController* BLMotor = new frc::Spark(BLMotorChannel);
-	frc::SpeedController* FRMotor = new frc::Spark(FRMotorChannel);
-	frc::SpeedController* BRMotor = new frc::Spark(BRMotorChannel);
+	frc::SpeedController* FLMotor = new frc::Spark(FRMotorChannel);
+	frc::SpeedController* BLMotor = new frc::Spark(BRMotorChannel);
+	frc::SpeedController* FRMotor = new frc::Spark(FLMotorChannel);
+	frc::SpeedController* BRMotor = new frc::Spark(BLMotorChannel);
 
 	int ticksSinceLastDrive = 0;
 };

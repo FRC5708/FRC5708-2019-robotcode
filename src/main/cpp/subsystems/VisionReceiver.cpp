@@ -107,8 +107,12 @@ void VisionReceiver::Periodic() {
 			TargetLoc target;
 			Radian wholeAngle = i.robotAngle + robPos.angle;
 
-			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle) + (ROBOT_LENGTH / 2)*sin(Radian(robPos.angle));
-			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle) + (ROBOT_LENGTH / 2)*cos(Radian(robPos.angle));
+			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle)
+			 + (ROBOT_LENGTH / 2 - 6)*sin(Radian(robPos.angle)) -
+			  (ROBOT_WIDTH / 2 - 1)*cos(Radian(robPos.angle));
+			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle)
+			 + (ROBOT_LENGTH / 2 - 6)*cos(Radian(robPos.angle))
+			 - (ROBOT_WIDTH / 2 - 1)*sin(Radian(robPos.angle));
 
 			target.angle = i.tapeAngle + i.robotAngle + robPos.angle;
 
