@@ -27,7 +27,7 @@ class HatchManipulator : public frc::Subsystem {
   void Stop();
   int current_position=STOP;
   frc::SpeedController* hatchMotor = new frc::Spark(hatchManipulatorChannel);
-  frc::Counter* hatch_counter=new frc::Counter();
+  frc::Counter* hatch_counter=new frc::Counter(HatchCounterChannel);
   int getCountChange();
   void updateTrueCount();
   double getDistance();
