@@ -8,10 +8,6 @@
 
 /* THINGS TO CHECK FOR BEFORE USING THIS CODE:
 
-Encoder type and DIRECTION
-Motor direction
-Spool diameter and/or rope winding function
-Make sure the limit switches are in place
 Do SPARKS stay in brake mode when limit switches are activated??
 
 */

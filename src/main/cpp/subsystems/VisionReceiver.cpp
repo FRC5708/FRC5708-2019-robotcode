@@ -49,6 +49,11 @@ void VisionReceiver::setupSocket() {
 	}
 }
 
+constexpr double cameraX = -11;
+constexpr double cameraY = 8;
+// clockwise = positive
+const Degree cameraTheta = 0;
+
 void VisionReceiver::Periodic() {
 	++dataAge;
 	//std::cout << "VisionReciever::Periodic : " << std::endl;
@@ -105,10 +110,12 @@ void VisionReceiver::Periodic() {
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
 			TargetLoc target;
-			Radian wholeAngle = i.robotAngle + robPos.angle;
+			Radian wholeAngle = -i.robotAngle + Radian(robPos.angle) + cameraTheta;
 
-			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle) + (ROBOT_LENGTH / 2)*sin(Radian(robPos.angle));
-			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle) + (ROBOT_LENGTH / 2)*cos(Radian(robPos.angle));
+			target.loc.x = robPos.loc.x + i.distance*sin(wholeAngle)
+			 + cameraX*cos(Radian(robPos.angle)) + cameraY*sin(Radian(robPos.angle));
+			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle)
+			 + cameraX*sin(Radian(robPos.angle)) + cameraY*cos(Radian(robPos.angle));
 
 			target.angle = i.tapeAngle + i.robotAngle + robPos.angle;
 
