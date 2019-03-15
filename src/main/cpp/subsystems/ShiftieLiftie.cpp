@@ -4,15 +4,19 @@
 ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
 liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 
-	liftEncoder.SetDistancePerPulse(1.0/360.0);
+	liftEncoder.SetDistancePerPulse(1.0/20.0);
+	liftEncoder.SetSamplesToAverage(4);
 
 	//Uncomment if someone winds the winch the wrong way.
 	//liftMotor->SetInverted(true);
 }
 
+
+// must be still, at bottom, for 1 second to reset encoder distance
+constexpr int calibrationWaitTicks = 50; 
+
 void ShiftieLiftie::Elevate(Setpoint point) {
 
-// TODO: MEASURE THESE VALUES
 // Height of the manipulator above the ground when the lift is at its lowest point
 constexpr double shootieZero = 6.5;
 constexpr double hatchZero = 1*12+7;
@@ -36,9 +40,23 @@ constexpr double hatchZero = 1*12+7;
 	// ROCKET middle goal
 	case HighGoalCargo: movePlace = 2*12+3.5 + 2*12+4 - shootieZero; break;
 	case HighGoalHatch: movePlace = 2*12+4; break;
+	case Stay: break;
 	}
 
 	holdTicks = 0;
+	stillTicks = 0;
+
+	doAutoLift = true;
+}
+
+void ShiftieLiftie::MoveMotor(double power) {
+	if (power != 0) {
+	doAutoLift = false;
+	liftMotor->Set(power);
+	}
+	else {
+		if (!doAutoLift) liftMotor->Set(0);
+	}
 }
 
 // measured positions of lift
@@ -85,21 +103,19 @@ double ShiftieLiftie::getRate() {
 
 constexpr double moveTolerance = 0.5; // inches away from the target point to be considered holding
 
-constexpr double kMove = 0.1; // motor-powers per inch
-constexpr double maxMoveSpeed = 24; // soft cap, in inches per second
+constexpr double kMove = 0.4; // motor-powers per inch
+constexpr double maxMoveSpeed = 36; // soft cap, in inches per second
 constexpr double maxOverSpeed = 10; // in/sec over maxMoveSpeed, at which motors are set to 0
-constexpr double slowDownPos = 4; // inches above bottom when we lower the max speed
-constexpr double slowestMaxSpeed = 5; // in/sec when lowering slowly
+constexpr double slowDownPos = 2; // inches above bottom when we lower the max speed
+constexpr double slowestMaxSpeed = 10; // in/sec when lowering slowly
 constexpr int maxHoldTicks = 100; // 2 seconds
-// must be still, at bottom, for 1 second to reset encoder distance
-constexpr int calibrationWaitTicks = 50; 
 
 bool ShiftieLiftie::isDone() {
 	return fabs(getPosition() - movePlace) < moveTolerance || holdTicks > 10;
 }
 
 void ShiftieLiftie::Periodic() {
-	if (!LIFT_CONTINUOUS_CONTROL) {
+	if (doAutoLift) {
 		double position = getPosition();
 		double rate = getRate();
 
@@ -115,13 +131,14 @@ void ShiftieLiftie::Periodic() {
 			double realMaxSpeed = maxMoveSpeed;
 
 			// slow down when approaching bottom so we don't slam into it
-			if (position < slowDownPos) realMaxSpeed -= 
+			if (position < slowDownPos && movePower < 0) realMaxSpeed -= 
 			std::max(position, 0.0) / slowDownPos * (maxMoveSpeed - slowestMaxSpeed);
 
+			// slow down if we are going too fast
 			double overSpeed = fabs(rate) - realMaxSpeed;
-
 			if (overSpeed > maxOverSpeed) movePower = 0;
 			else if (overSpeed > 0) movePower -= overSpeed / maxOverSpeed * movePower;
+
 
 			liftMotor->Set(movePower);
 		}

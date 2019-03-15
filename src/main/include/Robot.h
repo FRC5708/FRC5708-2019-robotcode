@@ -20,11 +20,12 @@
 
 #include "subsystems/ShiftieLiftie.h"
 #include "subsystems/McShootieTube.h"
+#include "subsystems/HatchManipulator.h"
 
 class Robot : public frc::TimedRobot {
  public:
  
-	static frc::Joystick* joystick;
+	static frc::Joystick *driveJoystick, *liftJoystick;
 	static OI* m_oi;
 	static Drivetrain drivetrain;
     static AutoDrive autoDrive;
@@ -32,6 +33,7 @@ class Robot : public frc::TimedRobot {
 	static McShootieTube manipulator;
 	static ShiftieLiftie lift;
 	static frc::Gyro* gyro;
+	static HatchManipulator hatch;
 
 	static Robot* instance;
 
@@ -48,9 +50,13 @@ class Robot : public frc::TimedRobot {
  private:
 	// Have it null by default so that if testing teleop it
 	// doesn't have undefined behavior and potentially crash.
-	frc::Command* m_autonomousCommand = nullptr;
+	frc::Command* autoCommand = nullptr;
 	//ExampleCommand m_defaultAuto;
 	//MyAutoCommand m_myAuto;
-	frc::SendableChooser<frc::Command*> m_chooser;
+	//frc::SendableChooser<frc::Command*> m_chooser;
+	frc::SendableChooser<char> locationSelect;
+	frc::SendableChooser<char> targetSideSelect;
+	frc::SendableChooser<int> targetSelect;
+
 	frc::Command* driveCommand;
 };

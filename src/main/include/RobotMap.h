@@ -35,9 +35,10 @@ constexpr int FRMotorChannel = 2;
 constexpr int BRMotorChannel = 3;
 constexpr int liftMotorChannel = 4;
 constexpr int ballManipulatorMotorLeft = 5, ballManipulatorMotorRight = 6;
+constexpr int hatchManipulatorChannel=7;
 
 constexpr double WheelCircumference = 6 * M_PI;
 
-constexpr double ROBOT_WIDTH = 27; // inches
-constexpr double ROBOT_LENGTH = 32;
+constexpr double ROBOT_WIDTH = 27.5; // inches
+constexpr double ROBOT_LENGTH = 33;
 extern bool IS_PROD;
