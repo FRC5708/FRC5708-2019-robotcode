@@ -14,54 +14,55 @@ HatchManipulator::HatchManipulator() : Subsystem("Hatch") {
 }
 
 void HatchManipulator::InitDefaultCommand() {
-  // Set the default command for a subsystem here.
-  // SetDefaultCommand(new MySpecialCommand());
+	// Set the default command for a subsystem here.
+	// SetDefaultCommand(new MySpecialCommand());
 }/*
 void HatchManipulator::Periodic(){
-  
+	
 }
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
 void HatchManipulator::Raise(){
-  current_position=manipulator_position::RAISED;
+	current_position=manipulator_position::RAISED;
 }*/
 void HatchManipulator::Periodic(){
-  updateTrueCount();
-  if(current_position=STOP) return;
-  if(current_position=RAISED){
-    if(abs(trueCount - 0) > 1000 ){
-    hatchMotor->Set(-0.4);
-    }
-    else{
-      current_position=STOP;
-    }
-  }
-  if(current_position=LOWERED){
-    if(abs(trueCount - LOWERED_COUNT) > 1000){
-      hatchMotor->Set(0.4);
-    }else{
-      current_position=STOP;
-    }
-  }
+	updateTrueCount();
+	if (current_position == RAISED && trueCount > 0) {
+		hatchMotor->Set(-1.0);
+	}
+	else if (current_position == LOWERED && trueCount < LOWERED_COUNT) {
+		hatchMotor->Set(1.0);
+	}
+	else {
+		hatchMotor->Set(0);
+	}
 }
 int HatchManipulator::getCountChange(){
-  int difference = hatch_counter->Get() - lastCount;
-  lastCount=hatch_counter->Get();
-  return difference;
+	int difference = hatch_counter->Get() - lastCount;
+	lastCount=hatch_counter->Get();
+	return difference;
 }
 void HatchManipulator::updateTrueCount(){
-  
-  //0 equals all the way raised, increases as goes down.
-  trueCount=trueCount + getCountChange() * current_position;
-  std::cout << "True Count: " << trueCount << std::endl;
-  std::cout << "Absolute Count: " << hatch_counter->Get() << std::endl;
+	static int timer = 0;
+	++timer;
+
+	double motorPower = hatchMotor->Get();
+	if (motorPower != 0) {
+		moveSign = (motorPower > 0) ? 1 : -1;
+	}
+	//0 equals all the way raised, increases as goes down.
+	trueCount=trueCount + getCountChange() * moveSign;
+
+	if (timer % 50 == 0) {
+		std::cout << "True Count: " << trueCount << " raw count: "<< hatch_counter->Get() << std::endl;
+	}
 }
 void HatchManipulator::Lower(){
-  current_position=LOWERED;
+	current_position=LOWERED;
 }
 void HatchManipulator::Raise(){
-  current_position=RAISED;
+	current_position=RAISED;
 }
 void HatchManipulator::Stop(){
-  current_position=STOP;
+	current_position=STOP;
 }
