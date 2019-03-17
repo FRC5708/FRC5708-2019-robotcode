@@ -12,8 +12,8 @@
 #include <frc/Encoder.h>
 #include "RobotMap.h"
 #include "frc/Counter.h"
-constexpr bool HATCH_CONTINUOUS_CONTROL=true;
-constexpr int LOWERED_COUNT=500; //Test to find actual value!
+constexpr bool HATCH_CONTINUOUS_CONTROL=false;
+constexpr int LOWERED_COUNT=50000; //Test to find actual value!
 constexpr int RAISED=-1;
 constexpr int LOWERED=1;
 constexpr int STOP=0;
