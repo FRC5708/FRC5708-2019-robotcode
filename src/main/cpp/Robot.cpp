@@ -43,7 +43,7 @@ void Robot::RobotInit() {
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::driveJoystick = new frc::Joystick(0);
-	Robot::liftJoystick = new frc::Joystick(1);
+	Robot::liftJoystick = new frc::Joystick(0);//FIXME
 	Robot::gyro = new frc::ADXRS450_Gyro();
 	Robot::m_oi = new OI();
 
