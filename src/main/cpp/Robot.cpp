@@ -32,8 +32,9 @@ HatchManipulator Robot::hatch;
 Robot* Robot::instance;
 bool environment_check(){
 struct stat buffer;  
-IS_PROD = !(stat ("/home/lvuser/platform_test", &buffer) == 0);
-std::cout << "Platform detected as " << (IS_PROD ? "PROD" : "TEST" )<< "..." << std::endl;
+bool IS_PROD_face = !(stat ("/home/lvuser/platform_test", &buffer) == 0);
+std::cout << "Platform detected as " << (IS_PROD_face ? "PROD" : "TEST" )<< "..." << std::endl;
+return IS_PROD_face;
 }
 void Robot::RobotInit() {
 	instance = this;
