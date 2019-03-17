@@ -7,7 +7,9 @@
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
 
 
-constexpr int INTAKE_BUTTON = 5, SHOOT_BUTTON = 6;
+
+bool stopperHasBeenTriggered=false;
+bool intakeIsStopped=false;
 
 
 double currentLeftPower=0.0;
@@ -105,11 +107,40 @@ void doLiftManipulator() {
 		Robot::lift.MoveMotor(power);
 	}
 
-	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON) ||
-	 Robot::driveJoystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
-	else if (Robot::liftJoystick->GetRawButton(INTAKE_BUTTON) || 
-	Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
-	else Robot::manipulator.Stop();
+	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON) || Robot::driveJoystick->GetRawButton(SHOOT_BUTTON)){
+		Robot::manipulator.Shoot();
+		//reset
+		stopperHasBeenTriggered=false;
+		intakeIsStopped=false;
+	}
+	else if (Robot::liftJoystick->GetRawButton(INTAKE_BUTTON) || Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)){
+		//Convoluted logic as follows: the first time the stopper button is pressed, the intake stops. However, if the driver presses the intake button again, it will override the stop.
+		//If the driver stops intaking, and then later tries to intake again, it will have reset.
+		if(Robot::BallManipulatorStopper->Get()){
+			//If the button is pressed, and we haven't triggered the stuff yet:
+			if(!stopperHasBeenTriggered){
+				stopperHasBeenTriggered=true;
+				intakeIsStopped=true;
+			}
+		}else{
+			//If it isn't pressed, we should reset everything.
+			stopperHasBeenTriggered=false;
+			intakeIsStopped=false;
+		}
+		if(Robot::liftJoystick->GetRawButtonPressed(INTAKE_BUTTON) || Robot::driveJoystick->GetRawButtonPressed(INTAKE_BUTTON)){
+			//If we press the intake again, override the stop.
+			intakeIsStopped=false;
+		}
+		if(!intakeIsStopped){
+			Robot::manipulator.Intake();
+		}
+	}
+	else{
+		Robot::manipulator.Stop();
+		//reset
+		stopperHasBeenTriggered=false;
+		intakeIsStopped=false;
+	}
 }
 
 // Called repeatedly when this Command is scheduled to run

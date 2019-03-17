@@ -16,6 +16,7 @@
 #include "commands/DriveWithJoystick.h"
 #include <sys/stat.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/DigitalInput.h>
 
 bool environment_check();
 bool IS_PROD = environment_check();
@@ -28,6 +29,7 @@ ShiftieLiftie Robot::lift;
 McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
 HatchManipulator Robot::hatch;
+frc::DigitalInput* Robot::BallManipulatorStopper = new frc::DigitalInput(ballManipulatorStopperChannel);
 
 Robot* Robot::instance;
 bool environment_check(){
