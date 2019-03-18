@@ -2,6 +2,7 @@
 #include <iostream>
 #include <frc/commands/CommandGroup.h>
 #include "subsystems/HatchManipulator.h"
+#include "RobotMap.h"
 
 // buttons on xbox:
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
