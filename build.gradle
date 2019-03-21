@@ -86,3 +86,6 @@ model {
         }
     }
 }
+tasks.withType(GenerateProjectFileTask) {
+    gradleArgs = "--info"
+}
