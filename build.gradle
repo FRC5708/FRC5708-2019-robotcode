@@ -64,6 +64,9 @@ model {
                     }
                 }
             }
+            binaries.all {
+                cppCompiler.args << '-Wall' << '-Wno-sign-compare'
+            }
 
             // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
             useLibrary(it, "wpilib")

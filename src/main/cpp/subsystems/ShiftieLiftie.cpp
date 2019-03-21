@@ -19,7 +19,7 @@ void ShiftieLiftie::Elevate(Setpoint point) {
 
 // Height of the manipulator above the ground when the lift is at its lowest point
 constexpr double shootieZero = 6.5;
-constexpr double hatchZero = 1*12+7;
+//constexpr double hatchZero = 1*12+7;
 
 	switch (point) {
 	case LowGoalHatch:
@@ -62,10 +62,10 @@ void ShiftieLiftie::MoveMotor(double power) {
 // measured positions of lift
 // The data is linear enough that we don't need this
 // the noise from the low-resolution encoder is larger than the spooling effect
-struct { double encRev, liftHeight; } liftMap[] = {
+/*struct { double encRev, liftHeight; } liftMap[] = {
 	{ 0, 0 }
 };
-constexpr double posCount = sizeof(liftMap) / sizeof(double) / 2;
+constexpr double posCount = sizeof(liftMap) / sizeof(double) / 2;*/
 
 // determined experimentally
 constexpr double moveCoeff = 9.209543;

@@ -8,7 +8,7 @@
 #include <array>
 
 AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
-	resetPosition({ 0, 0, 0, 0 });
+	resetPosition({{ 0, 0 }, 0, 0 });
 	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
@@ -46,7 +46,7 @@ double radius) {
 	}
 
 	double centerDist2 = pow(currentPos.x - center.x, 2) + pow(currentPos.y - center.y, 2);
-	double centerDist = sqrt(centerDist2);
+	//double centerDist = sqrt(centerDist2);
 	double aimPointDist = sqrt(centerDist2 - pow(radius, 2));
 
 	double xl = pow(radius, 2) * (currentPos.x - center.x) / centerDist2;
@@ -228,7 +228,7 @@ AutoDrive::RobotPosition AutoDrive::getPastPos(double milliseconds) {
 	//std::cout << "idxPast: " << idxPast << std::endl;
 	if (idxPast >= posCount) {
 		std::cerr << "requested time " << milliseconds << " too far in the past";
-		return { 0, 0, 0, 0 };
+		return {{ 0, 0 }, 0, 0 };
 		//abort();
 	}
 	return positions[(currentPosIndex - idxPast + posCount) % posCount];

@@ -34,7 +34,7 @@ bool environment_check(){
 struct stat buffer;  
 bool IS_PROD_face = !(stat ("/home/lvuser/platform_test", &buffer) == 0);
 std::cout << "Platform detected as " << (IS_PROD_face ? "PROD" : "TEST" )<< "..." << std::endl;
-return IS_PROD_face;
+return IS_PROD_face; 
 }
 void Robot::RobotInit() {
 	instance = this;
@@ -131,28 +131,26 @@ void Robot::AutonomousInit() {
 
 	AutoDrive::Point start;
 	switch (locationSelect.GetSelected()) {
-		case 'R': start = { xMag, 0 };
-		case 'L': start = { -xMag, 0 }; break;
-		case 'C': start = { 0, 0 }; break;
+		case 'R': start = { xMag, yStart };
+		case 'L': start = { -xMag, yStart }; break;
+		case 'C': start = { 0, yStart }; break;
 	}
 	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
 
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
 
-	AutoDrive::Point basePoint;
-
 	std::vector<AutoDrive::Point> points;
 	points.push_back({ autoDrive.getCurrentPos().loc.x, 4*12+6 });
 
 	int target = targetSelect.GetSelected();
-	constexpr double SHIP_BOTTOM = 54*12/2 - (9 + 8*12);
+	constexpr double SHIP_FRONT_Y = 54*12/2 - (9 + 8*12);
 	if (target == 0) {
-		points.push_back({ 18*sideSign, SHIP_BOTTOM - 30 - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_BOTTOM - 20 - ROBOT_LENGTH/2 });
+		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 30 - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_FRONT_Y - 20 - ROBOT_LENGTH/2 });
 	}
 	else {
-		points.push_back({ (23+36)*sideSign, SHIP_BOTTOM - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_BOTTOM + 25 + (target - 1) * 21 });
+		points.push_back({ (23+36)*sideSign, SHIP_FRONT_Y - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_FRONT_Y + 25 + (target - 1) * 21 });
 		points.push_back({ points.back().x - 12*sideSign, points.back().y });
 	}
 
