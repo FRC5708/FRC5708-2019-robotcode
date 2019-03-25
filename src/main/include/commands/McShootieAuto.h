@@ -30,6 +30,9 @@ public:
 		}
 		return false;
 	}
+	void Cancel() {
+		Robot::manipulator.Stop();
+	}
 		private:
 	std::chrono::steady_clock::time_point startTime;
 };  
