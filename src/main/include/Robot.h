@@ -12,6 +12,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/Joystick.h>
 #include <frc/interfaces/Gyro.h>
+#include <frc/DigitalInput.h>
 
 #include "OI.h"
 #include "subsystems/Drivetrain.h"
@@ -36,6 +37,7 @@ class Robot : public frc::TimedRobot {
 	static HatchManipulator hatch;
 
 	static Robot* instance;
+	static frc::DigitalInput* ProgrammaticUpperLimitSwitch;
 
 	void RobotInit() override;
 	void RobotPeriodic() override;
