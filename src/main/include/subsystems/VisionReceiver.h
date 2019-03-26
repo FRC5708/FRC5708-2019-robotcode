@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <sys/socket.h>
 #include "Angle.h"
 
 class VisionReceiver : public frc::Subsystem {
@@ -12,7 +13,11 @@ class VisionReceiver : public frc::Subsystem {
 	void setupSocket();
 	void pollForData();
 
+	void sendControlMessage(const char* message);
+
 	int sockfd;
+	struct sockaddr_storage clientAddr;
+	bool clientAddrExists = false;
 
 	struct TargetData {
 		double distance;
@@ -21,9 +26,13 @@ class VisionReceiver : public frc::Subsystem {
 		Radian tapeAngle, robotAngle;
 	};
 
+	int ticks;
+
  public:
 	VisionReceiver();
 	
+	void RobotEnabled() { sendControlMessage("ENABLE"); }
+	void RobotDisabled() { sendControlMessage("DISABLE"); }
 
 	// Subsystem Periodic() functions are always called before command Execute() functions
 	void Periodic() override;

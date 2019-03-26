@@ -88,6 +88,7 @@ void Robot::RobotPeriodic() {
  */
 void Robot::DisabledInit() {
 	frc::Scheduler::GetInstance()->RemoveAll();
+	visionReceiver.RobotDisabled();
 }
 
 void Robot::DisabledPeriodic() { 
@@ -111,6 +112,7 @@ void Robot::DisabledPeriodic() {
  * the if-else structure below with additional strings & commands.
  */
 void Robot::AutonomousInit() {
+	visionReceiver.RobotEnabled();
 	// std::string autoSelected = frc::SmartDashboard::GetString(
 	//     "Auto Selector", "Default");
 	// if (autoSelected == "My Auto") {
@@ -162,10 +164,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
 void Robot::TeleopInit() {
-	// This makes sure that the autonomous stops running when
-	// teleop starts running. If you want the autonomous to
-	// continue until interrupted by another command, remove
-	// this line or comment it out.
+	visionReceiver.RobotEnabled();
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 
