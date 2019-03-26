@@ -24,7 +24,7 @@ this->liftMove=new LiftMove(this->setpoint);
 
 // Called repeatedly when this Command is scheduled to run
 void ShooterAuto::Execute() {
-  if(this->liftMove->IsFinished() && this->ballShoot!=nullptr){
+  if(this->liftMove->IsFinished() && this->ballShoot==nullptr){
     this->ballShoot=new BallShoot();
   }
 }

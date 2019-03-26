@@ -10,10 +10,12 @@
 
 #include <frc/WPILib.h>
 #include "commands/VisionDrive.h"
+#include "commands/ShooterAuto.h"
 
 constexpr int VISION_BUTTON = 3;
 
 OI::OI() {
 	frc::JoystickButton* visionButton = new frc::JoystickButton(Robot::liftJoystick, VISION_BUTTON);
-	visionButton->WhenPressed(new VisionDrive(false));
+	visionButton->WhenPressed(new ShooterAuto(ShiftieLiftie::Setpoint::LowGoalCargo));
+
 }
