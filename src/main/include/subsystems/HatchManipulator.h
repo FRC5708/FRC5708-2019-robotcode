@@ -9,6 +9,7 @@
 
 #include <frc/commands/Subsystem.h>
 #include <frc/Spark.h>
+#include <frc/PWMTalonSRX.h>
 #include <frc/Encoder.h>
 #include "RobotMap.h"
 #include "frc/Counter.h"
@@ -30,8 +31,8 @@ class HatchManipulator : public frc::Subsystem {
 		STOP=0
 	};
 	int current_position=STOP;
-	frc::SpeedController* hatchMotor = new frc::Spark(hatchManipulatorChannel);
-	frc::Counter* hatch_counter=new frc::Counter(HatchCounterChannel);
+	frc::SpeedController* hatchMotor = IS_PROD ? (frc::SpeedController*) new frc::Spark(hatchManipulatorChannel) : 
+(frc::SpeedController*) new frc::PWMTalonSRX(hatchManipulatorChannel); //Blame electrical.
 	int getCountChange();
 	void updateTrueCount();
 	double getDistance();
