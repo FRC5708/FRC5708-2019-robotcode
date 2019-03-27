@@ -33,7 +33,7 @@ class HatchManipulator : public frc::Subsystem {
 	int current_position=STOP;
 	frc::SpeedController* hatchMotor = IS_PROD ? (frc::SpeedController*) new frc::Spark(hatchManipulatorChannel) : 
 (frc::SpeedController*) new frc::PWMTalonSRX(hatchManipulatorChannel); //Blame electrical.
-	frc::Counter* hatch_counter=new frc::Counter(HatchCounterChannel);
+	frc::Counter* hatch_counter=new frc::Counter(HatchCounterChannel); //Blame Git...
 	int getCountChange();
 	void updateTrueCount();
 	double getDistance();
