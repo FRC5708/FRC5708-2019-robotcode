@@ -11,5 +11,5 @@ public:
 	ofstream output_file;
 	Logger(string name="NONE",string output_filepath="");
 	~Logger();
-	void log(char* message);
+	void log(const char* message);
 };

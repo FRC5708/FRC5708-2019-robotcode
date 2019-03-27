@@ -53,8 +53,10 @@ constexpr double shootieZero = 6.5;
 void ShiftieLiftie::MoveMotor(double power) {
 	if (power != 0) {
 	doAutoLift = false;
-	if(Robot::ProgrammaticUpperLimitSwitch->Get() && !IS_PROD){
-		if(power>0){
+	ShiftyLog->log(("Limit_Switch: " + to_string(Robot::ProgrammaticUpperLimitSwitch->Get())).c_str());
+	if(!IS_PROD && !Robot::ProgrammaticUpperLimitSwitch->Get() ){
+		
+		if(power<0){
 			power=0;
 		}
 	}
