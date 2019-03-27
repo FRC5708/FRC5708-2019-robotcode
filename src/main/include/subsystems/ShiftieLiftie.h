@@ -4,6 +4,7 @@
 #include <frc/Spark.h>
 #include <frc/Encoder.h>
 #include "RobotMap.h"
+#include "Logger.h"
 
 
 /* THINGS TO CHECK FOR BEFORE USING THIS CODE:
@@ -40,7 +41,7 @@ class ShiftieLiftie : public frc::Subsystem {
 
 	bool isDone();
 
-
+	Logger* ShiftyLog=new Logger("SHIFTY");
 	frc::SpeedController* liftMotor = new frc::Spark(liftMotorChannel);
  private:
 	frc::Encoder liftEncoder;
