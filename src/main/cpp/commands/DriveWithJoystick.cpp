@@ -57,9 +57,15 @@ void cancelCommand(frc::Command* toCancel) {
 	else cancelCommand(toCancel->GetGroup());
 }
 void doHatch(){
-	if(!HATCH_CONTINUOUS_CONTROL){
-		
+	if(!(Robot::liftJoystick->GetRawButton(2) || Robot::driveJoystick->GetRawButton(2))){
+		if (Robot::liftJoystick->GetRawButton(7) || Robot::driveJoystick->GetRawButton(7)) {
+			Robot::hatch.Lower();
+		}
+		else if (Robot::liftJoystick->GetRawButton(8) || Robot::driveJoystick->GetRawButton(8)) {
+			Robot::hatch.Raise();
+		}
 	}else{
+		Robot::hatch.Stop();
 		//double power = inputTransform(Robot::driveJoystick->GetRawAxis(5), 0, 0.1, 0, 0);
 		double power = 0;
 

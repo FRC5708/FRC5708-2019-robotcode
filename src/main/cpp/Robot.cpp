@@ -16,6 +16,7 @@
 #include "commands/DriveWithJoystick.h"
 #include <sys/stat.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/DigitalInput.h>
 
 bool environment_check();
 bool IS_PROD = environment_check();
@@ -28,6 +29,7 @@ ShiftieLiftie Robot::lift;
 McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
 HatchManipulator Robot::hatch;
+frc::DigitalInput* Robot::ProgrammaticUpperLimitSwitch = new frc::DigitalInput(programmaticUpperLimitSwitchChannel);
 
 Robot* Robot::instance;
 bool environment_check(){
@@ -43,7 +45,7 @@ void Robot::RobotInit() {
 	//frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
 	Robot::driveJoystick = new frc::Joystick(0);
-	Robot::liftJoystick = new frc::Joystick(1);
+	Robot::liftJoystick = new frc::Joystick(0);//FIXME
 	Robot::gyro = new frc::ADXRS450_Gyro();
 	Robot::m_oi = new OI();
 
