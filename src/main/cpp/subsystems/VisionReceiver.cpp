@@ -69,7 +69,7 @@ void VisionReceiver::Periodic() {
 
 	char buf[66537];
 	ssize_t recieveSize = recvfrom(sockfd, buf, sizeof(buf) - 1, 
-	MSG_DONTWAIT, (struct sockaddr *) &clientAddr, nullptr);
+	MSG_DONTWAIT, (struct sockaddr *) &clientAddr, &clientAddrLen);
 	if (recieveSize > 0) {
 		clientAddrExists = true;
 
@@ -141,9 +141,11 @@ void VisionReceiver::Periodic() {
 
 void VisionReceiver::sendControlMessage(const char* message) {
 	if (clientAddrExists) {
+		//std::cout << "hearbeat: " << message << std::endl;
 		int fd = socket(clientAddr.ss_family, SOCK_DGRAM, 0);
 		if (fd < 0) perror("could not open vision control message socket");
-		if (sendto(fd, message, strlen(message), 0, (struct sockaddr *) &clientAddr, clientAddr.ss_len) < 0) {
+		((sockaddr_in *) &clientAddr)->sin_port = htons(5805);
+		if (sendto(fd, message, strlen(message), 0, (struct sockaddr *) &clientAddr, clientAddrLen) < 0) {
 			perror("failed to send vision control message");
 		}
 		close(fd);

@@ -17,6 +17,7 @@ class VisionReceiver : public frc::Subsystem {
 
 	int sockfd;
 	struct sockaddr_storage clientAddr;
+	socklen_t clientAddrLen = sizeof(clientAddr);
 	bool clientAddrExists = false;
 
 	struct TargetData {
