@@ -1,6 +1,6 @@
 #include "subsystems/ShiftieLiftie.h"
 #include <iostream>
-#include <robot.h>
+#include <Robot.h>
 
 ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
 liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
@@ -63,7 +63,7 @@ void ShiftieLiftie::UseStick(double power) {
 void ShiftieLiftie::MoveMotor(double power) {
 
 	if (!IS_PROD) {
-		ShiftyLog->log(("Limit_Switch: " + to_string(Robot::ProgrammaticUpperLimitSwitch->Get())).c_str());
+		ShiftyLog->log(("Limit_Switch: " + std::to_string(Robot::ProgrammaticUpperLimitSwitch->Get())).c_str());
 
 		if(!Robot::ProgrammaticUpperLimitSwitch->Get() && power < 0) {
 			power = 0;	
