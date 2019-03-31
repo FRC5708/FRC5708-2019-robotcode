@@ -16,7 +16,7 @@ Logger::Logger(string name,string output_filepath){
 	}
 	this->output_file.open(output_filepath,ofstream::out | ofstream::trunc);
 }
-void Logger::log(char* message){
+void Logger::log(const char* message){
 	time_t rawtime; time (&rawtime); struct tm *tm_struct = localtime(&rawtime);
 	output_file << tm_struct->tm_hour << ':' << tm_struct->tm_min << ':' << tm_struct->tm_sec << ' ' << message << endl;
 }

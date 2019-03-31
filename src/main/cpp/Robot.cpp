@@ -16,6 +16,7 @@
 #include "commands/DriveWithJoystick.h"
 #include <sys/stat.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/DigitalInput.h>
 
 bool environment_check();
 bool IS_PROD = environment_check();
@@ -28,6 +29,7 @@ ShiftieLiftie Robot::lift;
 McShootieTube Robot::manipulator;
 frc::Gyro* Robot::gyro;
 HatchManipulator Robot::hatch;
+frc::DigitalInput* Robot::ProgrammaticUpperLimitSwitch = new frc::DigitalInput(programmaticUpperLimitSwitchChannel);
 
 Robot* Robot::instance;
 bool environment_check(){
@@ -88,6 +90,7 @@ void Robot::RobotPeriodic() {
  */
 void Robot::DisabledInit() {
 	frc::Scheduler::GetInstance()->RemoveAll();
+	visionReceiver.RobotDisabled();
 }
 
 void Robot::DisabledPeriodic() { 
@@ -111,6 +114,7 @@ void Robot::DisabledPeriodic() {
  * the if-else structure below with additional strings & commands.
  */
 void Robot::AutonomousInit() {
+	visionReceiver.RobotEnabled();
 	// std::string autoSelected = frc::SmartDashboard::GetString(
 	//     "Auto Selector", "Default");
 	// if (autoSelected == "My Auto") {
@@ -162,10 +166,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
 void Robot::TeleopInit() {
-	// This makes sure that the autonomous stops running when
-	// teleop starts running. If you want the autonomous to
-	// continue until interrupted by another command, remove
-	// this line or comment it out.
+	visionReceiver.RobotEnabled();
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 

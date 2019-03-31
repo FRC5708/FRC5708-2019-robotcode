@@ -4,7 +4,6 @@
 #include <streambuf>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <netdb.h>
 
 
@@ -56,6 +55,11 @@ const Degree cameraTheta = 0;
 
 void VisionReceiver::Periodic() {
 	++dataAge;
+
+	// send "heartbeat" to rPi every second telling if robot is enabled or disabled
+	if (ticks++ % 50 == 0) {
+		Robot::instance->IsEnabled() ? RobotEnabled() : RobotDisabled();
+	}
 	//std::cout << "VisionReciever::Periodic : " << std::endl;
 	
 	std::vector<TargetData> readTapes;
@@ -65,8 +69,10 @@ void VisionReceiver::Periodic() {
 
 	char buf[66537];
 	ssize_t recieveSize = recvfrom(sockfd, buf, sizeof(buf) - 1, 
-	MSG_DONTWAIT, nullptr, nullptr);
+	MSG_DONTWAIT, (struct sockaddr *) &clientAddr, &clientAddrLen);
 	if (recieveSize > 0) {
+		clientAddrExists = true;
+
 		buf[recieveSize] = '\0';
 		visionDataStream << buf;
 
@@ -131,4 +137,17 @@ void VisionReceiver::Periodic() {
 	readTapes.clear();
 	//std::cout << "@CLEAR:" << std::endl;
 	//More stuff here?
+}
+
+void VisionReceiver::sendControlMessage(const char* message) {
+	if (clientAddrExists) {
+		//std::cout << "hearbeat: " << message << std::endl;
+		int fd = socket(clientAddr.ss_family, SOCK_DGRAM, 0);
+		if (fd < 0) perror("could not open vision control message socket");
+		((sockaddr_in *) &clientAddr)->sin_port = htons(5805);
+		if (sendto(fd, message, strlen(message), 0, (struct sockaddr *) &clientAddr, clientAddrLen) < 0) {
+			perror("failed to send vision control message");
+		}
+		close(fd);
+	}
 }
