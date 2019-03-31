@@ -81,34 +81,24 @@ void doHatch(){
 void doLiftManipulator() {
 	
 	int pov = Robot::liftJoystick->GetPOV();
-	if (/*pov != -1*/false) { //Removed due to lack of encoder! FIXME! 
-		ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
-		if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
+	ShiftieLiftie::Setpoint setpoint;
 
-		if (Robot::liftJoystick->GetRawButton(1)) {
-			// ball manipulator position
-			switch (pov) {
-				case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
-				case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
-				case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalCargo; break;
-			}
-		}
-		if (Robot::liftJoystick->GetRawButton(4)) {
-			// hatch manipulator position
-			switch (pov) {
-				case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalHatch; break;
-				case 90: setpoint = ShiftieLiftie::Setpoint::MidGoalHatch; break;
-				case 0: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
-			}
-		}
+	switch (pov) {
+		case 180: setpoint = ShiftieLiftie::Setpoint::Bottom; break;
+		case 270: setpoint = ShiftieLiftie::Setpoint::LowGoalCargo; break;
+		case 0: setpoint = ShiftieLiftie::Setpoint::MidGoalCargo; break;
+		// Rocket middle goal. If this is impossible, this should be removed
+		case 90: setpoint = ShiftieLiftie::Setpoint::HighGoalHatch; break;
+		default: setpoint = ShiftieLiftie::Setpoint::Stay; break;
+	}
 
+	if (/*setpoint != ShiftieLiftie::Setpoint::Stay*/false) {//Removed due to lack of encoder! FIXME! 
 		Robot::lift.Elevate(setpoint);
 	}	
-
 	else {
 		// right stick vertical
 		double power = inputTransform(Robot::liftJoystick->GetRawAxis(5), 0, 0.22, 0, 0);
-		Robot::lift.MoveMotor(power);
+		Robot::lift.UseStick(power);
 	}
 
 	if (Robot::liftJoystick->GetRawButton(SHOOT_BUTTON) ||

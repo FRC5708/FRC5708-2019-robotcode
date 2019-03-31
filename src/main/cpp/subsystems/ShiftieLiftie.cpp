@@ -8,6 +8,9 @@ liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
 	liftEncoder.SetDistancePerPulse(1.0/20.0);
 	liftEncoder.SetSamplesToAverage(4);
 
+	// disables motor if Set() is not called
+	liftMotor->SetSafetyEnabled(true);
+
 	//Uncomment if someone winds the winch the wrong way.
 	//liftMotor->SetInverted(true);
 }
@@ -50,21 +53,23 @@ constexpr double shootieZero = 6.5;
 	doAutoLift = true;
 }
 
-void ShiftieLiftie::MoveMotor(double power) {
+void ShiftieLiftie::UseStick(double power) {
 	if (power != 0) {
-	doAutoLift = false;
-	ShiftyLog->log(("Limit_Switch: " + to_string(Robot::ProgrammaticUpperLimitSwitch->Get())).c_str());
-	if(!IS_PROD && !Robot::ProgrammaticUpperLimitSwitch->Get() ){
-		
-		if(power<0){
-			power=0;
+		doAutoLift = false;
+		MoveMotor(power);
+	}
+	else if (!doAutoLift) MoveMotor(0);
+}
+void ShiftieLiftie::MoveMotor(double power) {
+
+	if (!IS_PROD) {
+		ShiftyLog->log(("Limit_Switch: " + to_string(Robot::ProgrammaticUpperLimitSwitch->Get())).c_str());
+
+		if(!Robot::ProgrammaticUpperLimitSwitch->Get() && power < 0) {
+			power = 0;	
 		}
 	}
 	liftMotor->Set(power);
-	}
-	else {
-		if (!doAutoLift) liftMotor->Set(0);
-	}
 }
 
 // measured positions of lift
@@ -148,9 +153,9 @@ void ShiftieLiftie::Periodic() {
 			else if (overSpeed > 0) movePower -= overSpeed / maxOverSpeed * movePower;
 
 
-			liftMotor->Set(movePower);
+			MoveMotor(movePower);
 		}
-		else liftMotor->Set(0);
+		else MoveMotor(0);
 
 		if (rate == 0) ++stillTicks;
 		else stillTicks = 0;

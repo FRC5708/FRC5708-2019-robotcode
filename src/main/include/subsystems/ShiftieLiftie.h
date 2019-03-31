@@ -33,6 +33,7 @@ class ShiftieLiftie : public frc::Subsystem {
 	void Periodic() override;
 	void Elevate(Setpoint setpoint);
 	void MoveMotor(double power);
+	void UseStick(double power);
 	
 	double movePlace;
 
@@ -42,7 +43,7 @@ class ShiftieLiftie : public frc::Subsystem {
 	bool isDone();
 
 	Logger* ShiftyLog=new Logger("SHIFTY");
-	frc::SpeedController* liftMotor = new frc::Spark(liftMotorChannel);
+	frc::PWMSpeedController* liftMotor = new frc::Spark(liftMotorChannel);
  private:
 	frc::Encoder liftEncoder;
 
