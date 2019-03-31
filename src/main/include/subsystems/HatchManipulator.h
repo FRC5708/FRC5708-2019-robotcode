@@ -13,8 +13,9 @@
 #include <frc/Encoder.h>
 #include "RobotMap.h"
 #include "frc/Counter.h"
+#include "Logger.h"
 constexpr bool HATCH_CONTINUOUS_CONTROL=true;
-constexpr int LOWERED_COUNT=6424; //Test to find actual value!
+constexpr int LOWERED_COUNT=390; //Test to find actual value!
 
 class HatchManipulator : public frc::Subsystem {
  public:
@@ -40,4 +41,5 @@ class HatchManipulator : public frc::Subsystem {
 	int lastCount=0;
 	int trueCount=0;
 	int moveSign = 0;
+	Logger* count_log= new Logger("Raw_Count","/home/lvuser/logging/Raw_Count_Last");
 };

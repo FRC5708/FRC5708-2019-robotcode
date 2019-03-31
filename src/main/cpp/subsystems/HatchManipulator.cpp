@@ -7,6 +7,7 @@
 
 #include "subsystems/HatchManipulator.h"
 #include <iostream>
+#include "Logger.h"
 
 HatchManipulator::HatchManipulator() : Subsystem("Hatch") {
   lastCount=hatch_counter->Get();
@@ -38,8 +39,9 @@ void HatchManipulator::Periodic(){
 	}
 }
 int HatchManipulator::getCountChange(){
-	int difference = hatch_counter->Get() - lastCount;
-	lastCount=hatch_counter->Get();
+	int curr_count=hatch_counter->Get();
+	int difference = curr_count - lastCount;
+	lastCount=curr_count;
 	return difference;
 }
 void HatchManipulator::updateTrueCount(){
@@ -50,12 +52,14 @@ void HatchManipulator::updateTrueCount(){
 	if (motorPower != 0) {
 		moveSign = (motorPower > 0) ? 1 : -1;
 	}
+	if (motorPower==0) moveSign=0; //Maybe stops weird race condition?
 	//0 equals all the way raised, increases as goes down.
 	trueCount=trueCount + getCountChange() * moveSign;
 
-	if (timer % 50 == 0) {
+	if (timer % 10 == 0) {
 		std::cout << "True Count: " << trueCount << " raw count: "<< hatch_counter->Get() << std::endl;
 	}
+	count_log->log(to_string(hatch_counter->Get()).c_str());
 }
 void HatchManipulator::Lower(){
 	current_position=LOWERED;
