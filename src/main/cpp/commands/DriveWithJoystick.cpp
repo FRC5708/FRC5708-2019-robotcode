@@ -81,7 +81,7 @@ void doHatch(){
 void doLiftManipulator() {
 	
 	int pov = Robot::liftJoystick->GetPOV();
-	if (pov != -1) {
+	if (/*pov != -1*/false) { //Removed due to lack of encoder! FIXME! 
 		ShiftieLiftie::Setpoint setpoint = ShiftieLiftie::Setpoint::Stay;
 		if (pov == 180) setpoint = ShiftieLiftie::Setpoint::Bottom;
 
