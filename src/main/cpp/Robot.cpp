@@ -90,7 +90,7 @@ void Robot::RobotPeriodic() {
  */
 void Robot::DisabledInit() {
 	frc::Scheduler::GetInstance()->RemoveAll();
-	visionReceiver.RobotDisabled();
+	visionReceiver.sendControlHeartbeat();
 }
 
 void Robot::DisabledPeriodic() { 
@@ -114,7 +114,7 @@ void Robot::DisabledPeriodic() {
  * the if-else structure below with additional strings & commands.
  */
 void Robot::AutonomousInit() {
-	visionReceiver.RobotEnabled();
+	visionReceiver.sendControlHeartbeat();
 	// std::string autoSelected = frc::SmartDashboard::GetString(
 	//     "Auto Selector", "Default");
 	// if (autoSelected == "My Auto") {
@@ -166,7 +166,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() { frc::Scheduler::GetInstance()->Run(); }
 
 void Robot::TeleopInit() {
-	visionReceiver.RobotEnabled();
+	visionReceiver.sendControlHeartbeat();
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 }
 

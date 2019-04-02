@@ -56,9 +56,8 @@ const Degree cameraTheta = 0;
 void VisionReceiver::Periodic() {
 	++dataAge;
 
-	// send "heartbeat" to rPi every second telling if robot is enabled or disabled
 	if (ticks++ % 50 == 0) {
-		Robot::instance->IsEnabled() ? RobotEnabled() : RobotDisabled();
+		sendControlHeartbeat();
 	}
 	//std::cout << "VisionReciever::Periodic : " << std::endl;
 	
@@ -137,6 +136,14 @@ void VisionReceiver::Periodic() {
 	readTapes.clear();
 	//std::cout << "@CLEAR:" << std::endl;
 	//More stuff here?
+}
+
+// send "heartbeat" to rPi every second telling if robot is enabled or disabled
+void VisionReceiver::sendControlHeartbeat() {
+	std::string msg = (Robot::instance->IsEnabled() ? "ENABLE" : "DISABLE")
+		+ std::string(" ")
+		 + (isActivelyDriving ? "DRIVEON" : "DRIVEOFF");
+		 sendControlMessage(msg.c_str());
 }
 
 void VisionReceiver::sendControlMessage(const char* message) {

@@ -31,9 +31,6 @@ class VisionReceiver : public frc::Subsystem {
 
  public:
 	VisionReceiver();
-	
-	void RobotEnabled() { sendControlMessage("ENABLE"); }
-	void RobotDisabled() { sendControlMessage("DISABLE"); }
 
 	// Subsystem Periodic() functions are always called before command Execute() functions
 	void Periodic() override;
@@ -52,4 +49,11 @@ class VisionReceiver : public frc::Subsystem {
 	int processingTime; // milliseconds
 	int dataAge = 0; // ticks
 	bool newData = false;
+
+	void sendControlHeartbeat();
+	bool isActivelyDriving = false;
+	void setIsActivelyDriving(bool value) {
+		isActivelyDriving = value; 
+		sendControlHeartbeat();
+	}
 };

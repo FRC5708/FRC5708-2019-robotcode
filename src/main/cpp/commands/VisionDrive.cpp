@@ -7,6 +7,7 @@ VisionDrive::VisionDrive(bool retry) : retry(retry) {
 }
 
 // Called just before this Command runs the first time
+// We also call it every time the command starts running
 void VisionDrive::Initialize() {
 	std::cout << "VisionDrive::Initialize()" << std::endl;
 	Robot::autoDrive.commandUsing = this;
@@ -17,6 +18,8 @@ void VisionDrive::Initialize() {
 
 	if (Robot::visionReceiver.targetLocs.size() > 0 && Robot::visionReceiver.dataAge < 25) processVisionData();
 	else if (!retry) done = true;
+
+	Robot::visionReceiver.setIsActivelyDriving(true);
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -107,6 +110,7 @@ bool VisionDrive::IsFinished() {
 void VisionDrive::End() {
 	std::cout << "ending VisionDrive" << std::endl;
 	Robot::autoDrive.commandUsing = nullptr;
+	Robot::visionReceiver.setIsActivelyDriving(false);
 }
 
 // Called when another command which requires one or more of the same
