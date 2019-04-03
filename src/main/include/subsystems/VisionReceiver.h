@@ -47,7 +47,7 @@ class VisionReceiver : public frc::Subsystem {
 	}
 
 	int processingTime; // milliseconds
-	int dataAge = 0; // ticks
+	int dataAge = 999999; // ticks
 	bool newData = false;
 
 	void sendControlHeartbeat();

@@ -68,9 +68,9 @@ void VisionDrive::Execute() {
 				done = true;
 			}
 		}
+		Robot::autoDrive.updatePower();
 	}
-
-	Robot::autoDrive.updatePower();
+	else Robot::drivetrain.Drive(0, 0);
 }
 
 void VisionDrive::processVisionData() {

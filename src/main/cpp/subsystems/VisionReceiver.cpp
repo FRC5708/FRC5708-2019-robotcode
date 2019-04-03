@@ -122,7 +122,7 @@ void VisionReceiver::Periodic() {
 			target.loc.y = robPos.loc.y + i.distance*cos(wholeAngle)
 			 + cameraX*sin(Radian(robPos.angle)) + cameraY*cos(Radian(robPos.angle));
 
-			target.angle = i.tapeAngle + i.robotAngle + robPos.angle;
+			target.angle = -i.tapeAngle + i.robotAngle + robPos.angle;
 
 			targetLocs.push_back(target);
 			std::cout << "got target at: <" << target.loc.x << ", " << target.loc.y << ">" << std::endl;

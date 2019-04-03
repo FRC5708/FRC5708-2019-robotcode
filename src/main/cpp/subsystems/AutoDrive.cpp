@@ -94,6 +94,7 @@ AutoDrive::Point AutoDrive::getCurveAimOffset(double radius) {
 void AutoDrive::updatePower() {
 
 	constexpr double kTurning = 0.1,
+	kTurnOvershoot = 0.01,
 	 kTurnReduction = 0.05,
 	 kForwardPower = 0.05;
 
@@ -167,6 +168,9 @@ void AutoDrive::updatePower() {
 
 	output << "angleDifference: " << angleDifference << "; ";
 	turnPower = kTurning * angleDifference;
+	if (fabs(angleDifference) < 5) {
+		turnPower -= kTurnOvershoot*Robot::drivetrain.GetGyroRate();
+	}
 
 	double currentCentripetal = fabs(Radian(Robot::drivetrain.GetGyroRate()) * Robot::drivetrain.GetRate());
 	if (currentCentripetal > maxCentripetal) {
