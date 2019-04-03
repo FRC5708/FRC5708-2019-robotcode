@@ -6,7 +6,7 @@
 
 class VisionDrive : public frc::Command {
  public:
-	VisionDrive(bool retry);
+	VisionDrive(bool retry, bool stayBack = true);
 	void Initialize() override;
 	void Execute() override;
 	bool IsFinished() override;
@@ -23,6 +23,7 @@ private:
 
 	bool retry;
 	bool gotFirstData = false;
+	bool stayBack = true;
 
 	bool done = false;
 };

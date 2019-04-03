@@ -12,6 +12,7 @@
 HatchManipulator::HatchManipulator() : Subsystem("Hatch") {
   lastCount=hatch_counter->Get();
   trueCount=0;
+  hatchMotor->SetInverted(true);
 }
 
 void HatchManipulator::InitDefaultCommand() {

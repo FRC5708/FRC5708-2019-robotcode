@@ -5,5 +5,5 @@
 
 class Autonomous : public frc::CommandGroup {
 public:
-	Autonomous(std::vector<AutoDrive::Point> points);
+	Autonomous(std::vector<AutoDrive::Point> points, bool doCargo);
 };

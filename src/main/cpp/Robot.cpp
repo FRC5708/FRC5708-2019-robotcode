@@ -66,6 +66,10 @@ void Robot::RobotInit() {
 	targetSelect.AddOption("Ship Side 3", 3);
 
 	frc::SmartDashboard::PutData("Target", &targetSelect);
+
+	itemSelect.SetDefaultOption("Cargo", true);
+	itemSelect.AddOption("Hatch", false);
+	frc::SmartDashboard::PutData("Game Piece", &itemSelect);
 }
 
 /**
@@ -128,6 +132,9 @@ void Robot::AutonomousInit() {
 	if (m_autonomousCommand != nullptr) {
 		m_autonomousCommand->Start();
 	}*/
+	drivetrain.ResetDistance();
+	gyro->Reset();
+
 	if (!driveCommand->IsRunning()) driveCommand->Start();
 
 	double xMag = 2*12 + 3*12 + 4 - ROBOT_WIDTH/2;
@@ -161,7 +168,7 @@ void Robot::AutonomousInit() {
 	}
 
 	if (autoCommand != nullptr) delete autoCommand;
-	autoCommand = new Autonomous(points);
+	autoCommand = new Autonomous(points, itemSelect.GetSelected());
 	autoCommand->Start();
 }
 

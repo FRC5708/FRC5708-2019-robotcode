@@ -70,10 +70,10 @@ void doHatch(){
 		double power = 0;
 
 		if (Robot::liftJoystick->GetRawButton(7) || Robot::driveJoystick->GetRawButton(7)) {
-			power = -1;
+			power = 1;
 		}
 		if (Robot::liftJoystick->GetRawButton(8) || Robot::driveJoystick->GetRawButton(8)) {
-			power = 1;
+			power = -1;
 		}
 		Robot::hatch.hatchMotor->Set(power);
 	}

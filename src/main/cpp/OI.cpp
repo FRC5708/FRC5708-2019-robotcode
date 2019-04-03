@@ -15,5 +15,8 @@ constexpr int VISION_BUTTON = 3;
 
 OI::OI() {
 	frc::JoystickButton* visionButton = new frc::JoystickButton(Robot::liftJoystick, VISION_BUTTON);
-	visionButton->WhenPressed(new VisionDrive(false));
+	VisionDrive* vd = new VisionDrive(false);
+	visionButton->WhenPressed(vd);
+	frc::JoystickButton* visionButton2 = new frc::JoystickButton(Robot::driveJoystick, VISION_BUTTON);
+	visionButton2->WhenPressed(vd);
 }
