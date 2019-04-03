@@ -31,12 +31,15 @@ void HatchManipulator::Periodic(){
 	updateTrueCount();
 	if (current_position == RAISED && trueCount > 0) {
 		hatchMotor->Set(-1.0);
+		isMoving = true;
 	}
 	else if (current_position == LOWERED && trueCount < LOWERED_COUNT) {
 		hatchMotor->Set(1.0);
+		isMoving = true;
 	}
 	else {
 		hatchMotor->Set(0);
+		isMoving = false;
 	}
 }
 int HatchManipulator::getCountChange(){

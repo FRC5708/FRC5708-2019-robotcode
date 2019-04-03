@@ -14,7 +14,7 @@ AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive"), output("position_output") 
 constexpr double maxCentripetal = 6*12, // in/sec^2
  topSpeed = 4*12, // estimated top speed of the robot at full power, inches/sec
  reachTopSpeed = 1, // estimated seconds to reach top speed from stop
- maxPower = 0.4, // maximum power the auton will run the motors at
+ //maxPower = 0.4, // maximum power the auton will run the motors at
  minForwardPower = 0.25; // below this the robot won't move
 
 double AutoDrive::pointDist(Point p1, Point p2) {
@@ -132,14 +132,15 @@ void AutoDrive::updatePower() {
 	else curveAimOffset = { 0, 0 };
 
 	Radian pointAngle;
-	double maxTurnPower;
+	//double maxTurnPower;
 	// if we haven't passed the aim point
 	//if (pow(target.loc.x - getCurrentPos().loc.x, 2) + pow(target.loc.y - getCurrentPos().loc.y, 2)
 	//>= pow(curveAimOffset.x, 2) + pow(curveAimOffset.y, 2)) {
 		// Point towards the curve aim point
 		pointAngle = atan2(target.loc.x - getCurrentPos().loc.x + curveAimOffset.x,
 		 target.loc.y - getCurrentPos().loc.y + curveAimOffset.y);
-		maxTurnPower = 0.5;//1;
+		 if (target.backwards) pointAngle = -pointAngle;
+		//maxTurnPower = 0.5;//1;
 		//output << "aiming at aim point: offset: <" << curveAimOffset.x << ", " << curveAimOffset.y << ">" << std::endl;
 	//}
 	/*else {
@@ -178,15 +179,18 @@ void AutoDrive::updatePower() {
 	}
 	if (fabs(turnPower) > maxTurnPower) turnPower = copysign(maxTurnPower, turnPower);
 
+	double targetDist = pointDist(target.loc, getCurrentPos().loc);
 	double forwardPower = 0;
-	if (fabs(angleDifference) < 30) {
+
+	// some arbitrary values
+	if ((targetDist > 7 || fabs(angleDifference) < 8) && fabs(angleDifference) < 30) {
+
 		if (target.slowDown) {
-			forwardPower = std::min(maxPower, minForwardPower + kForwardPower *
-				// distance to target:
-				pointDist(target.loc, getCurrentPos().loc));
+			forwardPower = std::min(maxPower, minForwardPower + kForwardPower * targetDist);
 		}
 		else forwardPower = maxPower;
 	}
+	if (target.backwards) forwardPower = -forwardPower;
 	
 	output << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << '\n';
 	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> theta=" << Degree(pointAngle) << '\n';

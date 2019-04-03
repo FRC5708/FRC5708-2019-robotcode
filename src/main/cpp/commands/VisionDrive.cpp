@@ -34,6 +34,8 @@ void VisionDrive::Execute() {
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 30;
 
+		Robot::autoDrive.target.backwards = false;
+
 		AutoDrive::Point approachPoint = { 
 			currentTarget.loc.x - (approachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
 			currentTarget.loc.y - (approachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
@@ -44,6 +46,7 @@ void VisionDrive::Execute() {
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.slowDown = false;
+		Robot::autoDrive.maxPower = 1; Robot::autoDrive.maxTurnPower = 1;
 
 		if (// if we are closer than 2 inches to the target
 		Robot::autoDrive.atTarget(currentTarget.loc, 2)) {
@@ -55,12 +58,12 @@ void VisionDrive::Execute() {
 		if (Robot::autoDrive.passedTarget(startingPoint)) {
 			double finalApproachDist = stayBack ? 2 : 0;
 			Robot::autoDrive.target.loc = {
-
 				currentTarget.loc.x - (finalApproachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
 				currentTarget.loc.y - (finalApproachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)
 			};
 			Robot::autoDrive.target.slowDown = true;
 			Robot::autoDrive.target.isAngled = false;
+			Robot::autoDrive.maxPower = 0.4; Robot::autoDrive.maxTurnPower = 0.5;
 			Robot::autoDrive.output << "driving final foot; ";
 
 			if (Robot::autoDrive.passedTarget(approachPoint)) {

@@ -35,6 +35,7 @@ public:
 		Point loc;
 
 		bool isAngled, // whether angle is set
+		backwards, // whether to drive backwards
 		 slowDown; // whether to slow down near the target
 		Degree angle; // angle to end up at
 	};
@@ -42,6 +43,8 @@ public:
 
 	bool passedTarget(Point from);
 	bool atTarget(Point compare, double dist = 2);
+
+	double maxPower = 0.4, maxTurnPower = 0.5;
 
 	// Call this from the command that is using AutoDrive.
 	// Wpilib's scheduler calls subsystems before commands, 

@@ -35,6 +35,7 @@ void PointMover::Initialize() {
 	updateTarget();
 
 	Robot::autoDrive.commandUsing = this;
+	Robot::autoDrive.maxPower = 1; Robot::autoDrive.maxTurnPower = 1;
 }
 void PointMover::Execute() {
 
@@ -92,15 +93,29 @@ public:
 	}
 };
 
+class CounterHatch : public frc::Command {
+	void Initialize() override {
+		Robot::hatch.Lower();
+		// Race condition with hatch.Periodic() and IsFinished()
+		// And don't want to look in WPI source code to find the order of these things
+		Robot::hatch.isMoving = true;
+	}
+	bool IsFinished() override {
+		return !Robot::hatch.isMoving;
+	}
+	void End() override {
+		Robot::hatch.Stop();
+	}
+};
 
 Autonomous::Autonomous(std::vector<AutoDrive::Point> points, bool doCargo) {
-	TimedHatch* timedHatch = new TimedHatch();
-	if (!doCargo) AddParallel(timedHatch);
+	frc::Command* hatchCommand = new CounterHatch();
+	if (!doCargo) AddParallel(hatchCommand);
 
 
 	AddSequential(new PointMover(points));
 	
-	if (!doCargo) AddSequential(new WaitFor(timedHatch));
+	if (!doCargo) AddSequential(new WaitFor(hatchCommand));
 	AddSequential(new VisionDrive(true, !doCargo));
 
 	if (doCargo) {

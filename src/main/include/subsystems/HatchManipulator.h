@@ -25,6 +25,8 @@ class HatchManipulator : public frc::Subsystem {
 	void Raise();
 	void Lower();
 	void Stop();
+	
+	bool isMoving = false;
 
 	enum Position : int {
 		RAISED=-1,
