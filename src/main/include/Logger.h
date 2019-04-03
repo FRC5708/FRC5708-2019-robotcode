@@ -8,8 +8,28 @@
 class Logger{
 public:
 	std::string name;
-	std::ofstream output_file;
+	std::fstream output_file;
 	Logger(std::string name="NONE",std::string output_filepath="");
 	~Logger();
-	void log(const char* message);
+	template <class T>
+	void log(T message);
+	template <class T>
+	Logger& operator<<(T message);
+
+private:
+
+	bool endedLine();
+	void logTime();
 };
+
+template <class T>
+Logger& Logger::operator<<(T message) {
+	if (endedLine()) logTime();
+	output_file << message;
+	return *this;
+}
+template <class T>
+void Logger::log(T message){
+	logTime();
+	output_file << message << std::endl;
+}

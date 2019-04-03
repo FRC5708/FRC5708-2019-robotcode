@@ -7,9 +7,8 @@
 
 #include <array>
 
-AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive") {
+AutoDrive::AutoDrive() : frc::Subsystem("AutoDrive"), output("position_output") {
 	resetPosition({{ 0, 0 }, 0, 0 });
-	output.open("/home/lvuser/position_output.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
 constexpr double maxCentripetal = 6*12, // in/sec^2
@@ -32,7 +31,7 @@ AutoDrive::Point AutoDrive::matchingPair(double x, double y1, double y2, AutoDri
 		output << "matchingPair() error. x:" << x << " y1:"  << y1 << " y2:" << y2 << 
 		" center:x:" << center.x << " y:" << center.y << " r^2:" << comp << 
 		" dist1:" << pow(x - center.x, 2) + pow(y1 - center.y, 2) << 
-		" dist2:" << pow(x - center.x, 2) + pow(y2 - center.y, 2) << std::endl;
+		" dist2:" << pow(x - center.x, 2) + pow(y2 - center.y, 2) << '\n';
 		
 		return { NAN, NAN };
 	}
@@ -189,8 +188,8 @@ void AutoDrive::updatePower() {
 		else forwardPower = maxPower;
 	}
 	
-	output << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << std::endl;
-	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> theta=" << Degree(pointAngle) << std::endl;
+	output << "Driving polar with <" << forwardPower << "," << turnPower << "> ..." << '\n';
+	output << "Aiming at Target: <" << target.loc.x << "," << target.loc.y << "> theta=" << Degree(pointAngle) << '\n';
 	Robot::drivetrain.DrivePolar(forwardPower, turnPower);
 }
 
@@ -221,7 +220,7 @@ void AutoDrive::updatePosition() {
 
 	if (newPos.loc.x != getCurrentPos().loc.x || newPos.loc.y != getCurrentPos().loc.y) {
 		output << "Current position: <" << getCurrentPos().loc.x 
-		<< "," << getCurrentPos().loc.y << ">, theta=" << getCurrentPos().angle << std::endl;
+		<< "," << getCurrentPos().loc.y << ">, theta=" << getCurrentPos().angle << '\n';
 	}
 
 	currentPosIndex = newPosIdx;

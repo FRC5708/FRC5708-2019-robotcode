@@ -140,6 +140,8 @@ void Robot::AutonomousInit() {
 		case 'C': start = { 0, yStart }; break;
 	}
 	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
+	drivetrain.ResetDistance();
+	gyro->Reset();
 
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
 

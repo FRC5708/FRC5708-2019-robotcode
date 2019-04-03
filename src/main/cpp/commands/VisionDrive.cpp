@@ -94,7 +94,7 @@ void VisionDrive::processVisionData() {
 	if (bestDistance < locationTolerance) {
 		currentTarget = bestTarget;
 		Robot::autoDrive.output << "new target!: <" << 
-		bestTarget.loc.x << ", " << bestTarget.loc.y <<"> theta=" << bestTarget.angle << std::endl;
+		bestTarget.loc.x << ", " << bestTarget.loc.y <<"> theta=" << bestTarget.angle << '\n';
 	}	
 
 	gotFirstData = true;

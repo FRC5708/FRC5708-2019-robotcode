@@ -95,33 +95,37 @@ void Drivetrain::ResetDistance(){
 
 double Drivetrain::GetDistance() {
 	double leftDistance = leftEncoder->GetDistance(), rightDistance = rightEncoder->GetDistance();
-	if (fabs(leftDistance) < 0.01) {
+	bool leftZero = fabs(leftDistance) < 0.01, rightZero = fabs(rightDistance) < 0.01;
+	if (leftZero && !rightZero) {
 		// emulate with gyro
 		return rightDistance * WheelCircumference + 
 		Radian(Degree(Robot::gyro->GetAngle())) * (ROBOT_WIDTH / 2.0);
 	}
-	else if (fabs(rightDistance) < 0.01) {
+	else if (rightZero && !leftZero) {
 		return leftDistance * WheelCircumference - 
 		Radian(Degree(Robot::gyro->GetAngle())) * (ROBOT_WIDTH / 2.0);
 	}
 	else {
 		// both encoders, yay!
+		// or maybe no encoders
 		return (leftDistance + rightDistance)/2.0 * WheelCircumference;
 	}
 }
 double Drivetrain::GetRate() {
 	double leftDistance = leftEncoder->GetDistance(), rightDistance = rightEncoder->GetDistance();
-	if (fabs(leftDistance) < 0.01) {
+	bool leftZero = fabs(leftDistance) < 0.01, rightZero = fabs(rightDistance) < 0.01;
+	if (leftZero && !rightZero) {
 		// emulate with gyro
 		return leftEncoder->GetRate() * WheelCircumference
 		 + Radian(Degree(Robot::gyro->GetRate())) * (ROBOT_WIDTH / 2.0);
 	}
-	else if (fabs(rightDistance) < 0.01) {
+	else if (rightZero && !leftZero) {
 		return rightEncoder->GetRate() * WheelCircumference
 		- Radian(Degree(Robot::gyro->GetRate())) * (ROBOT_WIDTH / 2.0);
 	}
 	else {
 		// both encoders, yay!
+		// or maybe no encoders
 		return (leftEncoder->GetRate() + rightEncoder->GetRate())/2.0 * WheelCircumference;
 	}
 }
