@@ -50,9 +50,13 @@ class Robot : public frc::TimedRobot {
 	void TestPeriodic() override;
 
  private:
+	enum struct PSPos {
+		Dont, Left, Right
+	};
+
 	// Have it null by default so that if testing teleop it
 	// doesn't have undefined behavior and potentially crash.
-	frc::Command* autoCommand = nullptr;
+	frc::CommandGroup* autoCommand = nullptr;
 	//ExampleCommand m_defaultAuto;
 	//MyAutoCommand m_myAuto;
 	//frc::SendableChooser<frc::Command*> m_chooser;
@@ -60,6 +64,11 @@ class Robot : public frc::TimedRobot {
 	frc::SendableChooser<char> targetSideSelect;
 	frc::SendableChooser<int> targetSelect;
 	frc::SendableChooser<bool> itemSelect;
+	frc::SendableChooser<PSPos> playerStationSelect;
+	frc::SendableChooser<int> secondTargetSelect;
+	frc::SendableChooser<char> secondTargetSideSelect;
+	
+	
 
 	frc::Command* driveCommand;
 };

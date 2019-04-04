@@ -7,26 +7,9 @@
 
 #include "commands/McShootieAuto.h"
 #include "commands/VisionDrive.h"
+#include <frc/commands/InstantCommand.h>
 
-class PointMover : public frc::Command {
-public:
-	void Execute() override;
-	void Initialize() override;
-	void End() override;
-	bool IsFinished() override { return done; }
 
-	PointMover(std::vector<AutoDrive::Point> targets) : targets(targets) {};
-
-private:
-	std::vector<AutoDrive::Point> targets;
-	int currentTargetIdx;
-
-	AutoDrive::Point prevTarget;
-
-	void updateTarget();
-
-	bool done = false;
-};
 
 void PointMover::Initialize() {
 
@@ -43,7 +26,7 @@ void PointMover::Execute() {
 
 		currentTargetIdx++;
 		if (currentTargetIdx < targets.size()) {
-			updateTarget();            
+			updateTarget();
 		}
 		else done = true;
 	}
@@ -108,7 +91,7 @@ class CounterHatch : public frc::Command {
 	}
 };
 
-Autonomous::Autonomous(std::vector<AutoDrive::Point> points, bool doCargo) {
+DriveAndVision::DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo) {
 	frc::Command* hatchCommand = new CounterHatch();
 	if (!doCargo) AddParallel(hatchCommand);
 
@@ -122,4 +105,23 @@ Autonomous::Autonomous(std::vector<AutoDrive::Point> points, bool doCargo) {
 		AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));
 		AddSequential(new BallShoot());
 	}
+}
+
+RecoverFromVision::RecoverFromVision(AutoDrive::Point pos, float backUpDist, bool front, bool pStation)
+ : PointMover({}), resetPos(pos) {
+
+	if (pStation)   targets = {{ pos.x, pos.y + backUpDist }};
+	else if (front) targets = {{ pos.x, pos.y - backUpDist }};
+	else targets = {{ pos.x - copysign(backUpDist, pos.x), pos.y }};
+}
+void RecoverFromVision::Initialize() {
+
+	Robot::autoDrive.resetPosition({ resetPos, Robot::gyro->GetAngle(), Robot::drivetrain.GetDistance() });
+
+	PointMover::Initialize();
+}
+
+void RecoverFromVision::Execute() {
+	Robot::autoDrive.target.backwards = true;
+	PointMover::Execute();
 }

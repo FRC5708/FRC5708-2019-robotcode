@@ -38,6 +38,23 @@ bool IS_PROD_face = !(stat ("/home/lvuser/platform_test", &buffer) == 0);
 std::cout << "Platform detected as " << (IS_PROD_face ? "PROD" : "TEST" )<< "..." << std::endl;
 return IS_PROD_face; 
 }
+void setupTargetSelect(frc::SendableChooser<char>& targetSideSelect, 
+frc::SendableChooser<int>& targetSelect, 
+std::string prefix = "") {
+
+	targetSideSelect.SetDefaultOption("Left", 'L');
+	targetSideSelect.AddOption("Right", 'R');
+	frc::SmartDashboard::PutData(prefix + "Target Side", &targetSideSelect);
+
+	targetSelect.SetDefaultOption("Ship Front", 0);
+	targetSelect.AddOption("Ship Side 1", 1);
+	targetSelect.AddOption("Ship Side 2", 2);
+	targetSelect.AddOption("Ship Side 3", 3);
+
+	frc::SmartDashboard::PutData(prefix + "Target", &targetSelect);
+}
+
+
 void Robot::RobotInit() {
 	instance = this;
 	//m_chooser.SetDefaultOption("Default Auto", &m_defaultAuto);
@@ -56,20 +73,17 @@ void Robot::RobotInit() {
 	locationSelect.AddOption("Right", 'R');
 	frc::SmartDashboard::PutData("Starting Pos", &locationSelect);
 
-	targetSideSelect.SetDefaultOption("Left", 'L');
-	targetSideSelect.AddOption("Right", 'R');
-	frc::SmartDashboard::PutData("Target Side", &targetSideSelect);
-
-	targetSelect.SetDefaultOption("Ship Front", 0);
-	targetSelect.AddOption("Ship Side 1", 1);
-	targetSelect.AddOption("Ship Side 2", 2);
-	targetSelect.AddOption("Ship Side 3", 3);
-
-	frc::SmartDashboard::PutData("Target", &targetSelect);
+	setupTargetSelect(targetSideSelect, targetSelect);
 
 	itemSelect.SetDefaultOption("Cargo", true);
 	itemSelect.AddOption("Hatch", false);
 	frc::SmartDashboard::PutData("Game Piece", &itemSelect);
+
+	playerStationSelect.SetDefaultOption("Don't", PSPos::Dont);
+	playerStationSelect.AddOption("Left", PSPos::Left);
+	playerStationSelect.AddOption("Right", PSPos::Right);
+
+	setupTargetSelect(secondTargetSideSelect, secondTargetSelect);
 }
 
 /**
@@ -106,6 +120,25 @@ void Robot::DisabledPeriodic() {
 	+ ", side: "+std::to_string(targetSideSelect.GetSelected()));
 }
 
+constexpr double SHIP_FRONT_Y = 54*12/2 - (9 + 8*12);
+// returns goal location
+AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::Point>& points) {
+
+	
+	if (target == 0) {
+		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 30 - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_FRONT_Y - 20 - ROBOT_LENGTH/2 });
+		return { points.back().x, SHIP_FRONT_Y - ROBOT_LENGTH/2 };
+	}
+	else {
+		points.push_back({ (23+36)*sideSign, SHIP_FRONT_Y - ROBOT_LENGTH/2 - 6 });
+		points.push_back({ points.back().x, SHIP_FRONT_Y + 25 + (target - 1) * 21 });
+		points.push_back({ points.back().x - 12*sideSign, points.back().y });
+		return { ((4*12 + 7.75)/2 + ROBOT_LENGTH/2) * sideSign, points.back().y };
+	}
+}
+
+
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -132,6 +165,10 @@ void Robot::AutonomousInit() {
 	if (m_autonomousCommand != nullptr) {
 		m_autonomousCommand->Start();
 	}*/
+
+	if (autoCommand != nullptr) delete autoCommand;
+	autoCommand = new frc::CommandGroup();
+
 	drivetrain.ResetDistance();
 	gyro->Reset();
 
@@ -146,8 +183,9 @@ void Robot::AutonomousInit() {
 		case 'L': start = { -xMag, yStart }; break;
 		case 'C': start = { 0, yStart }; break;
 	}
-	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
+
 	drivetrain.ResetDistance();
+	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
 	gyro->Reset();
 
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
@@ -155,20 +193,34 @@ void Robot::AutonomousInit() {
 	std::vector<AutoDrive::Point> points;
 	points.push_back({ autoDrive.getCurrentPos().loc.x, 4*12+6 });
 
-	int target = targetSelect.GetSelected();
-	constexpr double SHIP_FRONT_Y = 54*12/2 - (9 + 8*12);
-	if (target == 0) {
-		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 30 - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_FRONT_Y - 20 - ROBOT_LENGTH/2 });
-	}
-	else {
-		points.push_back({ (23+36)*sideSign, SHIP_FRONT_Y - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_FRONT_Y + 25 + (target - 1) * 21 });
-		points.push_back({ points.back().x - 12*sideSign, points.back().y });
+	int target1 = targetSelect.GetSelected();
+	auto endingPoint = toCargoShip(sideSign, target1, points);
+	autoCommand->AddSequential(new DriveAndVision(points, itemSelect.GetSelected()));
+	
+	if (playerStationSelect.GetSelected() != PSPos::Dont) {
+
+		RecoverFromVision* resetCommand = new RecoverFromVision(endingPoint, 18, (target1 == 0), false);
+		autoCommand->AddSequential(resetCommand);
+
+		// player station
+		std::vector<AutoDrive::Point> points2;
+		float sideSign2 = ((playerStationSelect.GetSelected() == PSPos::Left) ? -1 : 1);
+
+		points2.push_back({ resetCommand->getPoint().x, SHIP_FRONT_Y - 36 });
+		points2.push_back({ (5*12 + 4 + 69.56)*sideSign2, points.back().y });
+		points2.push_back({ points.back().x, 0 });
+		
+		autoCommand->AddSequential(new DriveAndVision(points2, false));
+		autoCommand->AddSequential(new RecoverFromVision(
+			{ points2.back().x, -4*12 + ROBOT_LENGTH/2 }, 10*12, false, true));
+
+		// second hatch delivery
+		std::vector<AutoDrive::Point> points3;
+
+		toCargoShip(((secondTargetSideSelect.GetSelected() == 'L') ? -1 : 1), secondTargetSelect.GetSelected(), points3);
+		autoCommand->AddSequential(new DriveAndVision(points, false));
 	}
 
-	if (autoCommand != nullptr) delete autoCommand;
-	autoCommand = new Autonomous(points, itemSelect.GetSelected());
 	autoCommand->Start();
 }
 
