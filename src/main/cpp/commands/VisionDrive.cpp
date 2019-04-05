@@ -46,7 +46,7 @@ void VisionDrive::Execute() {
 		Robot::autoDrive.target.isAngled = true;
 		Robot::autoDrive.target.angle = currentTarget.angle;
 		Robot::autoDrive.target.slowDown = false;
-		Robot::autoDrive.maxPower = 1; Robot::autoDrive.maxTurnPower = 1;
+		Robot::autoDrive.maxPower = 0.4; Robot::autoDrive.maxTurnPower = 0.5;
 
 		if (// if we are closer than 2 inches to the target
 		Robot::autoDrive.atTarget(currentTarget.loc, 2)) {

@@ -83,7 +83,7 @@ void Robot::RobotInit() {
 	playerStationSelect.AddOption("Left", PSPos::Left);
 	playerStationSelect.AddOption("Right", PSPos::Right);
 
-	setupTargetSelect(secondTargetSideSelect, secondTargetSelect);
+	setupTargetSelect(secondTargetSideSelect, secondTargetSelect, "Second ");
 }
 
 /**

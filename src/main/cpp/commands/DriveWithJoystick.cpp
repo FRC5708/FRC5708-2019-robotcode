@@ -57,7 +57,7 @@ void cancelCommand(frc::Command* toCancel) {
 	else cancelCommand(toCancel->GetGroup());
 }
 void doHatch(){
-	if(!(Robot::liftJoystick->GetRawButton(2) || Robot::driveJoystick->GetRawButton(2))){
+	if(/*!(Robot::liftJoystick->GetRawButton(2) || Robot::driveJoystick->GetRawButton(2))*/false){
 		if (Robot::liftJoystick->GetRawButton(7) || Robot::driveJoystick->GetRawButton(7)) {
 			Robot::hatch.Lower();
 		}
@@ -92,7 +92,7 @@ void doLiftManipulator() {
 		default: setpoint = ShiftieLiftie::Setpoint::Stay; break;
 	}
 
-	if (/*setpoint != ShiftieLiftie::Setpoint::Stay*/false) {//Removed due to lack of encoder! FIXME! 
+	if (setpoint != ShiftieLiftie::Setpoint::Stay) {
 		Robot::lift.Elevate(setpoint);
 	}	
 	else {

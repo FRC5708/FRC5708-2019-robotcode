@@ -3,7 +3,7 @@
 #include <Robot.h>
 
 ShiftieLiftie::ShiftieLiftie() : frc::Subsystem("Lift"),
-liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1]) {
+liftEncoder(LiftEncoderChannel[0], LiftEncoderChannel[1], true) {
 
 	liftEncoder.SetDistancePerPulse(1.0/20.0);
 	liftEncoder.SetSamplesToAverage(4);
