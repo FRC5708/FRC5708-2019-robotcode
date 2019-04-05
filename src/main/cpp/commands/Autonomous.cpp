@@ -18,7 +18,7 @@ void PointMover::Initialize() {
 	updateTarget();
 
 	Robot::autoDrive.commandUsing = this;
-	Robot::autoDrive.maxPower = 1; Robot::autoDrive.maxTurnPower = 1;
+	Robot::autoDrive.maxPower = 0.7; Robot::autoDrive.maxTurnPower = 1;
 }
 void PointMover::Execute() {
 
@@ -52,10 +52,10 @@ public:
 		startTime = std::chrono::steady_clock::now();
 	}
 	void Execute() override {
-		Robot::hatch.hatchMotor->Set(1);
+		Robot::hatch.hatchMotor->Set(-1);
 	}
 	bool IsFinished() override {
-		if (std::chrono::steady_clock::now() > startTime + std::chrono::milliseconds(10000)) {
+		if (std::chrono::steady_clock::now() > startTime + std::chrono::milliseconds(4000)) {
 			Robot::hatch.hatchMotor->Set(0);
 			return true;
 		}
@@ -92,7 +92,7 @@ class CounterHatch : public frc::Command {
 };
 
 DriveAndVision::DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo) {
-	frc::Command* hatchCommand = new CounterHatch();
+	frc::Command* hatchCommand = new TimedHatch();//new CounterHatch();
 	if (!doCargo) AddParallel(hatchCommand);
 
 

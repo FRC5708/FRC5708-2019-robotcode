@@ -29,7 +29,7 @@ public:
 	};
 	RobotPosition& getCurrentPos() { return positions[currentPosIndex]; }
 	RobotPosition getPastPos(double milliseconds);
-	void resetPosition(AutoDrive::RobotPosition newPos) { for (auto i : positions) { i = newPos; } }
+	void resetPosition(AutoDrive::RobotPosition newPos) { for (AutoDrive::RobotPosition& i : positions) { i = newPos; } }
 
 	struct Target {
 		Point loc;

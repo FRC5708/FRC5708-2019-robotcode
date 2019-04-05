@@ -160,7 +160,7 @@ void ShiftieLiftie::Periodic() {
 		if (rate == 0) ++stillTicks;
 		else stillTicks = 0;
 
-		if (movePlace <= 0 && stillTicks >= calibrationWaitTicks) {
+		if (movePlace <= 0 && position <= 0 && stillTicks >= calibrationWaitTicks) {
 			liftEncoder.Reset();
 			if (stillTicks == calibrationWaitTicks)
 				std::cout << "Calibrated lift" << std::endl;

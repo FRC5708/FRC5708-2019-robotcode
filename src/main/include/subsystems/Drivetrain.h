@@ -33,6 +33,9 @@ private:
 	frc::SpeedController* FRMotor = new frc::Spark(FLMotorChannel);
 	frc::SpeedController* BRMotor = new frc::Spark(BLMotorChannel);
 
+	bool leftEncoderGood = false, rightEncoderGood = false;
+	void checkEncoders();
+
 	int ticksSinceLastDrive = 0;
 };
 

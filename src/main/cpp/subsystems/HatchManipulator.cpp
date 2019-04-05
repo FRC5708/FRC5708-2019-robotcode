@@ -61,9 +61,8 @@ void HatchManipulator::updateTrueCount(){
 	trueCount=trueCount + getCountChange() * moveSign;
 
 	if (timer % 10 == 0) {
-		std::cout << "True Count: " << trueCount << " raw count: "<< hatch_counter->Get() << std::endl;
+		*count_log << "True Count: " << trueCount << " raw count: "<< hatch_counter->Get() << '\n';
 	}
-	count_log->log(std::to_string(hatch_counter->Get()).c_str());
 }
 void HatchManipulator::Lower(){
 	current_position=LOWERED;

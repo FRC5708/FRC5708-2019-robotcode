@@ -82,6 +82,7 @@ void Robot::RobotInit() {
 	playerStationSelect.SetDefaultOption("Don't", PSPos::Dont);
 	playerStationSelect.AddOption("Left", PSPos::Left);
 	playerStationSelect.AddOption("Right", PSPos::Right);
+	frc::SmartDashboard::PutData("Player Station", &playerStationSelect);
 
 	setupTargetSelect(secondTargetSideSelect, secondTargetSelect, "Second ");
 }
@@ -120,22 +121,30 @@ void Robot::DisabledPeriodic() {
 	+ ", side: "+std::to_string(targetSideSelect.GetSelected()));
 }
 
-constexpr double SHIP_FRONT_Y = 54*12/2 - (9 + 8*12);
+constexpr double SHIP_FRONT_Y = 220;
 // returns goal location
 AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::Point>& points) {
-
+	AutoDrive::Point toReturn;
 	
 	if (target == 0) {
 		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 30 - ROBOT_LENGTH/2 });
 		points.push_back({ points.back().x, SHIP_FRONT_Y - 20 - ROBOT_LENGTH/2 });
-		return { points.back().x, SHIP_FRONT_Y - ROBOT_LENGTH/2 };
+		toReturn = { points.back().x, SHIP_FRONT_Y - ROBOT_LENGTH/2 };
 	}
 	else {
 		points.push_back({ (23+36)*sideSign, SHIP_FRONT_Y - ROBOT_LENGTH/2 - 6 });
 		points.push_back({ points.back().x, SHIP_FRONT_Y + 25 + (target - 1) * 21 });
 		points.push_back({ points.back().x - 12*sideSign, points.back().y });
-		return { ((4*12 + 7.75)/2 + ROBOT_LENGTH/2) * sideSign, points.back().y };
+		toReturn = { ((4*12 + 7.75)/2 + ROBOT_LENGTH/2) * sideSign, points.back().y };
 	}
+
+	std::cout << "auto points: ";
+	for (auto i : points) {
+		std::cout << "(" << i.x << "," << i.y << ")  "; 
+	}
+	std::cout << std::endl;
+
+	return toReturn;
 }
 
 
@@ -151,6 +160,7 @@ AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::
  * the if-else structure below with additional strings & commands.
  */
 void Robot::AutonomousInit() {
+	std::cout << "Robot::AutonomousInit" << std::endl;
 	visionReceiver.sendControlHeartbeat();
 	// std::string autoSelected = frc::SmartDashboard::GetString(
 	//     "Auto Selector", "Default");
@@ -179,19 +189,19 @@ void Robot::AutonomousInit() {
 
 	AutoDrive::Point start;
 	switch (locationSelect.GetSelected()) {
-		case 'R': start = { xMag, yStart };
+		case 'R': start = { xMag, yStart }; break;
 		case 'L': start = { -xMag, yStart }; break;
+		default: 
+		std::cout << "Bad locationSelect" << std::endl;
 		case 'C': start = { 0, yStart }; break;
 	}
 
-	drivetrain.ResetDistance();
 	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
-	gyro->Reset();
 
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
 
 	std::vector<AutoDrive::Point> points;
-	points.push_back({ autoDrive.getCurrentPos().loc.x, 4*12+6 });
+	points.push_back({ autoDrive.getCurrentPos().loc.x, autoDrive.getCurrentPos().loc.y + 4*12 });
 
 	int target1 = targetSelect.GetSelected();
 	auto endingPoint = toCargoShip(sideSign, target1, points);
@@ -212,7 +222,7 @@ void Robot::AutonomousInit() {
 		
 		autoCommand->AddSequential(new DriveAndVision(points2, false));
 		autoCommand->AddSequential(new RecoverFromVision(
-			{ points2.back().x, -4*12 + ROBOT_LENGTH/2 }, 10*12, false, true));
+			{ points2.back().x, ROBOT_LENGTH/2 }, 10*12, false, true));
 
 		// second hatch delivery
 		std::vector<AutoDrive::Point> points3;
