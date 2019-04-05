@@ -81,7 +81,7 @@ void ShiftieLiftie::MoveMotor(double power) {
 constexpr double posCount = sizeof(liftMap) / sizeof(double) / 2;*/
 
 // determined experimentally
-constexpr double moveCoeff = 9.209543;
+constexpr double moveCoeff = 1/0.175766234; //9.209543;
 
 // should return a value in inches
 double ShiftieLiftie::getPosition() {
