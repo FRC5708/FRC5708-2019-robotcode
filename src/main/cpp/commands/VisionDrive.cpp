@@ -31,6 +31,12 @@ void VisionDrive::Execute() {
 	}
 
 	if (gotFirstData) {
+		if (fabs(Robot::drivetrain.GetRate()) < 1) stallCount++;
+		if (stallCount > 50) {
+			done = true;
+			return;
+		}
+
 		// distance, in inches, away from the vision targets, needed to turn without hitting anything
 		constexpr double approachDist = 30;
 
@@ -55,8 +61,10 @@ void VisionDrive::Execute() {
 			done = true;
 		}
 
-		if (Robot::autoDrive.passedTarget(startingPoint)) {
-			double finalApproachDist = stayBack ? 2 : 0;
+		if (/*Robot::autoDrive.passedTarget(startingPoint)*/true) {
+			//double finalApproachDist = stayBack ? 2 : 0;
+			double finalApproachDist = 0;//-5;
+
 			Robot::autoDrive.target.loc = {
 				currentTarget.loc.x - (finalApproachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),
 				currentTarget.loc.y - (finalApproachDist + ROBOT_LENGTH / 2)*cos(currentTarget.angle)

@@ -36,9 +36,9 @@ void PointMover::updateTarget() {
 	prevTarget = Robot::autoDrive.getCurrentPos().loc;
 	Robot::autoDrive.target.loc = targets[currentTargetIdx];
 
-	if (currentTargetIdx == targets.size() - 1) {
-		Robot::autoDrive.target.slowDown = true;
-	}
+	//if (currentTargetIdx == targets.size() - 1) {
+		//Robot::autoDrive.target.slowDown = true;
+	//}
 }
 void PointMover::End() {
 	Robot::autoDrive.commandUsing = nullptr;
@@ -55,7 +55,7 @@ public:
 		Robot::hatch.hatchMotor->Set(-1);
 	}
 	bool IsFinished() override {
-		if (std::chrono::steady_clock::now() > startTime + std::chrono::milliseconds(4000)) {
+		if (std::chrono::steady_clock::now() > startTime + std::chrono::milliseconds(6000)) {
 			Robot::hatch.hatchMotor->Set(0);
 			return true;
 		}
@@ -99,7 +99,7 @@ DriveAndVision::DriveAndVision(std::vector<AutoDrive::Point> points, bool doCarg
 	AddSequential(new PointMover(points));
 	
 	if (!doCargo) AddSequential(new WaitFor(hatchCommand));
-	AddSequential(new VisionDrive(true, !doCargo));
+	AddSequential(new VisionDrive(true, doCargo));
 
 	if (doCargo) {
 		AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));

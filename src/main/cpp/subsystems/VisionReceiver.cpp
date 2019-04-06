@@ -114,6 +114,8 @@ void VisionReceiver::Periodic() {
 		// What if there is some garbage data very close to the robot?
 		// That's why we don't just pick the closest target.
 		for (auto i : readTapes) {
+			i.distance += 3; // MEMEEMEEEEE
+
 			TargetLoc target;
 			Radian wholeAngle = -i.robotAngle + Radian(robPos.angle) + cameraTheta;
 

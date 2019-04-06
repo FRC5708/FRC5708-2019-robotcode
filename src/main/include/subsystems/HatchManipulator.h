@@ -43,5 +43,5 @@ class HatchManipulator : public frc::Subsystem {
 	int lastCount=0;
 	int trueCount=0;
 	int moveSign = 0;
-	Logger* count_log= new Logger("Raw_Count","/home/lvuser/logging/Raw_Count_Last");
+	Logger* count_log= new Logger("Raw_Count","/home/lvuser/Logging/Raw_Count_Last");
 };

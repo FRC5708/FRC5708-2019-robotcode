@@ -127,8 +127,8 @@ AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::
 	AutoDrive::Point toReturn;
 	
 	if (target == 0) {
-		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 30 - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_FRONT_Y - 20 - ROBOT_LENGTH/2 });
+		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 35 - ROBOT_LENGTH/2 });
+		points.push_back({ points.back().x, SHIP_FRONT_Y - 25 - ROBOT_LENGTH/2 });
 		toReturn = { points.back().x, SHIP_FRONT_Y - ROBOT_LENGTH/2 };
 	}
 	else {
@@ -201,7 +201,7 @@ void Robot::AutonomousInit() {
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
 
 	std::vector<AutoDrive::Point> points;
-	points.push_back({ autoDrive.getCurrentPos().loc.x, autoDrive.getCurrentPos().loc.y + 4*12 });
+	points.push_back({ autoDrive.getCurrentPos().loc.x, autoDrive.getCurrentPos().loc.y + 4*12 + 6 });
 
 	int target1 = targetSelect.GetSelected();
 	auto endingPoint = toCargoShip(sideSign, target1, points);
