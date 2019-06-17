@@ -61,9 +61,10 @@ void VisionDrive::Execute() {
 			done = true;
 		}
 
-		if (/*Robot::autoDrive.passedTarget(startingPoint)*/true) {
+		if (Robot::autoDrive.passedTarget(startingPoint)) {
 			//double finalApproachDist = stayBack ? 2 : 0;
-			double finalApproachDist = 0;//-5;
+			// distance robot will stop before the vision targets
+			double finalApproachDist = 10;//0;//-5;
 
 			Robot::autoDrive.target.loc = {
 				currentTarget.loc.x - (finalApproachDist + ROBOT_LENGTH / 2)*sin(currentTarget.angle),

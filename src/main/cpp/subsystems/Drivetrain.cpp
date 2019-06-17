@@ -1,12 +1,27 @@
 #include "subsystems/Drivetrain.h"
 #include "Robot.h"
 #include <frc/DriverStation.h>
+#include <frc/Spark.h>
+#include <frc/PWMTalonSRX.h>
 #include <iostream>
 #include <math.h>
 
 
 Drivetrain::Drivetrain() : frc::Subsystem("Drivetrain") {
 	
+	if (IS_PROD) {
+		FLMotor = new frc::Spark(FLMotorChannel);
+		FRMotor = new frc::Spark(FRMotorChannel);
+		BLMotor = new frc::Spark(BLMotorChannel);
+		BRMotor = new frc::Spark(BRMotorChannel);
+	}
+	else {
+		FLMotor = new frc::PWMTalonSRX(FLMotorChannel);
+		FRMotor = new frc::PWMTalonSRX(FRMotorChannel);
+		BLMotor = new frc::PWMTalonSRX(BLMotorChannel);
+		BRMotor = new frc::PWMTalonSRX(BRMotorChannel);
+	}
+
 	leftEncoder->SetDistancePerPulse(1.0/360.0);
 	rightEncoder->SetDistancePerPulse(1.0/360.0);
 	

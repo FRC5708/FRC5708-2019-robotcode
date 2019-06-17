@@ -1,8 +1,8 @@
 #ifndef Drivetrain_H
 #define Drivetrain_H
 
+#include <frc/SpeedController.h>
 #include <frc/commands/Subsystem.h>
-#include <frc/Spark.h>
 #include <frc/Encoder.h>
 #include <vector>
 #include "RobotMap.h"
@@ -28,10 +28,11 @@ public:
 	frc::Encoder* rightEncoder = new frc::Encoder(RightEncoderChannel[0],RightEncoderChannel[1], false);
 private:
 
-	frc::SpeedController* FLMotor = new frc::Spark(FRMotorChannel);
-	frc::SpeedController* BLMotor = new frc::Spark(BRMotorChannel);
-	frc::SpeedController* FRMotor = new frc::Spark(FLMotorChannel);
-	frc::SpeedController* BRMotor = new frc::Spark(BLMotorChannel);
+
+	frc::SpeedController* FLMotor;
+	frc::SpeedController* BLMotor;
+	frc::SpeedController* FRMotor;
+	frc::SpeedController* BRMotor;
 
 	bool leftEncoderGood = false, rightEncoderGood = false;
 	void checkEncoders();
