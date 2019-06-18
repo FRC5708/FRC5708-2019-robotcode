@@ -5,7 +5,8 @@
 
 class DriveAndVision : public frc::CommandGroup {
 public:
-	DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo);
+
+	DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo, bool doVision);
 };
 
 class PointMover : public frc::Command {

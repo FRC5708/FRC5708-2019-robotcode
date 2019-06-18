@@ -67,6 +67,7 @@ class Robot : public frc::TimedRobot {
 	frc::SendableChooser<PSPos> playerStationSelect;
 	frc::SendableChooser<int> secondTargetSelect;
 	frc::SendableChooser<char> secondTargetSideSelect;
+	frc::SendableChooser<bool> visionFreeSelect;
 	
 	
 

@@ -91,15 +91,15 @@ class CounterHatch : public frc::Command {
 	}
 };
 
-DriveAndVision::DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo) {
+DriveAndVision::DriveAndVision(std::vector<AutoDrive::Point> points, bool doCargo, bool doVision) {
 	frc::Command* hatchCommand = new TimedHatch();//new CounterHatch();
 	if (!doCargo) AddParallel(hatchCommand);
-
 
 	AddSequential(new PointMover(points));
 	
 	if (!doCargo) AddSequential(new WaitFor(hatchCommand));
-	AddSequential(new VisionDrive(true, doCargo));
+
+	if (doVision) AddSequential(new VisionDrive(true, doCargo));
 
 	if (doCargo) {
 		AddSequential(new LiftMove(ShiftieLiftie::Setpoint::MidGoalCargo));

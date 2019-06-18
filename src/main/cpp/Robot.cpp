@@ -85,6 +85,9 @@ void Robot::RobotInit() {
 	frc::SmartDashboard::PutData("Player Station", &playerStationSelect);
 
 	setupTargetSelect(secondTargetSideSelect, secondTargetSelect, "Second ");
+
+	visionFreeSelect.SetDefaultOption("Use vision", true);
+	visionFreeSelect.AddOption("Reckoning only", false);
 }
 
 /**
@@ -123,19 +126,27 @@ void Robot::DisabledPeriodic() {
 
 constexpr double SHIP_FRONT_Y = 220;
 // returns goal location
-AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::Point>& points) {
+// stayBack=whether to stay back in order to use vision
+AutoDrive::Point toCargoShip(float sideSign, int target, std::vector<AutoDrive::Point>& points, bool stayBack) {
 	AutoDrive::Point toReturn;
+
+	constexpr double extraForwardDist = 2;
 	
 	if (target == 0) {
 		points.push_back({ 18*sideSign, SHIP_FRONT_Y - 35 - ROBOT_LENGTH/2 });
-		points.push_back({ points.back().x, SHIP_FRONT_Y - 25 - ROBOT_LENGTH/2 });
+
 		toReturn = { points.back().x, SHIP_FRONT_Y - ROBOT_LENGTH/2 };
+		if (stayBack) points.push_back({ points.back().x, SHIP_FRONT_Y - 25 - ROBOT_LENGTH/2 });
+
+		else points.push_back({ toReturn.x, toReturn.y + extraForwardDist });
 	}
 	else {
 		points.push_back({ (23+36)*sideSign, SHIP_FRONT_Y - ROBOT_LENGTH/2 - 6 });
 		points.push_back({ points.back().x, SHIP_FRONT_Y + 25 + (target - 1) * 21 });
-		points.push_back({ points.back().x - 12*sideSign, points.back().y });
 		toReturn = { ((4*12 + 7.75)/2 + ROBOT_LENGTH/2) * sideSign, points.back().y };
+
+		if (stayBack) points.push_back({ points.back().x - 12*sideSign, points.back().y });
+		else points.push_back({ toReturn.x - extraForwardDist*sideSign, toReturn.y });
 	}
 
 	std::cout << "auto points: ";
@@ -199,36 +210,41 @@ void Robot::AutonomousInit() {
 	autoDrive.resetPosition({ start, 0, drivetrain.GetDistance() });
 
 	float sideSign = ((targetSideSelect.GetSelected() == 'L') ? -1 : 1);
+	bool usingVision = visionFreeSelect.GetSelected();
 
 	std::vector<AutoDrive::Point> points;
 	points.push_back({ autoDrive.getCurrentPos().loc.x, autoDrive.getCurrentPos().loc.y + 4*12 + 6 });
 
 	int target1 = targetSelect.GetSelected();
-	auto endingPoint = toCargoShip(sideSign, target1, points);
-	autoCommand->AddSequential(new DriveAndVision(points, itemSelect.GetSelected()));
+	auto endingPoint = toCargoShip(sideSign, target1, points, usingVision);
+	autoCommand->AddSequential(new DriveAndVision(points, itemSelect.GetSelected(), usingVision));
 	
 	if (playerStationSelect.GetSelected() != PSPos::Dont) {
+		if (!usingVision) std::cout << "Can't try 2x hatch auto without vision enabled" << std::endl;
+		else {
 
-		RecoverFromVision* resetCommand = new RecoverFromVision(endingPoint, 18, (target1 == 0), false);
-		autoCommand->AddSequential(resetCommand);
+			RecoverFromVision* resetCommand = new RecoverFromVision(endingPoint, 18, (target1 == 0), false);
+			autoCommand->AddSequential(resetCommand);
 
-		// player station
-		std::vector<AutoDrive::Point> points2;
-		float sideSign2 = ((playerStationSelect.GetSelected() == PSPos::Left) ? -1 : 1);
+			// player station
+			std::vector<AutoDrive::Point> points2;
+			float sideSign2 = ((playerStationSelect.GetSelected() == PSPos::Left) ? -1 : 1);
 
-		points2.push_back({ resetCommand->getPoint().x, SHIP_FRONT_Y - 36 });
-		points2.push_back({ (5*12 + 4 + 69.56)*sideSign2, points.back().y });
-		points2.push_back({ points.back().x, 0 });
-		
-		autoCommand->AddSequential(new DriveAndVision(points2, false));
-		autoCommand->AddSequential(new RecoverFromVision(
-			{ points2.back().x, ROBOT_LENGTH/2 }, 10*12, false, true));
+			points2.push_back({ resetCommand->getPoint().x, SHIP_FRONT_Y - 36 });
+			points2.push_back({ (5*12 + 4 + 69.56)*sideSign2, points.back().y });
+			points2.push_back({ points.back().x, 0 });
+			
+			autoCommand->AddSequential(new DriveAndVision(points2, false, true));
+			autoCommand->AddSequential(new RecoverFromVision(
+				{ points2.back().x, ROBOT_LENGTH/2 }, 10*12, false, true));
 
-		// second hatch delivery
-		std::vector<AutoDrive::Point> points3;
+			// second hatch delivery
+			std::vector<AutoDrive::Point> points3;
 
-		toCargoShip(((secondTargetSideSelect.GetSelected() == 'L') ? -1 : 1), secondTargetSelect.GetSelected(), points3);
-		autoCommand->AddSequential(new DriveAndVision(points, false));
+			toCargoShip(((secondTargetSideSelect.GetSelected() == 'L') ? -1 : 1), 
+			secondTargetSelect.GetSelected(), points3, true);
+			autoCommand->AddSequential(new DriveAndVision(points, false, true));
+		}
 	}
 
 	autoCommand->Start();
