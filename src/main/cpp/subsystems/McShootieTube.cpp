@@ -23,6 +23,10 @@ void McShootieTube::Shoot() {
 	leftMotor->Set(1);
 	rightMotor->Set(1);
 }
+void McShootieTube::Creep() {
+	leftMotor->Set(0.1);
+	rightMotor->Set(0.1);
+}
 void McShootieTube::Stop() {
 	leftMotor->StopMotor();
 	rightMotor->StopMotor();

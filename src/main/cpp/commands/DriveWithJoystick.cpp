@@ -7,7 +7,7 @@
 // 1=A, 2=B, 3=X, 4=Y, 5=left bumper, 6=right bumper, 7=Back, 8=Start, 9=left joystick, 10=right joystick
 
 
-constexpr int INTAKE_BUTTON = 5, SHOOT_BUTTON = 6;
+constexpr int INTAKE_BUTTON = 5, SHOOT_BUTTON = 6, CREEP_BUTTON = 3;
 
 
 double currentLeftPower=0.0;
@@ -105,6 +105,8 @@ void doLiftManipulator() {
 	 Robot::driveJoystick->GetRawButton(SHOOT_BUTTON)) Robot::manipulator.Shoot();
 	else if (Robot::liftJoystick->GetRawButton(INTAKE_BUTTON) || 
 	Robot::driveJoystick->GetRawButton(INTAKE_BUTTON)) Robot::manipulator.Intake();
+	else if (Robot::liftJoystick->GetRawButton(CREEP_BUTTON) || 
+	Robot::driveJoystick->GetRawButton(CREEP_BUTTON)) Robot::manipulator.Creep();
 	else Robot::manipulator.Stop();
 }
 
